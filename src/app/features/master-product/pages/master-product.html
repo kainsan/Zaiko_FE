@@ -1,0 +1,41 @@
+<div class="master-product-container">
+  <header class="header">
+    <div class="breadcrumb">
+      <a routerLink="/admin" class="breadcrumb-link">
+        マスタ
+      </a>
+      <svg xmlns="http://www.w3.org/2000/svg" height="16" width="7" viewBox="0 0 256 512">
+        <path fill="#9f9f9f"
+          d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+      </svg>
+      <span class="current-page">商品</span>
+      <button class="add-button">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M10.5625 4.46875C10.9941 4.46875 11.375 4.84961 11.375 5.28125V6.09375C11.375 6.55078 10.9941 6.90625 10.5625 6.90625H6.90625V10.5625C6.90625 11.0195 6.52539 11.375 6.09375 11.375H5.28125C4.82422 11.375 4.46875 11.0195 4.46875 10.5625V6.90625H0.8125C0.355469 6.90625 0 6.55078 0 6.09375V5.28125C0 4.84961 0.355469 4.46875 0.8125 4.46875H4.46875V0.8125C4.46875 0.380859 4.82422 0 5.28125 0H6.09375C6.52539 0 6.90625 0.380859 6.90625 0.8125V4.46875H10.5625Z"
+            fill="white" />
+        </svg>
+
+      </button>
+    </div>
+
+    <div class="header-actions">
+      <div class="date-container">
+        <span class="date-label">業務日付</span>
+        <span class="date-value">{{currentDate}}</span>
+      </div>
+
+      <button class="collapse-button">
+        <svg width="6" height="9" viewBox="0 0 6 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M5.52344 4.89453L1.80469 8.61328C1.53125 8.88672 1.12109 8.88672 0.875 8.61328L0.246094 8.01172C0 7.73828 0 7.32812 0.246094 7.08203L2.89844 4.45703L0.246094 1.80469C0 1.55859 0 1.14844 0.246094 0.875L0.875 0.246094C1.12109 0 1.53125 0 1.80469 0.246094L5.52344 3.96484C5.76953 4.23828 5.76953 4.64844 5.52344 4.89453Z"
+            fill="#9F9F9F" />
+        </svg>
+      </button>
+    </div>
+  </header>
+  <section>
+    <search-product></search-product>
+  </section>
+  <list-product></list-product>
+</div>
