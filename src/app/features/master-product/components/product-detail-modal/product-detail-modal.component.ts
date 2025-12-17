@@ -1,39 +1,47 @@
-import { Component, Inject } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output, signal, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
-import { Product } from '../list-product-component/list-product.component';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { Product } from '../../services/product.service';
 
 @Component({
-    selector: 'app-product-detail-modal',
+    selector: 'product-detail-modal',
     standalone: true,
     imports: [CommonModule],
     templateUrl: './product-detail-modal.component.html',
     styleUrls: ['./product-detail-modal.component.scss']
 })
-export class ProductDetailModalComponent {
+export class ProductDetailModalComponent implements OnInit, OnChanges {
+    @Input() product!: Product;
+    @Output() close = new EventEmitter<void>();
     activeTab: string = 'general'; // Default tab
+    productForm!: FormGroup;
 
     constructor(
-        public dialogRef: MatDialogRef<ProductDetailModalComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: Product
+        private fb: FormBuilder,
     ) { }
+
+    ngOnInit(): void {
+        this.initForm();
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['product'] && changes['product'].currentValue) {
+            this.product = changes['product'].currentValue;
+        }
+    }
+
+    initForm() {
+        this.productForm = this.fb.group({
+            // isSet: [this.data.isSet],
+        });
+    }
 
     selectTab(tab: string): void {
         this.activeTab = tab;
     }
 
     onClose(): void {
-        this.dialogRef.close();
-    }
-
-    onSave(): void {
-        // Implement save logic here
-        this.dialogRef.close(this.data);
-    }
-
-    onDelete(): void {
-        // Implement delete logic here
-        this.dialogRef.close('delete');
+        this.close.emit();
     }
 }

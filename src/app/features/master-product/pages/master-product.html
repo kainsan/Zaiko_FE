@@ -25,17 +25,36 @@
         <span class="date-value">{{currentDate}}</span>
       </div>
 
-      <button class="collapse-button">
-        <svg width="6" height="9" viewBox="0 0 6 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <button class="collapse-button" (click)="toggleSearch()">
+        <svg *ngIf="isSearchVisible()" width="13" height="8" viewBox="0 0 13 8" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
           <path
-            d="M5.52344 4.89453L1.80469 8.61328C1.53125 8.88672 1.12109 8.88672 0.875 8.61328L0.246094 8.01172C0 7.73828 0 7.32812 0.246094 7.08203L2.89844 4.45703L0.246094 1.80469C0 1.55859 0 1.14844 0.246094 0.875L0.875 0.246094C1.12109 0 1.53125 0 1.80469 0.246094L5.52344 3.96484C5.76953 4.23828 5.76953 4.64844 5.52344 4.89453Z"
-            fill="#9F9F9F" />
+            d="M6.48047 0.246094L11.8125 5.55078C12.0586 5.82422 12.0586 6.23438 11.8125 6.48047L11.1836 7.10938C10.9375 7.35547 10.5273 7.35547 10.2539 7.10938L6.04297 2.89844L1.80469 7.10938C1.53125 7.35547 1.12109 7.35547 0.875 7.10938L0.246094 6.48047C0 6.23438 0 5.82422 0.246094 5.55078L5.57812 0.246094C5.82422 0 6.23438 0 6.48047 0.246094Z"
+            fill="#4392BB" />
         </svg>
+
+        <!-- ICON SEARCH -->
+        <svg *ngIf="!isSearchVisible()" width="15" height="15" viewBox="0 0 15 15" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M13.8086 12.1133C14.0547 12.3867 14.0547 12.7969 13.7812 13.043L13.0156 13.8086C12.7695 14.082 12.3594 14.082 12.0859 13.8086L9.37891 11.1016C9.24219 10.9648 9.1875 10.8008 9.1875 10.6367V10.1719C8.20312 10.9375 7 11.375 5.6875 11.375C2.54297 11.375 0 8.83203 0 5.6875C0 2.57031 2.54297 0 5.6875 0C8.80469 0 11.375 2.57031 11.375 5.6875C11.375 7.02734 10.9102 8.23047 10.1719 9.1875H10.6094C10.7734 9.1875 10.9375 9.26953 11.0742 9.37891L13.8086 12.1133ZM5.6875 9.1875C7.60156 9.1875 9.1875 7.62891 9.1875 5.6875C9.1875 3.77344 7.60156 2.1875 5.6875 2.1875C3.74609 2.1875 2.1875 3.77344 2.1875 5.6875C2.1875 7.62891 3.74609 9.1875 5.6875 9.1875Z"
+            fill="#4392BB" />
+        </svg>
+
       </button>
     </div>
   </header>
-  <section>
+  <section *ngIf="isSearchVisible()">
     <search-product></search-product>
   </section>
-  <list-product></list-product>
+  <div class="container">
+    <div class="left">
+      <list-product [products]="products()" (openDetail)="openProductDetail($event)"></list-product>
+    </div>
+    <mat-sidenav #drawer mode="side" position="end" [opened]="!!selectedProduct" class="detail-drawer">
+      <div class="right" *ngIf="selectedProduct()">
+        <product-detail-modal [product]="selectedProduct()!" (close)="closeProductDetail()"></product-detail-modal>
+      </div>
+    </mat-sidenav>
+  </div>
 </div>

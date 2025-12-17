@@ -45,12 +45,22 @@
       font-size: 13px;
       outline: none;
       box-sizing: border-box;
-
       &:focus {
         border-color: #2b80d8;
         box-shadow: 0 0 2px rgba(43, 128, 216, 0.4);
       }
     }
+  }
+
+  .select-arrow {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iNiIgdmlld0JveD0iMCAwIDEwIDYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTUgNkwwLjY2OTczIDBMOS4zMzAyIDBMMi41eDYiIGZpbGw9IiM0MzkzQkIiLz48L3N2Zz4=');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 9px 10px;
+    padding-right: 30px; // Chừa khoảng trống cho mũi tên
   }
 
   .code-range {

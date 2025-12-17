@@ -37,75 +37,76 @@
         <table class="product-table">
           <thead>
             <tr>
-              <th class="sticky-left min-w-[32px]">No.</th>
-              <th class="min-w-[80px]">商品コード</th>
-              <th class="min-w-[240px]">名称</th>
-              <th class="min-w-[104px]">UPC1</th>
-              <th class="min-w-[104px]">UPC2</th>
-              <th class="min-w-[96px]">規格</th>
-              <th class="min-w-[160px]">名称情報1</th>
-              <th class="min-w-[160px]">名称情報2</th>
-              <th class="min-w-[160px]">名称情報3</th>
-              <th class="min-w-[160px]">名称情報4</th>
-              <th class="min-w-[104px]">商品分類コード１</th>
-              <th class="min-w-[120px]">商品分類名１</th>
-              <th class="min-w-[104px]">商品分類コード２</th>
-              <th class="min-w-[120px]">商品分類名２</th>
-              <th class="min-w-[104px]">商品分類コード３</th>
-              <th class="min-w-[120px]">商品分類名３</th>
-              <th class="min-w-[104px]">商品分類コード４</th>
-              <th class="min-w-[120px]">商品分類名４</th>
-              <th class="min-w-[104px]">商品分類コード５</th>
-              <th class="min-w-[120px]">商品分類名５</th>
-              <th class="min-w-[112px]">推奨倉庫</th>
-              <th class="min-w-[112px]">推奨ロケーション</th>
-              <th class="min-w-[64px]">ＦＩＦＯ</th>
-              <th class="min-w-[80px]">日付管理</th>
-              <th class="min-w-[64px]">番号管理</th>
-              <th class="min-w-[80px]">入庫荷姿</th>
-              <th class="min-w-[80px]">出庫荷姿</th>
-              <th class="min-w-[80px]">ＭＣ／ＩＣ</th>
-              <th class="min-w-[80px]">ＩＣ／Ｐ</th>
-              <th class="sticky-right min-w-[60px]">操作</th>
+              <th class="sticky-left" style="width: 2rem;">No.</th>
+              <th style="width:80px;">商品コード</th>
+              <th style="width:240px;">名称</th>
+              <th style="width:104px;">UPC1</th>
+              <th style="width:104px;">UPC2</th>
+              <th style="width:96px;">規格</th>
+              <th style="width:160px;">名称情報1</th>
+              <th style="width:160px;">名称情報2</th>
+              <th style="width:160px;">名称情報3</th>
+              <th style="width:160px;">名称情報4</th>
+              <th style="width:104px;">商品分類コード１</th>
+              <th style="width:120px;">商品分類名１</th>
+              <th style="width:104px;">商品分類コード２</th>
+              <th style="width:120px;">商品分類名２</th>
+              <th style="width:104px;">商品分類コード３</th>
+              <th style="width:120px;">商品分類名３</th>
+              <th style="width:104px;">商品分類コード４</th>
+              <th style="width:120px;">商品分類名４</th>
+              <th style="width:104px;">商品分類コード５</th>
+              <th style="width:120px;">商品分類名５</th>
+              <th style="width:112px;">推奨倉庫</th>
+              <th style="width:112px;">推奨ロケーション</th>
+              <th style="width:64px;">ＦＩＦＯ</th>
+              <th style="width:80px;">日付管理</th>
+              <th style="width:64px;">番号管理</th>
+              <th style="width:80px;">入庫荷姿</th>
+              <th style="width:80px;">出庫荷姿</th>
+              <th style="width:80px;">ＭＣ／ＩＣ</th>
+              <th style="width:80px;">ＩＣ／Ｐ</th>
+              <th class="sticky-right" style="width:60px;">操作</th>
             </tr>
           </thead>
           <tbody>
-            <ng-container *ngIf="products && products.length > 0">
-              <tr *ngFor="let product of products" (click)="openProductDetail(product)">
+            <ng-container *ngIf="products.length > 0">
+              <tr *ngFor="let product of products;" (click)="openProductDetail(product)">
                 <td class="sticky-left">
-                  {{product.no }}</td>
-                <td>{{ product.code }}</td>
+                  {{product.productId }}</td>
+                <td>{{ product.productCode }}</td>
                 <td>
-                  <div class="flex items-center justify-between">
-                    <span class="p-1.5 text-xs font-medium">{{ product.upc1 }}</span>
-                    <span *ngIf="product.name === 'セット'" class="set-badge">{{ product.name }}</span>
+                  <div class="product-name-cell">
+                    <span>{{ product.name1 }}</span>
+                    <span *ngIf="product.isSet === '0'" class="set-badge">セット</span>
                   </div>
                 </td>
-                <td>{{ product.upc1 }}</td>
-                <td>{{ product.upc2 }}</td>
-                <td>{{ product.spec }}</td>
-                <td>{{ product.info1 }}</td>
-                <td>{{ product.info2 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
-                <td>{{ product.info3 }}</td>
+                <td>{{ product.upcCd1 }}</td>
+                <td>{{ product.upcCd2 }}</td>
+                <td>{{ product.standardInfo }}</td>
+                <td>{{ product.name2 }}</td>
+                <td>{{ product.name3 }}</td>
+                <td>{{ product.name4 }}</td>
+                <td>{{ product.name5 }}</td>
+                <td>{{ product.categoryCode1 }}</td>
+                <td>{{ product.freeItem1 }}</td>
+                <td>{{ product.categoryCode2 }}</td>
+                <td>{{ product.freeItem2 }}</td>
+                <td>{{ product.categoryCode3 }}</td>
+                <td>{{ product.freeItem3 }}</td>
+                <td>{{ product.categoryCode4 }}</td>
+                <td>{{ product.freeItem4 }}</td>
+                <td>{{ product.categoryCode5 }}</td>
+                <td>{{ product.freeItem5 }}</td>
+                <td>{{product.repositoryId}}</td>
+                <td>{{product.locationId}}</td>
+                <td>{{product.fifoType}}</td>
+                <td>{{product.isDateTimeMng}}</td>
+                <td>{{product.isNumberMng}}</td>
+                <td>{{getInputPackagingString(product)}}</td>
+                <td>{{getOutputPackagingString(product)}}</td>
+                <td>{{product.packCsUnitCode}}</td>
+                <td>{{product.packBlUnitCode}}</td>
                 <td class="sticky-right">
                   <button class="delete-btn">
                     <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -117,7 +118,7 @@
                 </td>
               </tr>
             </ng-container>
-            <ng-container *ngIf="!products || products.length === 0">
+            <ng-container *ngIf="products.length === 0">
               <tr>
                 <td colspan="100%" class="no-data">
                   表示するデータはありません。
@@ -130,11 +131,16 @@
     </section>
 
     <div class="load-more-container">
-      <Button class="load-more-btn">
+      <button class="load-more-btn" (click)="loadMore()">
         <div class="btn-content">
-          <i class="fa-solid fa-angles-down"></i><span>更に表示</span>
+          <svg width="9" height="12" viewBox="0 0 9 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M3.99219 5.52344L0.273438 1.80469C0 1.53125 0 1.12109 0.273438 0.875L0.875 0.246094C1.14844 0 1.55859 0 1.80469 0.246094L4.42969 2.89844L7.08203 0.246094C7.32812 0 7.73828 0 8.01172 0.246094L8.64062 0.875C8.88672 1.12109 8.88672 1.53125 8.64062 1.80469L4.92188 5.52344C4.64844 5.76953 4.23828 5.76953 3.99219 5.52344ZM4.92188 10.7734C4.64844 11.0195 4.23828 11.0195 3.99219 10.7734L0.273438 7.05469C0 6.78125 0 6.37109 0.273438 6.125L0.875 5.49609C1.14844 5.25 1.55859 5.25 1.80469 5.49609L4.45703 8.14844L7.08203 5.49609C7.32812 5.25 7.76562 5.25 8.01172 5.49609L8.64062 6.125C8.88672 6.37109 8.88672 6.78125 8.64062 7.05469L4.92188 10.7734Z"
+              fill="#4392BB" />
+          </svg>
+          <span>更に表示</span>
         </div>
-      </Button>
+      </button>
     </div>
   </div>
 </main>

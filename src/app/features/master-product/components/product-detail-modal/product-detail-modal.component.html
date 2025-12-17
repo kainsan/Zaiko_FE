@@ -26,7 +26,7 @@
     </div>
 
     <!-- Close Button (Top Right) -->
-    <button (click)="onClose()" class="close-btn">
+    <button class="close-btn" (click)="onClose()">
       <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           d="M6.72656 4.89453L9.46094 7.65625C9.81641 7.98438 9.81641 8.53125 9.46094 8.85938L8.85938 9.46094C8.53125 9.81641 7.98438 9.81641 7.65625 9.46094L4.92188 6.72656L2.16016 9.46094C1.83203 9.81641 1.28516 9.81641 0.957031 9.46094L0.355469 8.85938C0 8.53125 0 7.98438 0.355469 7.65625L3.08984 4.89453L0.355469 2.16016C0 1.83203 0 1.28516 0.355469 0.957031L0.957031 0.355469C1.28516 0 1.83203 0 2.16016 0.355469L4.92188 3.08984L7.65625 0.355469C7.98438 0 8.53125 0 8.85938 0.355469L9.46094 0.957031C9.81641 1.28516 9.81641 1.83203 9.46094 2.16016L6.72656 4.89453Z"
@@ -40,21 +40,23 @@
     <!-- General Tab Content -->
     <div *ngIf="activeTab === 'general'" class="tab-content general">
       <!-- Code and UPC -->
-      <div class="form-grid-3 section-divider">
-        <div class="form-group">
+      <div class="top-row-group">
+        <div class="form-group code-group">
           <label>商品コード <span class="required">*</span></label>
-          <input type="text" [value]="data.code" class="read-only" readonly />
+          <input type="text" class="read-only" readonly [value]="product.productCode" />
         </div>
-        <div class="form-group">
+        <div class="form-group upc-group">
           <label>UPC1</label>
-          <input type="text" [value]="data.upc1" />
+          <input type="text" [value]="product.upcCd1" />
         </div>
-        <div class="form-group">
+        <div class="form-group upc-group">
           <label>UPC2</label>
-          <input type="text" [value]="data.upc2" />
+          <input type="text" [value]="product.upcCd2" />
         </div>
+      </div>
+      <div class="checkbox-row section-divider">
         <div class="checkbox-group">
-          <input type="checkbox" id="isSet" />
+          <input type="checkbox" id="isSet" [checked]="product.isSet === '0'"/>
           <label for="isSet">セット品</label>
         </div>
       </div>
@@ -62,17 +64,17 @@
       <!-- Name Fields -->
       <div class="form-group section-divider no-border">
         <label>名称</label>
-        <input type="text" [value]="data.name" />
-        <input type="text" />
-        <input type="text" />
-        <input type="text" />
-        <input type="text" />
+        <input type="text" [value]="product.name1"  />
+        <input type="text" [value]="product.name2" />
+        <input type="text" [value]="product.name3" />
+        <input type="text" [value]="product.name4" />
+        <input type="text" [value]="product.name5" />
       </div>
 
       <!-- Spec -->
       <div class="form-group section-divider">
         <label>規格</label>
-        <input type="text" [value]="data.spec" />
+        <input type="text" [value]="product.standardInfo" />
       </div>
 
       <!-- Categories -->
@@ -82,16 +84,16 @@
           <label>商品分類コード 1</label>
           <div class="input-with-button">
             <div class="relative-wrapper">
-              <input type="text" value="110" class="small-input" />
+              <input type="text" class="small-input" [value]="product.categoryCode1" />
               <button class="icon-btn">
-                <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="10" height="10" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M5.91797 5.19141C6.02344 5.30859 6.02344 5.48438 5.90625 5.58984L5.57812 5.91797C5.47266 6.03516 5.29688 6.03516 5.17969 5.91797L4.01953 4.75781C3.96094 4.69922 3.9375 4.62891 3.9375 4.55859V4.35938C3.51562 4.6875 3 4.875 2.4375 4.875C1.08984 4.875 0 3.78516 0 2.4375C0 1.10156 1.08984 0 2.4375 0C3.77344 0 4.875 1.10156 4.875 2.4375C4.875 3.01172 4.67578 3.52734 4.35938 3.9375H4.54688C4.61719 3.9375 4.6875 3.97266 4.74609 4.01953L5.91797 5.19141ZM2.4375 3.9375C3.25781 3.9375 3.9375 3.26953 3.9375 2.4375C3.9375 1.61719 3.25781 0.9375 2.4375 0.9375C1.60547 0.9375 0.9375 1.61719 0.9375 2.4375C0.9375 3.26953 1.60547 3.9375 2.4375 3.9375Z"
                     fill="white" />
                 </svg>
               </button>
             </div>
-            <input type="text" value="MT在庫商品" class="flex-input" readonly />
+            <input type="text" class="flex-input" readonly [value]="product.freeItem1" />
           </div>
         </div>
         <!-- Category 2 -->
@@ -99,7 +101,7 @@
           <label>商品分類コード 2</label>
           <div class="input-with-button">
             <div class="relative-wrapper">
-              <input type="text" value="100" class="small-input" />
+              <input type="text" class="small-input" [value]="product.categoryCode2" />
               <button class="icon-btn">
                 <svg width="7" height="7" viewBox="0 0 7 7" fill="red" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -108,7 +110,7 @@
                 </svg>
               </button>
             </div>
-            <input type="text" class="flex-input" readonly />
+            <input type="text" class="flex-input" readonly [value]="product.freeItem2" />
           </div>
         </div>
         <!-- Category 3 -->
@@ -116,16 +118,16 @@
           <label>商品分類コード 3</label>
           <div class="input-with-button">
             <div class="relative-wrapper">
-              <input type="text" class="small-input" />
+              <input type="text" class="small-input" [value]="product.categoryCode3" />
               <button class="icon-btn">
-                <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="10" height="10" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M5.91797 5.19141C6.02344 5.30859 6.02344 5.48438 5.90625 5.58984L5.57812 5.91797C5.47266 6.03516 5.29688 6.03516 5.17969 5.91797L4.01953 4.75781C3.96094 4.69922 3.9375 4.62891 3.9375 4.55859V4.35938C3.51562 4.6875 3 4.875 2.4375 4.875C1.08984 4.875 0 3.78516 0 2.4375C0 1.10156 1.08984 0 2.4375 0C3.77344 0 4.875 1.10156 4.875 2.4375C4.875 3.01172 4.67578 3.52734 4.35938 3.9375H4.54688C4.61719 3.9375 4.6875 3.97266 4.74609 4.01953L5.91797 5.19141ZM2.4375 3.9375C3.25781 3.9375 3.9375 3.26953 3.9375 2.4375C3.9375 1.61719 3.25781 0.9375 2.4375 0.9375C1.60547 0.9375 0.9375 1.61719 0.9375 2.4375C0.9375 3.26953 1.60547 3.9375 2.4375 3.9375Z"
                     fill="white" />
                 </svg>
               </button>
             </div>
-            <input type="text" class="flex-input" readonly />
+            <input type="text" class="flex-input" readonly  [value]="product.freeItem3" />
           </div>
         </div>
         <!-- Category 4 -->
@@ -133,16 +135,16 @@
           <label>商品分類コード 4</label>
           <div class="input-with-button">
             <div class="relative-wrapper">
-              <input type="text" class="small-input" />
+              <input type="text" class="small-input" [value]="product.categoryCode4" />
               <button class="icon-btn">
-                <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="10" height="10" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M5.91797 5.19141C6.02344 5.30859 6.02344 5.48438 5.90625 5.58984L5.57812 5.91797C5.47266 6.03516 5.29688 6.03516 5.17969 5.91797L4.01953 4.75781C3.96094 4.69922 3.9375 4.62891 3.9375 4.55859V4.35938C3.51562 4.6875 3 4.875 2.4375 4.875C1.08984 4.875 0 3.78516 0 2.4375C0 1.10156 1.08984 0 2.4375 0C3.77344 0 4.875 1.10156 4.875 2.4375C4.875 3.01172 4.67578 3.52734 4.35938 3.9375H4.54688C4.61719 3.9375 4.6875 3.97266 4.74609 4.01953L5.91797 5.19141ZM2.4375 3.9375C3.25781 3.9375 3.9375 3.26953 3.9375 2.4375C3.9375 1.61719 3.25781 0.9375 2.4375 0.9375C1.60547 0.9375 0.9375 1.61719 0.9375 2.4375C0.9375 3.26953 1.60547 3.9375 2.4375 3.9375Z"
                     fill="white" />
                 </svg>
               </button>
             </div>
-            <input type="text" class="flex-input" readonly />
+            <input type="text" class="flex-input" readonly [value]="product.freeItem4" />
           </div>
         </div>
         <!-- Category 5 -->
@@ -150,16 +152,16 @@
           <label>商品分類コード 5</label>
           <div class="input-with-button">
             <div class="relative-wrapper">
-              <input type="text" value="327" class="small-input" />
+              <input type="text" class="small-input" [value]="product.categoryCode5" />
               <button class="icon-btn">
-                <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="10" height="10" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M5.91797 5.19141C6.02344 5.30859 6.02344 5.48438 5.90625 5.58984L5.57812 5.91797C5.47266 6.03516 5.29688 6.03516 5.17969 5.91797L4.01953 4.75781C3.96094 4.69922 3.9375 4.62891 3.9375 4.55859V4.35938C3.51562 4.6875 3 4.875 2.4375 4.875C1.08984 4.875 0 3.78516 0 2.4375C0 1.10156 1.08984 0 2.4375 0C3.77344 0 4.875 1.10156 4.875 2.4375C4.875 3.01172 4.67578 3.52734 4.35938 3.9375H4.54688C4.61719 3.9375 4.6875 3.97266 4.74609 4.01953L5.91797 5.19141ZM2.4375 3.9375C3.25781 3.9375 3.9375 3.26953 3.9375 2.4375C3.9375 1.61719 3.25781 0.9375 2.4375 0.9375C1.60547 0.9375 0.9375 1.61719 0.9375 2.4375C0.9375 3.26953 1.60547 3.9375 2.4375 3.9375Z"
                     fill="white" />
                 </svg>
               </button>
             </div>
-            <input type="text" value="大黒工業株式会社" class="flex-input" readonly />
+            <input type="text" class="flex-input" readonly [value]="product.freeItem5" />
           </div>
         </div>
       </div>
@@ -167,7 +169,7 @@
       <!-- Summary -->
       <div class="form-group section-divider no-border">
         <label>摘要</label>
-        <textarea></textarea>
+        <textarea [value]="product.notes"></textarea>
       </div>
     </div>
 
@@ -176,15 +178,15 @@
       <div class="form-grid-3 section-divider">
         <div class="form-group">
           <label>商品コード <span class="required">*</span></label>
-          <input type="text" [value]="data.code" class="read-only" readonly />
+          <input type="text" class="read-only" readonly />
         </div>
         <div class="form-group">
           <label>UPC1</label>
-          <input type="text" [value]="data.upc1" class="read-only" readonly />
+          <input type="text" class="read-only" readonly />
         </div>
         <div class="form-group">
           <label>UPC2</label>
-          <input type="text" [value]="data.upc2" class="read-only" readonly />
+          <input type="text" class="read-only" readonly />
         </div>
       </div>
 
@@ -316,6 +318,14 @@
       <div class="packaging-options">
         <div class="section-label">荷姿</div>
         <table class="packaging-table">
+          <colgroup>
+            <col style="width: 140px;">
+            <col style="width: 50px;">
+            <col style="width: 50px;">
+            <col style="width: 120px;">
+            <col style="width: 70px;">
+            <col style="width: auto;">
+          </colgroup>
           <thead>
             <tr>
               <th></th>
@@ -412,8 +422,8 @@
                   </button>
                 </div>
               </td>
-              <td class="no-padding text-gray-500">
-                -
+              <td class="no-padding text-gray-500" style="padding-left: 8px;">
+                <span>-</span>
               </td>
               <td></td>
             </tr>
@@ -424,26 +434,103 @@
 
     <!-- Stock Tab Content -->
     <div *ngIf="activeTab === 'stock'" class="tab-content stock">
+      <!-- Top Row: Product Code, UPC1, UPC2 -->
+      <div class="form-grid-3 section-divider">
+        <div class="form-group code-group">
+          <label>商品コード <span class="required">*</span></label>
+          <input type="text" class="read-only" readonly [value]="product.productCode" />
+        </div>
+        <div class="form-group upc-group">
+          <label>UPC1</label>
+          <input type="text" class="read-only" readonly [value]="product.upcCd1" />
+        </div>
+        <div class="form-group upc-group">
+          <label>UPC2</label>
+          <input type="text" class="read-only" readonly [value]="product.upcCd2" />
+        </div>
+      </div>
+
+      <!-- Warehouse and Location -->
+      <div class="form-grid-2 section-divider">
+        <div class="form-group">
+          <label>推奨倉庫</label>
+          <select class="select-arrow">
+            <option value=""></option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>推奨ロケーション</label>
+          <select class="select-arrow">
+            <option value=""></option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Replenishment Management -->
       <div class="form-grid-3 section-divider">
         <div class="form-group">
-          <label>商品コード <span class="required">*</span></label>
-          <input type="text" [value]="data.code" class="read-only" readonly />
+          <label>補充管理</label>
+          <div class="radio-group-row">
+            <div class="radio-item">
+              <input type="radio" name="replenishment" id="rep-do" />
+              <label for="rep-do">する</label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="replenishment" id="rep-dont" checked />
+              <label for="rep-dont">しない</label>
+            </div>
+          </div>
         </div>
         <div class="form-group">
-          <label>UPC1</label>
-          <input type="text" [value]="data.upc1" class="read-only" readonly />
+          <label>補充点</label>
+          <input type="text" value="0" class="text-right read-only" readonly />
         </div>
         <div class="form-group">
-          <label>UPC2</label>
-          <input type="text" [value]="data.upc2" class="read-only" readonly />
+          <label>最低補充数（バラ）</label>
+          <input type="text" value="0" class="text-right read-only" readonly />
+        </div>
+      </div>
+
+      <!-- Expenses -->
+      <div class="checkbox-row section-divider">
+        <div class="checkbox-group">
+          <input type="checkbox" id="expenses" />
+          <label for="expenses">諸掛</label>
+        </div>
+      </div>
+
+      <!-- Supplier Info -->
+      <div class="form-grid-supplier section-divider no-border">
+        <div class="form-group code-col">
+          <label>仕入先コード</label>
+          <div class="input-with-button">
+            <div class="relative-wrapper">
+              <input type="text" value="000320" class="small-input" />
+              <button class="icon-btn">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M9.66797 8.75391C9.84375 8.92969 9.84375 9.22266 9.66797 9.39844L9.375 9.69141C9.19922 9.86719 8.90625 9.86719 8.73047 9.69141L6.94336 7.9043C6.88477 7.8457 6.85547 7.75781 6.85547 7.66992V7.49414C6.24023 7.96289 5.47852 8.25586 4.62891 8.25586C2.60742 8.25586 0.966797 6.61523 0.966797 4.59375C0.966797 2.57227 2.60742 0.931641 4.62891 0.931641C6.65039 0.931641 8.29102 2.57227 8.29102 4.59375C8.29102 5.44336 7.99805 6.20508 7.5293 6.82031H7.70508C7.79297 6.82031 7.88086 6.84961 7.93945 6.9082L9.66797 8.75391ZM4.62891 6.82031C5.85938 6.82031 6.85547 5.82422 6.85547 4.59375C6.85547 3.36328 5.85938 2.36719 4.62891 2.36719C3.39844 2.36719 2.40234 3.36328 2.40234 4.59375C2.40234 5.82422 3.39844 6.82031 4.62891 6.82031Z"
+                    fill="white" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="form-group name-col">
+          <label>&nbsp;</label>
+          <input type="text" value="株式会社トライフ" class="read-only" readonly />
+        </div>
+        <div class="form-group lead-time-col">
+          <label>リードタイム</label>
+          <input type="text" value="1" class="read-only" readonly />
         </div>
       </div>
     </div>
 
     <!-- Footer Actions -->
     <div class="modal-footer">
-      <button (click)="onDelete()" class="delete-btn">削除</button>
-      <button (click)="onSave()" class="save-btn">保存</button>
+      <button class="delete-btn">削除</button>
+      <button class="save-btn">保存</button>
     </div>
   </div>
 </div>
