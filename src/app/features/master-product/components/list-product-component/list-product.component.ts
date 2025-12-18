@@ -1,43 +1,70 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  computed,
+  EventEmitter,
+  input,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  signal,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ProductDetailModalComponent } from '../product-detail-modal/product-detail-modal.component';
-import { ProductService, Product } from '../../services/product.service';
+import { ProductService } from '../../services/product.service';
+import { Product } from '../../model/product.model';
 
+export type ProductType = 'ALL' | 'SET' | 'PRODUCT';
 @Component({
   selector: 'list-product',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './list-product-component.html',
-  styleUrls: ['./list-product-component.scss']
+  styleUrls: ['./list-product-component.scss'],
 })
 export class ListProductComponent implements OnChanges {
   @Input() products: Product[] = [];
   @Output() openDetail: EventEmitter<Product> = new EventEmitter<Product>();
+  @Output() selectedTypeChange = new EventEmitter<ProductType>();
   currentPage: number = 0;
-  pageSize: number = 20;
-  constructor(
-    private dialog: MatDialog,
-    private productService: ProductService
-  ) { }
+  pageSize: number = 50;
+  selectedType = signal<ProductType>('ALL');
+  productList = signal<Product[]>([]);
+
+  constructor(private dialog: MatDialog, private productService: ProductService) { }
+
+
+  filteredProducts = computed(() => {
+    let type = this.selectedType();
+    //bắn state radio button lên component cha
+    this.selectedTypeChange.emit(type);
+    let list = this.productList();
+
+    if (type === 'ALL') {
+      return list;
+    } else if (type === 'SET') {
+      return list.filter((p) => p.isSet === '1');
+    } else {
+      return list.filter((p) => p.isSet === '0');
+    }
+  });
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['products']) {
-      this.products = changes['products'].currentValue;
+      if (changes['searchProducts']) {
+        this.productList.set(changes['searchProducts'].currentValue);
+      } else {
+        this.productList.set(changes['products'].currentValue);
+      }
     }
   }
 
-  loadMore(): void {
-    this.currentPage++;
-    console.log(this.currentPage);
-    this.productService.loadMoreProducts(this.currentPage, this.pageSize).subscribe(newProducts => {
-      this.products = [...this.products, ...newProducts];
-    });
-  }
+
 
   openProductDetail(product: Product): void {
     this.openDetail.emit(product);
-
   }
 
   getInputPackagingString(product: any): string {

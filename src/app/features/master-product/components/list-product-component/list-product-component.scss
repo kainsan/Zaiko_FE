@@ -51,7 +51,7 @@
         font-weight: 500;
         transition: background-color 0.15s;
         background-color: transparent;
-
+        cursor: pointer;
         &:hover {
           background-color: rgba(67, 146, 187, 0.1);
         }
@@ -223,7 +223,11 @@
               align-items: center;
               justify-content: space-between;
               line-height: 20px;
-
+            .product-name {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
               .upc-text {
                 font-size: 13px;
                 font-weight: 500;

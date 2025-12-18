@@ -45,11 +45,13 @@
     </div>
   </header>
   <section *ngIf="isSearchVisible()">
-    <search-product></search-product>
+    <search-product [selectedType]="selectedTypeFromList"
+      (searchProducts)="handleSearchResults($event)"></search-product>
   </section>
   <div class="container">
     <div class="left">
-      <list-product [products]="products()" (openDetail)="openProductDetail($event)"></list-product>
+      <list-product (selectedTypeChange)="onSelectedTypeChange($event)" [products]="products()"
+        (openDetail)="openProductDetail($event)"></list-product>
     </div>
     <mat-sidenav #drawer mode="side" position="end" [opened]="!!selectedProduct" class="detail-drawer">
       <div class="right" *ngIf="selectedProduct()">

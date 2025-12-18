@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal, ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SearchProductComponent } from '../components/search-component/search-product.component';
-import { ListProductComponent } from '../components/list-product-component/list-product.component';
+import { ListProductComponent, ProductType } from '../components/list-product-component/list-product.component';
 import { ProductDetailModalComponent } from '../components/product-detail-modal/product-detail-modal.component';
-import { Product, ProductService } from '../services/product.service';
+import { ProductService } from '../services/product.service';
+import { Product } from '../model/product.model';
 import { MatSidenavModule } from '@angular/material/sidenav';
 
 @Component({
@@ -16,7 +17,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 })
 export class MasterProduct implements OnInit {
   currentPage: number = 0;
-  pageSize: number = 20;
+  pageSize: number = 50;
   currentDate = new Date().toLocaleDateString('ja-JP', {
     year: 'numeric',
     month: '2-digit',
@@ -26,6 +27,8 @@ export class MasterProduct implements OnInit {
   products = signal<Product[]>([]);
   selectedProduct = signal<Product | null>(null);
   isSearchVisible = signal<boolean>(true);
+  searchProducts = signal<Product[]>([]);
+  selectedTypeFromList: ProductType = 'ALL';
 
   constructor(
     private productService: ProductService,
@@ -34,6 +37,10 @@ export class MasterProduct implements OnInit {
     this.productService.getProducts(this.currentPage, this.pageSize).subscribe(data => {
       this.products.set(data);
     });
+  }
+
+  onSelectedTypeChange(type: ProductType) {
+    this.selectedTypeFromList = type;
   }
 
   openProductDetail(product: Product): void {
@@ -46,5 +53,9 @@ export class MasterProduct implements OnInit {
 
   toggleSearch(): void {
     this.isSearchVisible.set(!this.isSearchVisible());
+  }
+
+  handleSearchResults(searchProducts: Product[]): void {
+    this.products.set(searchProducts);
   }
 }

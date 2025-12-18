@@ -14,15 +14,18 @@
         </button>
         <div class="filter-options">
           <div class="filter-item">
-            <input type="radio" name="productType" id="all" checked />
+            <input type="radio" name="productType" id="all" [checked]="selectedType() === 'ALL'"
+              (change)="selectedType.set('ALL')" />
             <label for="all">全て</label>
           </div>
           <div class="filter-item">
-            <input type="radio" name="productType" id="set" />
+            <input type="radio" name="productType" id="set" [checked]="selectedType() === 'SET'"
+              (change)="selectedType.set('SET')" />
             <label for="set">セット品</label>
           </div>
           <div class="filter-item">
-            <input type="radio" name="productType" id="product" />
+            <input type="radio" name="productType" id="product" [checked]="selectedType() === 'PRODUCT'"
+              (change)="selectedType.set('PRODUCT')" />
             <label for="product">商品</label>
           </div>
         </div>
@@ -70,15 +73,15 @@
             </tr>
           </thead>
           <tbody>
-            <ng-container *ngIf="products.length > 0">
-              <tr *ngFor="let product of products;" (click)="openProductDetail(product)">
+            <ng-container *ngIf="filteredProducts().length > 0">
+              <tr *ngFor="let product of filteredProducts()" (click)="openProductDetail(product)">
                 <td class="sticky-left">
                   {{product.productId }}</td>
                 <td>{{ product.productCode }}</td>
                 <td>
                   <div class="product-name-cell">
-                    <span>{{ product.name1 }}</span>
-                    <span *ngIf="product.isSet === '0'" class="set-badge">セット</span>
+                    <span class="product-name">{{ product.name1 }}</span>
+                    <span *ngIf="product.isSet === '1'" class="set-badge">セット</span>
                   </div>
                 </td>
                 <td>{{ product.upcCd1 }}</td>
@@ -118,7 +121,7 @@
                 </td>
               </tr>
             </ng-container>
-            <ng-container *ngIf="products.length === 0">
+            <ng-container *ngIf="filteredProducts().length === 0">
               <tr>
                 <td colspan="100%" class="no-data">
                   表示するデータはありません。

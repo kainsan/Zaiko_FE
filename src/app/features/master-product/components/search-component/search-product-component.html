@@ -1,13 +1,13 @@
 <section class="search-product-container">
-  <form #goodsForm="ngForm" (ngSubmit)="(goodsForm.value)" class="search-form">
+  <form (ngSubmit)="searchProduct()" class="search-form">
     <div class="grid-container">
       <!-- 商品コード -->
       <div class="form-group ">
         <label>商品コード</label>
         <div class="code-range">
           <div class="code-input">
-            <input type="text" />
-            <button>
+            <input type="text" [(ngModel)]="productCodeFrom" name="productCodeFrom" #inputCodeProduct1 />
+            <button type="button" (click)="openCodeProduct1Search(inputCodeProduct1.value)">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="14" height="14" rx="1" fill="#4392BB" />
                 <path
@@ -18,8 +18,9 @@
           </div>
           <span>~</span>
           <div class="code-input">
-            <input type="text" />
-            <button><svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <input type="text" [(ngModel)]="productCodeTo" name="productCodeTo" #inputCodeProduct2 />
+            <button type="button" (click)="openCodeProduct2Search(inputCodeProduct2.value)">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="14" height="14" rx="1" fill="#4392BB" />
                 <path
                   d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
@@ -33,64 +34,64 @@
       <!-- 名称 -->
       <div class="form-group">
         <label>名称</label>
-        <input type="text" />
+        <input type="text" [(ngModel)]="name1" name="name1" />
       </div>
 
       <!-- UPC1 -->
       <div class="form-group">
         <label>UPC１</label>
-        <input type="text" />
+        <input type="text" [(ngModel)]="upcCd1" name="upcCd1" />
       </div>
 
       <!-- UPC2 -->
       <div class="form-group">
         <label>UPC２</label>
-        <input type="text" />
+        <input type="text" [(ngModel)]="upcCd2" name="upcCd2" />
       </div>
 
       <!-- 商品分類1 -->
       <div class="form-group">
         <label>商品分類１</label>
-        <input type="text" placeholder="コード、名称で検索" />
+        <input type="text" placeholder="コード、名称で検索" [(ngModel)]="categoryCode1" name="categoryCode1" />
       </div>
 
       <!-- 商品分類2 -->
       <div class="form-group">
         <label>商品分類２</label>
-        <input type="text" placeholder="コード、名称で検索" />
+        <input type="text" placeholder="コード、名称で検索" [(ngModel)]="categoryCode2" name="categoryCode2" />
       </div>
 
       <!-- 商品分類3 -->
       <div class="form-group">
         <label>商品分類３</label>
-        <input type="text" placeholder="コード、名称で検索" />
+        <input type="text" placeholder="コード、名称で検索" [(ngModel)]="categoryCode3" name="categoryCode3" />
       </div>
 
       <!-- 商品分類4 -->
       <div class="form-group">
         <label>商品分類４</label>
-        <input type="text" placeholder="コード、名称で検索" />
+        <input type="text" placeholder="コード、名称で検索" [(ngModel)]="categoryCode4" name="categoryCode4" />
       </div>
 
       <!-- 商品分類5 -->
       <div class="form-group">
         <label>商品分類５</label>
-        <input type="text" placeholder="コード、名称で検索" />
+        <input type="text" placeholder="コード、名称で検索" [(ngModel)]="categoryCode5" name="categoryCode5" />
       </div>
 
       <!-- 推奨倉庫 -->
       <div class="form-group">
         <label>推奨倉庫</label>
-        <select class="select-arrow">
-          <option value="">選択</option>
+        <select class="select-arrow" [(ngModel)]="repositoryId" name="repositoryId">
+          <option [value]="0">選択</option>
         </select>
       </div>
 
       <!-- 推奨ロケーション -->
       <div class="form-group">
         <label>推奨ロケーション</label>
-        <select class="select-arrow">
-          <option value="">選択</option>
+        <select class="select-arrow" [(ngModel)]="locationId" name="locationId">
+          <option [value]="0">選択</option>
         </select>
       </div>
 

@@ -1,75 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable, tap } from 'rxjs';
 import { PageResponse } from '../response/PageResponse';
-
-export interface Product {
-  productId?: number;
-  productCode?: string;
-  name1?: string;
-  isSet?: string;
-  upcCd1?: string;
-  upcCd2?: string;
-  standardInfo?: string;
-  name2?: string;
-  name3?: string;
-  name4?: string;
-  name5?: string;
-  categoryCode1?: string;
-  freeItem1?: string | null;
-  categoryCode2?: string;
-  freeItem2?: string | null;
-  categoryCode3?: string;
-  freeItem3?: string | null;
-  categoryCode4?: string;
-  freeItem4?: string | null;
-  categoryCode5?: string;
-  freeItem5?: string | null;
-  repositoryId?: number | null;
-  locationId?: number | null;
-  fifoType?: string | null;
-  isDateTimeMng?: string | null;
-  isNumberMng?: string | null;
-  isPackCsInput?: string | null;
-  isPackCsOutput?: string | null;
-
-  companyId?: number;
-  notes?: string | null;
-  dateTimeMngType?: string;
-  cartonWeight?: number;
-  cartonWeightName?: string;
-  cartonVolume?: number;
-  cartonVolumeName?: string;
-  cartonVertical?: number;
-  cartonHorizontal?: number;
-  cartonHigh?: number;
-  pieceWeight?: number;
-  pieceWeightName?: string | null;
-  pieceVolume?: number;
-  pieceVolumeName?: string | null;
-  pieceVertical?: number;
-  pieceHorizontal?: number;
-  pieceHigh?: number;
-  packCsUnitCode?: string;
-  packCsAmount?: number;
-  isPackBlInput?: string | null;
-  isPackBlOutput?: string | null;
-  packBlUnitCode?: string;
-  packBlAmount?: number;
-  isPieceInput?: string | null;
-  isPieceOutput?: string | null;
-  pieceUnitCode?: string;
-  isReplenishMng?: string;
-  minInventoryQuantity?: number | null;
-  minInputQuantity?: number | null;
-  isVarious?: string;
-  supplierId?: number;
-  leadTime?: number;
-  tax?: string;
-
-
-}
-
+import { Product } from '../model/product.model';
+import { ProductSearchParams } from '../request/ProductSearchRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -90,12 +24,50 @@ export class ProductService {
     );
   }
 
+  searchProducts(searchParams: ProductSearchParams): Observable<Product[]> {
+    let params = new HttpParams();
+    if (searchParams.productCodeFrom) params = params.set('productCodeFrom', searchParams.productCodeFrom);
+    if (searchParams.productCodeTo) params = params.set('productCodeTo', searchParams.productCodeTo);
+    if (searchParams.name1) params = params.set('name1', searchParams.name1);
+    if (searchParams.upcCd1) params = params.set('upcCd1', searchParams.upcCd1);
+    if (searchParams.upcCd2) params = params.set('upcCd2', searchParams.upcCd2);
+    if (searchParams.categoryCode1) params = params.set('categoryCode1', searchParams.categoryCode1);
+    if (searchParams.categoryCode2) params = params.set('categoryCode2', searchParams.categoryCode2);
+    if (searchParams.categoryCode3) params = params.set('categoryCode3', searchParams.categoryCode3);
+    if (searchParams.categoryCode4) params = params.set('categoryCode4', searchParams.categoryCode4);
+    if (searchParams.categoryCode5) params = params.set('categoryCode5', searchParams.categoryCode5);
+    if (searchParams.repositoryId) params = params.set('repositoryId', searchParams.repositoryId);
+    if (searchParams.locationId) params = params.set('locationId', searchParams.locationId);
+    if (searchParams.page) params = params.set('page', searchParams.page);
+    if (searchParams.pageSize) params = params.set('pageSize', searchParams.pageSize);
 
-  loadMoreProducts(page: number, size: number): Observable<Product[]> {
+    return this.http.get<PageResponse<Product>>(this.apiUrl + '/search', { params }).pipe(
+      map(response => response.content)
+    );
+  }
+
+
+
+  loadMoreProducts(searchParams: ProductSearchParams): Observable<Product[]> {
+    let params = new HttpParams();
+    if (searchParams.productCodeFrom) params = params.set('productCodeFrom', searchParams.productCodeFrom);
+    if (searchParams.productCodeTo) params = params.set('productCodeTo', searchParams.productCodeTo);
+    if (searchParams.name1) params = params.set('name1', searchParams.name1);
+    if (searchParams.upcCd1) params = params.set('upcCd1', searchParams.upcCd1);
+    if (searchParams.upcCd2) params = params.set('upcCd2', searchParams.upcCd2);
+    if (searchParams.categoryCode1) params = params.set('categoryCode1', searchParams.categoryCode1);
+    if (searchParams.categoryCode2) params = params.set('categoryCode2', searchParams.categoryCode2);
+    if (searchParams.categoryCode3) params = params.set('categoryCode3', searchParams.categoryCode3);
+    if (searchParams.categoryCode4) params = params.set('categoryCode4', searchParams.categoryCode4);
+    if (searchParams.categoryCode5) params = params.set('categoryCode5', searchParams.categoryCode5);
+    if (searchParams.repositoryId) params = params.set('repositoryId', searchParams.repositoryId);
+    if (searchParams.locationId) params = params.set('locationId', searchParams.locationId);
+
     return this.http.get<PageResponse<Product>>(this.apiUrl, {
       params: {
-        page: page.toString(),
-        limit: size.toString()
+        ...params,
+        page: params.toString(),
+        pageSize: params.toString()
       }
     }).pipe(
       map(response => response.content)

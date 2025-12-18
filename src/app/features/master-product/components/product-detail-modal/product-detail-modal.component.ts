@@ -1,13 +1,14 @@
 import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output, signal, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Product } from '../../services/product.service';
+import { Product } from '../../model/product.model';
+import { CommonSearchDialogComponent  } from '../common-search-dialog/common-search-dialog.component';
 
 @Component({
     selector: 'product-detail-modal',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, MatDialogModule],
     templateUrl: './product-detail-modal.component.html',
     styleUrls: ['./product-detail-modal.component.scss']
 })
@@ -19,7 +20,17 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
 
     constructor(
         private fb: FormBuilder,
+        private dialog: MatDialog
     ) { }
+
+    openSupplierSearch(): void {
+        this.dialog.open(CommonSearchDialogComponent, {
+            width: '800px',
+            height: '600px',
+            panelClass: 'custom-dialog-container',
+            autoFocus: false
+        });
+    }
 
     ngOnInit(): void {
         this.initForm();

@@ -1,4 +1,4 @@
-import { Product } from "../services/product.service";
+import { Product } from '../model/product.model';
 
 export interface PageResponse<T> {
   content: Product[];
