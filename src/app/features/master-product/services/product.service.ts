@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { PageResponse } from '../response/PageResponse';
-import { Product } from '../model/product.model';
+import { MasterProductDTO } from '../model/product.model';
 import { ProductSearchParams } from '../request/ProductSearchRequest';
 
 @Injectable({
@@ -13,18 +13,16 @@ export class ProductService {
 
   constructor(private http: HttpClient) { }
 
-  getProducts(page: number, limit: number) {
-    return this.http.get<PageResponse<Product>>(this.apiUrl, {
+  getProducts(page: number, limit: number): Observable<PageResponse<MasterProductDTO>> {
+    return this.http.get<PageResponse<MasterProductDTO>>(this.apiUrl, {
       params: {
         page,
         limit
       }
-    }).pipe(
-      map(response => response.content)
-    );
+    });
   }
 
-  searchProducts(searchParams: ProductSearchParams): Observable<Product[]> {
+  searchProducts(searchParams: ProductSearchParams): Observable<PageResponse<MasterProductDTO>> {
     let params = new HttpParams();
     if (searchParams.productCodeFrom) params = params.set('productCodeFrom', searchParams.productCodeFrom);
     if (searchParams.productCodeTo) params = params.set('productCodeTo', searchParams.productCodeTo);
@@ -42,14 +40,10 @@ export class ProductService {
     if (searchParams.page) params = params.set('page', searchParams.page);
     if (searchParams.pageSize) params = params.set('pageSize', searchParams.pageSize);
 
-    return this.http.get<PageResponse<Product>>(this.apiUrl + '/search', { params }).pipe(
-      map(response => response.content)
-    );
+    return this.http.get<PageResponse<MasterProductDTO>>(this.apiUrl + '/search', { params });
   }
 
-
-
-  loadMoreProducts(searchParams: ProductSearchParams): Observable<Product[]> {
+  loadMoreProducts(searchParams: ProductSearchParams): Observable<PageResponse<MasterProductDTO>> {
     let params = new HttpParams();
     if (searchParams.productCodeFrom) params = params.set('productCodeFrom', searchParams.productCodeFrom);
     if (searchParams.productCodeTo) params = params.set('productCodeTo', searchParams.productCodeTo);
@@ -64,14 +58,12 @@ export class ProductService {
     if (searchParams.repositoryId) params = params.set('repositoryId', searchParams.repositoryId);
     if (searchParams.locationId) params = params.set('locationId', searchParams.locationId);
 
-    return this.http.get<PageResponse<Product>>(this.apiUrl, {
+    return this.http.get<PageResponse<MasterProductDTO>>(this.apiUrl, {
       params: {
         ...params,
-        page: params.toString(),
-        pageSize: params.toString()
+        page: searchParams.page?.toString() || '0',
+        pageSize: searchParams.pageSize?.toString() || '50'
       }
-    }).pipe(
-      map(response => response.content)
-    );
+    });
   }
 }

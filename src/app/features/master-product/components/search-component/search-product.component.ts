@@ -1,32 +1,33 @@
-// src/app/admin/master-product/components/search-product.component.ts
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, signal, SimpleChanges, } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CommonSearchDialogComponent } from '../common-search-dialog/common-search-dialog.component';
-import { Product } from '../../model/product.model';
+import { Product, MasterProductDTO } from '../../model/product.model';
 import { ProductService } from '../../services/product.service';
 import { ProductType } from '../list-product-component/list-product.component';
 import { ProductSearchParams } from '../../request/ProductSearchRequest';
+import { PageResponse } from '../../response/PageResponse';
 
 @Component({
-  selector: 'search-product', // <--- Đây là tên thẻ bạn sẽ dùng
-  standalone: true, // <--- QUAN TRỌNG: Để true để dùng như React
-  imports: [CommonModule, MatSelectModule, FormsModule, MatDialogModule], // Import các module cần thiết riêng cho component này
+  selector: 'search-product',
+  standalone: true,
+  imports: [CommonModule, MatSelectModule, FormsModule, MatDialogModule],
   templateUrl: './search-product-component.html',
   styleUrls: ['./search-product.component.scss'],
 })
-export class SearchProductComponent implements OnChanges {
-  @Input() products: Product[] = [];
+export class SearchProductComponent implements OnChanges, OnInit {
+  @Input() products: MasterProductDTO[] = [];
+  allProducts: Product[] = [];
   repositoryId: number = 0;
   locationId: number = 0;
   repositories: number[] = [];
   locations: number[] = [];
 
   // Search fields
-  productCodeFrom: string = '';
-  productCodeTo: string = '';
+  productCodeFrom = signal('');
+  productCodeTo = signal('');
   name1: string = '';
   upcCd1: string = '';
   upcCd2: string = '';
@@ -37,10 +38,16 @@ export class SearchProductComponent implements OnChanges {
   categoryCode5: string = '';
   isSet: string = '';
   @Input() selectedType!: ProductType;
-  @Output() searchProducts = new EventEmitter<Product[]>();
+  @Output() searchProducts = new EventEmitter<PageResponse<MasterProductDTO>>();
   @Output() onSearchParams = new EventEmitter<ProductSearchParams>();
 
   constructor(private dialog: MatDialog, private productService: ProductService) { }
+
+  ngOnInit(): void {
+    this.productService.getProducts(0, 100).subscribe(response => {
+      this.allProducts = response.content.map(item => item.productEntity);
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedType'] && !changes['selectedType'].firstChange) {
@@ -56,17 +63,19 @@ export class SearchProductComponent implements OnChanges {
     const locSet = new Set<number>();
 
     this.products.forEach(p => {
-      if (p.repositoryId != null) repoSet.add(p.repositoryId);
-      if (p.locationId != null) locSet.add(p.locationId);
+      const entity = p.productEntity;
+      if (entity.repositoryId != null) repoSet.add(entity.repositoryId);
+      if (entity.locationId != null) locSet.add(entity.locationId);
     });
 
     this.repositories = Array.from(repoSet).sort((a, b) => a - b);
     this.locations = Array.from(locSet).sort((a, b) => a - b);
   }
+
   searchProduct(): void {
     const searchParams: ProductSearchParams = {
-      productCodeFrom: this.productCodeFrom,
-      productCodeTo: this.productCodeTo,
+      productCodeFrom: this.productCodeFrom(),
+      productCodeTo: this.productCodeTo(),
       name1: this.name1,
       upcCd1: this.upcCd1,
       upcCd2: this.upcCd2,
@@ -80,26 +89,27 @@ export class SearchProductComponent implements OnChanges {
       isSet: this.selectedType === 'ALL' ? undefined : (this.selectedType === 'SET' ? '1' : '0')
     };
     this.onSearchParams.emit(searchParams);
-    this.productService.searchProducts(searchParams).subscribe((products) => {
-      this.searchProducts.emit(products);
+    this.productService.searchProducts(searchParams).subscribe((response) => {
+      this.searchProducts.emit(response);
     });
   }
 
-  openCodeProduct1Search(inputCodeProduct1: string): void {
-    this.dialog.open(CommonSearchDialogComponent, {
+  openProductCodeSearch(type: 'from' | 'to'): void {
+    const dialogRef = this.dialog.open(CommonSearchDialogComponent, {
       width: '800px',
       height: '600px',
       panelClass: 'custom-dialog-container',
-      data: { productCode: inputCodeProduct1 },
+      data: { products: this.allProducts },
     });
-  }
 
-  openCodeProduct2Search(inputCodeProduct2: string): void {
-    this.dialog.open(CommonSearchDialogComponent, {
-      width: '800px',
-      height: '600px',
-      panelClass: 'custom-dialog-container',
-      data: { productCode: inputCodeProduct2 },
+    dialogRef.afterClosed().subscribe((product: Product | null) => {
+      if (!product) return;
+
+      if (type === 'from') {
+        this.productCodeFrom.set(product.productCode || '');
+      } else {
+        this.productCodeTo.set(product.productCode || '');
+      }
     });
   }
 }

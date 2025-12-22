@@ -50,7 +50,7 @@
   </section>
   <div class="container">
     <div class="left">
-      <list-product (selectedTypeChange)="onSelectedTypeChange($event)" [products]="products()"
+      <list-product  (selectedTypeChange)="onSelectedTypeChange($event)" [products]="products()"
         (openDetail)="openProductDetail($event)" (loadMore)="handleLoadMore()"></list-product>
     </div>
     <mat-sidenav #drawer mode="side" position="end" [opened]="!!selectedProduct" class="detail-drawer">

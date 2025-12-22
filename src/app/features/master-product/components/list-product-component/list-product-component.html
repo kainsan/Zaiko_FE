@@ -32,7 +32,7 @@
       </div>
 
       <span class="record-count">
-        総計 <span class="count-value">14</span> / 21 件
+        総計 <span class="count-value">{{currentPage}}</span> / {{ totalPages }} 件
       </span>
     </div>
     <section class="table-section">
@@ -74,42 +74,42 @@
           </thead>
           <tbody>
             <ng-container *ngIf="filteredProducts().length > 0">
-              <tr *ngFor="let product of filteredProducts()" (click)="openProductDetail(product)">
+              <tr *ngFor="let product of filteredProducts()" (click)="openProductDetail(product.productEntity)">
                 <td class="sticky-left">
-                  {{product.productId }}</td>
-                <td>{{ product.productCode }}</td>
+                  {{product.productEntity.productId }}</td>
+                <td>{{ product.productEntity.productCode }}</td>
                 <td>
                   <div class="product-name-cell">
-                    <span class="product-name">{{ product.name1 }}</span>
-                    <span *ngIf="product.isSet === '1'" class="set-badge">セット</span>
+                    <span class="product-name">{{ product.productEntity.name1 }}</span>
+                    <span *ngIf="product.productEntity.isSet === '1'" class="set-badge">セット</span>
                   </div>
                 </td>
-                <td>{{ product.upcCd1 }}</td>
-                <td>{{ product.upcCd2 }}</td>
-                <td>{{ product.standardInfo }}</td>
-                <td>{{ product.name2 }}</td>
-                <td>{{ product.name3 }}</td>
-                <td>{{ product.name4 }}</td>
-                <td>{{ product.name5 }}</td>
-                <td>{{ product.categoryCode1 }}</td>
-                <td>{{ product.freeItem1 }}</td>
-                <td>{{ product.categoryCode2 }}</td>
-                <td>{{ product.freeItem2 }}</td>
-                <td>{{ product.categoryCode3 }}</td>
-                <td>{{ product.freeItem3 }}</td>
-                <td>{{ product.categoryCode4 }}</td>
-                <td>{{ product.freeItem4 }}</td>
-                <td>{{ product.categoryCode5 }}</td>
-                <td>{{ product.freeItem5 }}</td>
-                <td>{{product.repositoryId}}</td>
-                <td>{{product.locationId}}</td>
-                <td>{{product.fifoType}}</td>
-                <td>{{product.isDateTimeMng}}</td>
-                <td>{{product.isNumberMng}}</td>
-                <td>{{getInputPackagingString(product)}}</td>
-                <td>{{getOutputPackagingString(product)}}</td>
-                <td>{{product.packCsUnitCode}}</td>
-                <td>{{product.packBlUnitCode}}</td>
+                <td>{{ product.productEntity.upcCd1 }}</td>
+                <td>{{ product.productEntity.upcCd2 }}</td>
+                <td>{{ product.productEntity.standardInfo }}</td>
+                <td>{{ product.productEntity.name2 }}</td>
+                <td>{{ product.productEntity.name3 }}</td>
+                <td>{{ product.productEntity.name4 }}</td>
+                <td>{{ product.productEntity.name5 }}</td>
+                <td>{{ product.productEntity.categoryCode1 }}</td>
+                <td>{{ product.category1Entity?.categoryName }}</td>
+                <td>{{ product.productEntity.categoryCode2 }}</td>
+                <td>{{ product.category2Entity?.categoryName }}</td>
+                <td>{{ product.productEntity.categoryCode3 }}</td>
+                <td>{{ product.category3Entity?.categoryName }}</td>
+                <td>{{ product.productEntity.categoryCode4 }}</td>
+                <td>{{ product.category4Entity?.categoryName }}</td>
+                <td>{{ product.productEntity.categoryCode5 }}</td>
+                <td>{{ product.category5Entity?.categoryName }}</td>
+                <td>{{product.productEntity.repositoryId}}</td>
+                <td>{{product.productEntity.locationId}}</td>
+                <td>{{product.productEntity.fifoType}}</td>
+                <td>{{product.productEntity.isDateTimeMng}}</td>
+                <td>{{product.productEntity.isNumberMng}}</td>
+                <td>{{getInputPackagingString(product.productEntity)}}</td>
+                <td>{{getOutputPackagingString(product.productEntity)}}</td>
+                <td>{{product.productEntity.packCsUnitCode}}</td>
+                <td>{{product.productEntity.packBlUnitCode}}</td>
                 <td class="sticky-right">
                   <button class="delete-btn">
                     <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -3,34 +3,23 @@ export interface Product {
   productCode?: string;
   name1?: string;
   isSet?: string;
-  upcCd1?: string;
-  upcCd2?: string;
-  standardInfo?: string;
-  name2?: string;
-  name3?: string;
-  name4?: string;
-  name5?: string;
-  categoryCode1?: string;
-  freeItem1?: string | null;
-  categoryCode2?: string;
-  freeItem2?: string | null;
-  categoryCode3?: string;
-  freeItem3?: string | null;
-  categoryCode4?: string;
-  freeItem4?: string | null;
-  categoryCode5?: string;
-  freeItem5?: string | null;
-  repositoryId?: number | null;
-  locationId?: number | null;
+  upcCd1?: string | null;
+  upcCd2?: string | null;
+  name2?: string | null;
+  name3?: string | null;
+  name4?: string | null;
+  name5?: string | null;
+  standardInfo?: string | null;
+  categoryCode1?: string | null;
+  categoryCode2?: string | null;
+  categoryCode3?: string | null;
+  categoryCode4?: string | null;
+  categoryCode5?: string | null;
+  notes?: string | null;
   fifoType?: string | null;
   isDateTimeMng?: string | null;
-  isNumberMng?: string | null;
-  isPackCsInput?: string | null;
-  isPackCsOutput?: string | null;
-
-  companyId?: number;
-  notes?: string | null;
   dateTimeMngType?: string;
+  isNumberMng?: string | null;
   cartonWeight?: number;
   cartonWeightName?: string;
   cartonVolume?: number;
@@ -45,6 +34,8 @@ export interface Product {
   pieceVertical?: number;
   pieceHorizontal?: number;
   pieceHigh?: number;
+  isPackCsInput?: string | null;
+  isPackCsOutput?: string | null;
   packCsUnitCode?: string;
   packCsAmount?: number;
   isPackBlInput?: string | null;
@@ -54,11 +45,35 @@ export interface Product {
   isPieceInput?: string | null;
   isPieceOutput?: string | null;
   pieceUnitCode?: string;
+  repositoryId?: number | null;
+  locationId?: number | null;
   isReplenishMng?: string;
   minInventoryQuantity?: number | null;
   minInputQuantity?: number | null;
   isVarious?: string;
-  supplierId?: number;
+  supplierId?: number | null;
   leadTime?: number;
   tax?: string;
+  companyId?: number;
+  freeItem1?: string | null;
+  freeItem2?: string | null;
+  freeItem3?: string | null;
+  freeItem4?: string | null;
+  freeItem5?: string | null;
+}
+
+export interface CategoryEntity {
+  companyId: number;
+  categoryCode: string;
+  categoryName: string;
+  sortIdx: number | null;
+}
+
+export interface MasterProductDTO {
+  productEntity: Product;
+  category1Entity: CategoryEntity | null;
+  category2Entity: CategoryEntity | null;
+  category3Entity: CategoryEntity | null;
+  category4Entity: CategoryEntity | null;
+  category5Entity: CategoryEntity | null;
 }

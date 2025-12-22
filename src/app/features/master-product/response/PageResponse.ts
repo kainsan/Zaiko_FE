@@ -1,7 +1,7 @@
-import { Product } from '../model/product.model';
+import { MasterProductDTO } from '../model/product.model';
 
-export interface PageResponse<T> {
-  content: Product[];
+export interface PageResponse<T = MasterProductDTO> {
+  content: T[];
   page: {
     size: number;
     totalElements: number;

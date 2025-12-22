@@ -2,19 +2,16 @@ import {
   Component,
   computed,
   EventEmitter,
-  input,
   Input,
   OnChanges,
-  OnInit,
   Output,
   signal,
   SimpleChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { ProductDetailModalComponent } from '../product-detail-modal/product-detail-modal.component';
-import { ProductService } from '../../services/product.service';
-import { Product } from '../../model/product.model';
+import { Product, MasterProductDTO } from '../../model/product.model';
+import { I } from '@angular/cdk/keycodes';
 
 export type ProductType = 'ALL' | 'SET' | 'PRODUCT';
 @Component({
@@ -25,17 +22,17 @@ export type ProductType = 'ALL' | 'SET' | 'PRODUCT';
   styleUrls: ['./list-product-component.scss'],
 })
 export class ListProductComponent implements OnChanges {
-  @Input() products: Product[] = [];
+  @Input() products: MasterProductDTO[] = [];
+  @Input() totalPages: number = 0;
+  @Input() currentPage: number = 0;
   @Output() openDetail: EventEmitter<Product> = new EventEmitter<Product>();
   @Output() selectedTypeChange = new EventEmitter<ProductType>();
   @Output() loadMore = new EventEmitter<void>();
-  currentPage: number = 0;
-  pageSize: number = 50;
+
   selectedType = signal<ProductType>('ALL');
-  productList = signal<Product[]>([]);
+  productList = signal<MasterProductDTO[]>([]);
 
-  constructor(private dialog: MatDialog, private productService: ProductService) { }
-
+  constructor(private dialog: MatDialog) { }
 
   filteredProducts = computed(() => {
     let type = this.selectedType();
@@ -44,9 +41,9 @@ export class ListProductComponent implements OnChanges {
     if (type === 'ALL') {
       return list;
     } else if (type === 'SET') {
-      return list.filter((p) => p.isSet === '1');
+      return list.filter((p) => p.productEntity.isSet === '1');
     } else {
-      return list.filter((p) => p.isSet === '0');
+      return list.filter((p) => p.productEntity.isSet === '0');
     }
   });
 
@@ -57,15 +54,9 @@ export class ListProductComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['products']) {
-      if (changes['searchProducts']) {
-        this.productList.set(changes['searchProducts'].currentValue);
-      } else {
-        this.productList.set(changes['products'].currentValue);
-      }
+      this.productList.set(changes['products'].currentValue);
     }
   }
-
-
 
   openProductDetail(product: Product): void {
     this.openDetail.emit(product);
@@ -77,6 +68,7 @@ export class ListProductComponent implements OnChanges {
     const pc = product.isPieceInput === '1' ? 'Y' : 'N';
     return `${cs} ${bl} ${pc}`;
   }
+
   getOutputPackagingString(product: any): string {
     const cs = product.isPackCsOutput === '1' ? 'Y' : 'N';
     const bl = product.isPackBlOutput === '1' ? 'Y' : 'N';

@@ -6,8 +6,8 @@
         <label>商品コード</label>
         <div class="code-range">
           <div class="code-input">
-            <input type="text" [(ngModel)]="productCodeFrom" name="productCodeFrom" #inputCodeProduct1 />
-            <button type="button" (click)="openCodeProduct1Search(inputCodeProduct1.value)">
+            <input type="text" [ngModel]="productCodeFrom()" (ngModelChange)="productCodeFrom.set($event)" name="productCodeFrom" />
+            <button type="button" (click)="openProductCodeSearch('from')">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="14" height="14" rx="1" fill="#4392BB" />
                 <path
@@ -18,8 +18,8 @@
           </div>
           <span>~</span>
           <div class="code-input">
-            <input type="text" [(ngModel)]="productCodeTo" name="productCodeTo" #inputCodeProduct2 />
-            <button type="button" (click)="openCodeProduct2Search(inputCodeProduct2.value)">
+            <input type="text" [ngModel]="productCodeTo()" (ngModelChange)="productCodeTo.set($event)" name="productCodeTo" />
+            <button type="button" (click)="openProductCodeSearch('to')">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="14" height="14" rx="1" fill="#4392BB" />
                 <path
@@ -81,7 +81,7 @@
 
       <!-- 推奨倉庫 -->
       <div class="form-group">
-        <label>locationId</label>
+        <label>推奨倉庫</label>
         <select class="select-arrow" [(ngModel)]="repositoryId" name="repositoryId">
           <option [value]="0">選択</option>
           <option *ngFor="let repo of repositories" [value]="repo">{{repo}}</option>

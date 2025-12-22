@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SearchProductComponent } from '../components/search-component/search-product.component';
 import { ListProductComponent, ProductType } from '../components/list-product-component/list-product.component';
 import { ProductSearchParams } from '../request/ProductSearchRequest';
 import { ProductDetailModalComponent } from '../components/product-detail-modal/product-detail-modal.component';
 import { ProductService } from '../services/product.service';
-import { Product } from '../model/product.model';
+import { Product, MasterProductDTO } from '../model/product.model';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { PageResponse } from '../response/PageResponse';
 
 @Component({
   selector: 'app-master-product',
@@ -17,27 +18,30 @@ import { MatSidenavModule } from '@angular/material/sidenav';
   styleUrls: ['./master-product.scss'],
 })
 export class MasterProduct implements OnInit {
-  currentPage: number = 0;
+  currentPage = signal<number>(0);
   pageSize: number = 50;
+  totalPages = signal<number>(0);
   currentDate = new Date().toLocaleDateString('ja-JP', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
   }).replace(/\//g, '/');
 
-  products = signal<Product[]>([]);
+  products = signal<MasterProductDTO[]>([]);
   selectedProduct = signal<Product | null>(null);
   isSearchVisible = signal<boolean>(true);
-  searchProducts = signal<Product[]>([]);
   selectedTypeFromList: ProductType = 'ALL';
   currentSearchParams: ProductSearchParams = {};
 
   constructor(
     private productService: ProductService,
   ) { }
+
   ngOnInit(): void {
-    this.productService.getProducts(this.currentPage, this.pageSize).subscribe(data => {
-      this.products.set(data);
+    this.productService.getProducts(this.currentPage(), this.pageSize).subscribe(response => {
+      this.products.set(response.content);
+      this.totalPages.set(response.page.totalPages);
+      this.currentPage.set(0);
     });
   }
 
@@ -57,9 +61,10 @@ export class MasterProduct implements OnInit {
     this.isSearchVisible.set(!this.isSearchVisible());
   }
 
-  handleSearchResults(searchProducts: Product[]): void {
-    this.products.set(searchProducts);
-    this.currentPage = 0; // Reset page on new search
+  handleSearchResults(response: PageResponse<MasterProductDTO>): void {
+    this.products.set(response.content);
+    this.totalPages.set(response.page.totalPages);
+    this.currentPage.set(0); // Reset page on new search
   }
 
   handleSearchParams(params: ProductSearchParams): void {
@@ -67,15 +72,16 @@ export class MasterProduct implements OnInit {
   }
 
   handleLoadMore(): void {
-    this.currentPage++;
+    this.currentPage.set(this.currentPage() + 1);
     const params = {
       ...this.currentSearchParams,
-      page: this.currentPage,
+      page: this.currentPage(),
       pageSize: this.pageSize
     };
 
-    this.productService.searchProducts(params).subscribe(newProducts => {
-      this.products.update(current => [...current, ...newProducts]);
+    this.productService.searchProducts(params).subscribe(response => {
+      this.products.update(current => [...current, ...response.content]);
+      this.totalPages.set(response.page.totalPages);
     });
   }
 }
