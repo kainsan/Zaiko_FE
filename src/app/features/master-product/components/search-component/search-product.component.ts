@@ -18,8 +18,11 @@ import { ProductSearchParams } from '../../request/ProductSearchRequest';
   styleUrls: ['./search-product.component.scss'],
 })
 export class SearchProductComponent implements OnChanges {
+  @Input() products: Product[] = [];
   repositoryId: number = 0;
   locationId: number = 0;
+  repositories: number[] = [];
+  locations: number[] = [];
 
   // Search fields
   productCodeFrom: string = '';
@@ -43,9 +46,25 @@ export class SearchProductComponent implements OnChanges {
     if (changes['selectedType'] && !changes['selectedType'].firstChange) {
       this.searchProduct(); // auto search khi radio đổi
     }
+    if (changes['products'] && this.products) {
+      this.extractDistinctValues();
+    }
+  }
+
+  private extractDistinctValues(): void {
+    const repoSet = new Set<number>();
+    const locSet = new Set<number>();
+
+    this.products.forEach(p => {
+      if (p.repositoryId != null) repoSet.add(p.repositoryId);
+      if (p.locationId != null) locSet.add(p.locationId);
+    });
+
+    this.repositories = Array.from(repoSet).sort((a, b) => a - b);
+    this.locations = Array.from(locSet).sort((a, b) => a - b);
   }
   searchProduct(): void {
-    const searchParams = {
+    const searchParams: ProductSearchParams = {
       productCodeFrom: this.productCodeFrom,
       productCodeTo: this.productCodeTo,
       name1: this.name1,
@@ -56,9 +75,9 @@ export class SearchProductComponent implements OnChanges {
       categoryCode3: this.categoryCode3,
       categoryCode4: this.categoryCode4,
       categoryCode5: this.categoryCode5,
-      repositoryId: this.repositoryId,
-      locationId: this.locationId,
-      isSet: this.isSet
+      repositoryId: this.repositoryId !== 0 ? this.repositoryId : undefined,
+      locationId: this.locationId !== 0 ? this.locationId : undefined,
+      isSet: this.selectedType === 'ALL' ? undefined : (this.selectedType === 'SET' ? '1' : '0')
     };
     this.onSearchParams.emit(searchParams);
     this.productService.searchProducts(searchParams).subscribe((products) => {

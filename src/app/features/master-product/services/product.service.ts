@@ -38,6 +38,7 @@ export class ProductService {
     if (searchParams.categoryCode5) params = params.set('categoryCode5', searchParams.categoryCode5);
     if (searchParams.repositoryId) params = params.set('repositoryId', searchParams.repositoryId);
     if (searchParams.locationId) params = params.set('locationId', searchParams.locationId);
+    if (searchParams.isSet) params = params.set('isSet', searchParams.isSet);
     if (searchParams.page) params = params.set('page', searchParams.page);
     if (searchParams.pageSize) params = params.set('pageSize', searchParams.pageSize);
 

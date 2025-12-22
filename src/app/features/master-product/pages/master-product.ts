@@ -3,6 +3,7 @@ import { Component, OnInit, signal, ChangeDetectorRef } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SearchProductComponent } from '../components/search-component/search-product.component';
 import { ListProductComponent, ProductType } from '../components/list-product-component/list-product.component';
+import { ProductSearchParams } from '../request/ProductSearchRequest';
 import { ProductDetailModalComponent } from '../components/product-detail-modal/product-detail-modal.component';
 import { ProductService } from '../services/product.service';
 import { Product } from '../model/product.model';
@@ -29,6 +30,7 @@ export class MasterProduct implements OnInit {
   isSearchVisible = signal<boolean>(true);
   searchProducts = signal<Product[]>([]);
   selectedTypeFromList: ProductType = 'ALL';
+  currentSearchParams: ProductSearchParams = {};
 
   constructor(
     private productService: ProductService,
@@ -57,5 +59,23 @@ export class MasterProduct implements OnInit {
 
   handleSearchResults(searchProducts: Product[]): void {
     this.products.set(searchProducts);
+    this.currentPage = 0; // Reset page on new search
+  }
+
+  handleSearchParams(params: ProductSearchParams): void {
+    this.currentSearchParams = params;
+  }
+
+  handleLoadMore(): void {
+    this.currentPage++;
+    const params = {
+      ...this.currentSearchParams,
+      page: this.currentPage,
+      pageSize: this.pageSize
+    };
+
+    this.productService.searchProducts(params).subscribe(newProducts => {
+      this.products.update(current => [...current, ...newProducts]);
+    });
   }
 }

@@ -15,17 +15,17 @@
         <div class="filter-options">
           <div class="filter-item">
             <input type="radio" name="productType" id="all" [checked]="selectedType() === 'ALL'"
-              (change)="selectedType.set('ALL')" />
+              (change)="onTypeChange('ALL')" />
             <label for="all">全て</label>
           </div>
           <div class="filter-item">
             <input type="radio" name="productType" id="set" [checked]="selectedType() === 'SET'"
-              (change)="selectedType.set('SET')" />
+              (change)="onTypeChange('SET')" />
             <label for="set">セット品</label>
           </div>
           <div class="filter-item">
             <input type="radio" name="productType" id="product" [checked]="selectedType() === 'PRODUCT'"
-              (change)="selectedType.set('PRODUCT')" />
+              (change)="onTypeChange('PRODUCT')" />
             <label for="product">商品</label>
           </div>
         </div>
@@ -134,7 +134,7 @@
     </section>
 
     <div class="load-more-container">
-      <button class="load-more-btn" (click)="loadMore()">
+      <button class="load-more-btn" (click)="loadMore.emit()">
         <div class="btn-content">
           <svg width="9" height="12" viewBox="0 0 9 12" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path

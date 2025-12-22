@@ -45,13 +45,13 @@
     </div>
   </header>
   <section *ngIf="isSearchVisible()">
-    <search-product [selectedType]="selectedTypeFromList"
-      (searchProducts)="handleSearchResults($event)"></search-product>
+    <search-product [selectedType]="selectedTypeFromList" [products]="products()"
+      (searchProducts)="handleSearchResults($event)" (onSearchParams)="handleSearchParams($event)"></search-product>
   </section>
   <div class="container">
     <div class="left">
       <list-product (selectedTypeChange)="onSelectedTypeChange($event)" [products]="products()"
-        (openDetail)="openProductDetail($event)"></list-product>
+        (openDetail)="openProductDetail($event)" (loadMore)="handleLoadMore()"></list-product>
     </div>
     <mat-sidenav #drawer mode="side" position="end" [opened]="!!selectedProduct" class="detail-drawer">
       <div class="right" *ngIf="selectedProduct()">

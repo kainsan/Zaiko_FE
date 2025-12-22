@@ -14,6 +14,7 @@ export interface ProductSearchParams {
 
   repositoryId?: number;
   locationId?: number;
+  isSet?: string;
 
   page?: number;
   pageSize?: number;

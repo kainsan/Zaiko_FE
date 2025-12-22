@@ -28,6 +28,7 @@ export class ListProductComponent implements OnChanges {
   @Input() products: Product[] = [];
   @Output() openDetail: EventEmitter<Product> = new EventEmitter<Product>();
   @Output() selectedTypeChange = new EventEmitter<ProductType>();
+  @Output() loadMore = new EventEmitter<void>();
   currentPage: number = 0;
   pageSize: number = 50;
   selectedType = signal<ProductType>('ALL');
@@ -38,8 +39,6 @@ export class ListProductComponent implements OnChanges {
 
   filteredProducts = computed(() => {
     let type = this.selectedType();
-    //bắn state radio button lên component cha
-    this.selectedTypeChange.emit(type);
     let list = this.productList();
 
     if (type === 'ALL') {
@@ -50,6 +49,11 @@ export class ListProductComponent implements OnChanges {
       return list.filter((p) => p.isSet === '0');
     }
   });
+
+  onTypeChange(type: ProductType): void {
+    this.selectedType.set(type);
+    this.selectedTypeChange.emit(type);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['products']) {

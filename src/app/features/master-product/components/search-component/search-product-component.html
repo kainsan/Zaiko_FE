@@ -81,9 +81,10 @@
 
       <!-- 推奨倉庫 -->
       <div class="form-group">
-        <label>推奨倉庫</label>
+        <label>locationId</label>
         <select class="select-arrow" [(ngModel)]="repositoryId" name="repositoryId">
           <option [value]="0">選択</option>
+          <option *ngFor="let repo of repositories" [value]="repo">{{repo}}</option>
         </select>
       </div>
 
@@ -92,6 +93,7 @@
         <label>推奨ロケーション</label>
         <select class="select-arrow" [(ngModel)]="locationId" name="locationId">
           <option [value]="0">選択</option>
+          <option *ngFor="let loc of locations" [value]="loc">{{loc}}</option>
         </select>
       </div>
 
