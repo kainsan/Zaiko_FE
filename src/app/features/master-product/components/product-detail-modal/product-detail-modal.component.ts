@@ -2,8 +2,9 @@ import { Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output, sign
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Product } from '../../model/product.model';
-import { CommonSearchDialogComponent  } from '../common-search-dialog/common-search-dialog.component';
+import { MasterProductDTO, Product, Repository, Location } from '../../model/product.model';
+import { CommonSearchDialogComponent } from '../common-search-dialog/common-search-dialog.component';
+import { ProductService } from '../../services/product.service';
 
 @Component({
     selector: 'product-detail-modal',
@@ -13,14 +14,18 @@ import { CommonSearchDialogComponent  } from '../common-search-dialog/common-sea
     styleUrls: ['./product-detail-modal.component.scss']
 })
 export class ProductDetailModalComponent implements OnInit, OnChanges {
-    @Input() product!: Product;
+    @Input() product!: MasterProductDTO;
     @Output() close = new EventEmitter<void>();
     activeTab: string = 'general'; // Default tab
     productForm!: FormGroup;
 
+    repositories = signal<Repository[]>([]);
+    locations = signal<Location[]>([]);
+
     constructor(
         private fb: FormBuilder,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private productService: ProductService
     ) { }
 
     openSupplierSearch(): void {
@@ -34,11 +39,37 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
 
     ngOnInit(): void {
         this.initForm();
+        this.loadRepositories();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['product'] && changes['product'].currentValue) {
             this.product = changes['product'].currentValue;
+            if (this.product.productEntity.repositoryId) {
+                this.loadLocations(this.product.productEntity.repositoryId);
+            }
+        }
+    }
+
+    loadRepositories(): void {
+        this.productService.getRepositories().subscribe(repos => {
+            this.repositories.set(repos);
+        });
+    }
+
+    loadLocations(repositoryId: number): void {
+        this.productService.getLocationsByRepository(repositoryId).subscribe(locs => {
+            this.locations.set(locs);
+            console.log(locs)
+        });
+    }
+
+    onWarehouseChange(event: any): void {
+        const repositoryId = event.target.value;
+        if (repositoryId) {
+            this.loadLocations(Number(repositoryId));
+        } else {
+            this.locations.set([]);
         }
     }
 

@@ -1,4 +1,4 @@
-<div class="modal-container">
+<div class="modal-container" *ngIf="product?.productEntity">
   <!-- Header with Tabs -->
   <div class="modal-header">
     <div class="tabs-container">
@@ -43,20 +43,20 @@
       <div class="top-row-group">
         <div class="form-group code-group">
           <label>商品コード <span class="required">*</span></label>
-          <input type="text" class="read-only" readonly [value]="product.productCode" />
+          <input type="text" class="read-only" readonly [value]="product.productEntity.productCode" />
         </div>
         <div class="form-group upc-group">
           <label>UPC1</label>
-          <input type="text" [value]="product.upcCd1" />
+          <input type="text" [value]="product.productEntity.upcCd1" />
         </div>
         <div class="form-group upc-group">
           <label>UPC2</label>
-          <input type="text" [value]="product.upcCd2" />
+          <input type="text" [value]="product.productEntity.upcCd2" />
         </div>
       </div>
       <div class="checkbox-row section-divider">
         <div class="checkbox-group">
-          <input type="checkbox" id="isSet" [checked]="product.isSet === '1'" />
+          <input type="checkbox" id="isSet" [checked]="product.productEntity.isSet === '1'" />
           <label for="isSet">セット品</label>
         </div>
       </div>
@@ -64,17 +64,17 @@
       <!-- Name Fields -->
       <div class="form-group section-divider no-border">
         <label>名称</label>
-        <input type="text" [value]="product.name1" />
-        <input type="text" [value]="product.name2" />
-        <input type="text" [value]="product.name3" />
-        <input type="text" [value]="product.name4" />
-        <input type="text" [value]="product.name5" />
+        <input type="text" [value]="product.productEntity.name1" />
+        <input type="text" [value]="product.productEntity.name2" />
+        <input type="text" [value]="product.productEntity.name3" />
+        <input type="text" [value]="product.productEntity.name4" />
+        <input type="text" [value]="product.productEntity.name5" />
       </div>
 
       <!-- Spec -->
       <div class="form-group section-divider">
         <label>規格</label>
-        <input type="text" [value]="product.standardInfo" />
+        <input type="text" [value]="product.productEntity.standardInfo" />
       </div>
 
       <!-- Categories -->
@@ -84,7 +84,7 @@
           <label>商品分類コード 1</label>
           <div class="input-with-button">
             <div class="relative-wrapper">
-              <input type="text" class="small-input" [value]="product.categoryCode1" />
+              <input type="text" class="small-input" [value]="product.productEntity.categoryCode1" />
               <button class="icon-btn">
                 <svg width="10" height="10" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -93,7 +93,7 @@
                 </svg>
               </button>
             </div>
-            <input type="text" class="flex-input" readonly [value]="product.freeItem1" />
+            <input type="text" class="flex-input" readonly [value]="product.category1Entity?.categoryName" />
           </div>
         </div>
         <!-- Category 2 -->
@@ -101,7 +101,7 @@
           <label>商品分類コード 2</label>
           <div class="input-with-button">
             <div class="relative-wrapper">
-              <input type="text" class="small-input" [value]="product.categoryCode2" />
+              <input type="text" class="small-input" [value]="product.productEntity.categoryCode2" />
               <button class="icon-btn">
                 <svg width="7" height="7" viewBox="0 0 7 7" fill="red" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -110,7 +110,7 @@
                 </svg>
               </button>
             </div>
-            <input type="text" class="flex-input" readonly [value]="product.freeItem2" />
+            <input type="text" class="flex-input" readonly [value]="product.category2Entity?.categoryName" />
           </div>
         </div>
         <!-- Category 3 -->
@@ -118,7 +118,7 @@
           <label>商品分類コード 3</label>
           <div class="input-with-button">
             <div class="relative-wrapper">
-              <input type="text" class="small-input" [value]="product.categoryCode3" />
+              <input type="text" class="small-input" [value]="product.productEntity.categoryCode3" />
               <button class="icon-btn">
                 <svg width="10" height="10" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -127,7 +127,7 @@
                 </svg>
               </button>
             </div>
-            <input type="text" class="flex-input" readonly [value]="product.freeItem3" />
+            <input type="text" class="flex-input" readonly [value]="product.category3Entity?.categoryName" />
           </div>
         </div>
         <!-- Category 4 -->
@@ -135,7 +135,7 @@
           <label>商品分類コード 4</label>
           <div class="input-with-button">
             <div class="relative-wrapper">
-              <input type="text" class="small-input" [value]="product.categoryCode4" />
+              <input type="text" class="small-input" [value]="product.productEntity.categoryCode4" />
               <button class="icon-btn">
                 <svg width="10" height="10" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -144,7 +144,7 @@
                 </svg>
               </button>
             </div>
-            <input type="text" class="flex-input" readonly [value]="product.freeItem4" />
+            <input type="text" class="flex-input" readonly [value]="product.category4Entity?.categoryName" />
           </div>
         </div>
         <!-- Category 5 -->
@@ -152,7 +152,7 @@
           <label>商品分類コード 5</label>
           <div class="input-with-button">
             <div class="relative-wrapper">
-              <input type="text" class="small-input" [value]="product.categoryCode5" />
+              <input type="text" class="small-input" [value]="product.productEntity.categoryCode5" />
               <button class="icon-btn">
                 <svg width="10" height="10" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -161,7 +161,7 @@
                 </svg>
               </button>
             </div>
-            <input type="text" class="flex-input" readonly [value]="product.freeItem5" />
+            <input type="text" class="flex-input" readonly [value]="product.category5Entity?.categoryName" />
           </div>
         </div>
       </div>
@@ -169,7 +169,7 @@
       <!-- Summary -->
       <div class="form-group section-divider no-border">
         <label>摘要</label>
-        <textarea [value]="product.notes"></textarea>
+        <textarea [value]="product.productEntity.notes"></textarea>
       </div>
     </div>
 
@@ -178,26 +178,26 @@
       <div class="form-grid-3 section-divider">
         <div class="form-group">
           <label>商品コード <span class="required">*</span></label>
-          <input type="text" class="read-only" readonly />
+          <input type="text" class="read-only" readonly [value]="product.productEntity.productCode" />
         </div>
         <div class="form-group">
           <label>UPC1</label>
-          <input type="text" class="read-only" readonly />
+          <input type="text" class="read-only" readonly [value]="product.productEntity.upcCd1" />
         </div>
         <div class="form-group">
           <label>UPC2</label>
-          <input type="text" class="read-only" readonly />
+          <input type="text" class="read-only" readonly [value]="product.productEntity.upcCd2" />
         </div>
       </div>
 
       <div class="packaging-options">
         <div class="section-label">ＦＩＦＯ</div>
         <div class="checkbox-group option-row indent-1">
-          <input type="radio" name="fifo" id="fifo" />
+          <input type="radio" name="fifo" id="fifo" [checked]="product.productEntity.fifoType === '0'" />
           <span>ファーストイン・ファーストアウト（先入先出）引当をする</span>
         </div>
         <div class="checkbox-group option-row indent-1">
-          <input type="radio" name="fifo" id="lifo" />
+          <input type="radio" name="fifo" id="lifo" [checked]="product.productEntity.fifoType === '1'" />
           <span>ラストイン・ファーストアウト（後入先出）引当をする</span>
         </div>
       </div>
@@ -235,8 +235,8 @@
               <div class="form-group">
                 <label>重量（単位）</label>
                 <div class="input-row">
-                  <input type="text" value="110" />
-                  <input type="text" value="" />
+                  <input type="text" [value]="product.productEntity.cartonWeight" />
+                  <input type="text" [value]="product.productEntity.cartonWeightName" />
                 </div>
               </div>
             </div>
@@ -244,8 +244,8 @@
               <div class="form-group">
                 <label>容積（単位）</label>
                 <div class="input-row">
-                  <input type="text" value="110" />
-                  <input type="text" value="" />
+                  <input type="text" [value]="product.productEntity.cartonVolume" />
+                  <input type="text" [value]="product.productEntity.cartonVolumeName" />
                 </div>
               </div>
             </div>
@@ -253,19 +253,19 @@
               <div class="form-group">
                 <label>縦ｘ横ｘ高</label>
                 <div class="dimension-row">
-                  <input type="text" value="110" />
+                  <input type="text" [value]="product.productEntity.cartonHigh" />
                   <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M-1.94311e-05 6.7439H1.83598L2.62798 5.5079C2.84398 5.1119 3.08398 4.7159 3.29998 4.3319H3.34798C3.61198 4.7159 3.91198 5.1239 4.16398 5.5079L5.03998 6.7439H6.94798L4.53598 3.4319L6.77998 -0.000103951H4.94398L4.23598 1.1999C4.04398 1.5719 3.82798 1.9799 3.62398 2.3519H3.57598C3.34798 1.9799 3.07198 1.5719 2.85598 1.2119L2.06398 -0.000103951H0.167981L2.38798 3.2399L-1.94311e-05 6.7439Z"
                       fill="#485764" />
                   </svg>
-                  <input type="text" value="" />
+                  <input type="text" [value]="product.productEntity.cartonHorizontal" />
                   <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M-1.94311e-05 6.7439H1.83598L2.62798 5.5079C2.84398 5.1119 3.08398 4.7159 3.29998 4.3319H3.34798C3.61198 4.7159 3.91198 5.1239 4.16398 5.5079L5.03998 6.7439H6.94798L4.53598 3.4319L6.77998 -0.000103951H4.94398L4.23598 1.1999C4.04398 1.5719 3.82798 1.9799 3.62398 2.3519H3.57598C3.34798 1.9799 3.07198 1.5719 2.85598 1.2119L2.06398 -0.000103951H0.167981L2.38798 3.2399L-1.94311e-05 6.7439Z"
                       fill="#485764" />
                   </svg>
-                  <input type="text" value="" />
+                  <input type="text" [value]="product.productEntity.cartonVertical" />
                 </div>
               </div>
             </div>
@@ -277,8 +277,8 @@
               <div class="form-group">
                 <label>重量（単位）</label>
                 <div class="input-row">
-                  <input type="text" value="110" />
-                  <input disabled type="text" value="" />
+                  <input type="text" [value]="product.productEntity.pieceWeight" />
+                  <input disabled type="text" [value]="product.productEntity.pieceWeightName" />
                 </div>
               </div>
             </div>
@@ -286,8 +286,8 @@
               <div class="form-group">
                 <label>容積（単位）</label>
                 <div class="input-row">
-                  <input type="text" value="110" />
-                  <input disabled type="text" value="" />
+                  <input type="text" [value]="product.productEntity.pieceVolume" />
+                  <input disabled type="text" [value]="product.productEntity.pieceVolumeName" />
                 </div>
               </div>
             </div>
@@ -295,19 +295,19 @@
               <div class="form-group">
                 <label>縦ｘ横ｘ高</label>
                 <div class="dimension-row">
-                  <input type="text" value="110" />
+                  <input type="text" [value]="product.productEntity.cartonHigh" />
                   <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M-1.94311e-05 6.7439H1.83598L2.62798 5.5079C2.84398 5.1119 3.08398 4.7159 3.29998 4.3319H3.34798C3.61198 4.7159 3.91198 5.1239 4.16398 5.5079L5.03998 6.7439H6.94798L4.53598 3.4319L6.77998 -0.000103951H4.94398L4.23598 1.1999C4.04398 1.5719 3.82798 1.9799 3.62398 2.3519H3.57598C3.34798 1.9799 3.07198 1.5719 2.85598 1.2119L2.06398 -0.000103951H0.167981L2.38798 3.2399L-1.94311e-05 6.7439Z"
                       fill="#485764" />
                   </svg>
-                  <input type="text" value="" />
+                  <input type="text" [value]="product.productEntity.cartonHorizontal" />
                   <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M-1.94311e-05 6.7439H1.83598L2.62798 5.5079C2.84398 5.1119 3.08398 4.7159 3.29998 4.3319H3.34798C3.61198 4.7159 3.91198 5.1239 4.16398 5.5079L5.03998 6.7439H6.94798L4.53598 3.4319L6.77998 -0.000103951H4.94398L4.23598 1.1999C4.04398 1.5719 3.82798 1.9799 3.62398 2.3519H3.57598C3.34798 1.9799 3.07198 1.5719 2.85598 1.2119L2.06398 -0.000103951H0.167981L2.38798 3.2399L-1.94311e-05 6.7439Z"
                       fill="#485764" />
                   </svg>
-                  <input type="text" value="" />
+                  <input type="text" [value]="product.productEntity.cartonVertical" />
                 </div>
               </div>
             </div>
@@ -340,17 +340,17 @@
               <td>マスターカートン</td>
               <td class="center">
                 <div class="checkbox-group justify-center">
-                  <input type="checkbox" checked />
+                  <input type="checkbox" [checked]="product.productEntity.isPackCsInput === '1'" />
                 </div>
               </td>
               <td class="center">
                 <div class="checkbox-group justify-center">
-                  <input type="checkbox" checked />
+                  <input type="checkbox" [checked]="product.productEntity.isPackCsOutput === '1'" />
                 </div>
               </td>
               <td>
                 <div class="unit-input-wrapper">
-                  <input type="text" />
+                  <input type="text" [value]="" />
                   <button>
                     <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
@@ -371,17 +371,17 @@
               <td>インナーカートン</td>
               <td class="center">
                 <div class="checkbox-group justify-center">
-                  <input type="checkbox" />
+                  <input type="checkbox" [checked]="product.productEntity.isPackBlInput === '1'" />
                 </div>
               </td>
               <td class="center">
                 <div class="checkbox-group justify-center">
-                  <input type="checkbox" />
+                  <input type="checkbox" [checked]="product.productEntity.isPackBlOutput === '1'" />
                 </div>
               </td>
               <td>
                 <div class="unit-input-wrapper">
-                  <input type="text" />
+                  <input type="text" [value]="" />
                   <button>
                     <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
@@ -402,17 +402,17 @@
               <td>ピース</td>
               <td class="center">
                 <div class="checkbox-group justify-center">
-                  <input type="checkbox" checked />
+                  <input type="checkbox" [checked]="product.productEntity.isPieceInput === '1'" />
                 </div>
               </td>
               <td class="center">
                 <div class="checkbox-group justify-center">
-                  <input type="checkbox" checked />
+                  <input type="checkbox" [checked]="product.productEntity.isPieceInput === '1'" />
                 </div>
               </td>
               <td>
                 <div class="unit-input-wrapper">
-                  <input type="text" />
+                  <input type="text" [value]="" />
                   <button>
                     <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
@@ -438,15 +438,15 @@
       <div class="form-grid-3 section-divider">
         <div class="form-group code-group">
           <label>商品コード <span class="required">*</span></label>
-          <input type="text" class="read-only" readonly [value]="product.productCode" />
+          <input type="text" class="read-only" readonly [value]="product.productEntity.productCode" />
         </div>
         <div class="form-group upc-group">
           <label>UPC1</label>
-          <input type="text" class="read-only" readonly [value]="product.upcCd1" />
+          <input type="text" class="read-only" readonly [value]="product.productEntity.upcCd1" />
         </div>
         <div class="form-group upc-group">
           <label>UPC2</label>
-          <input type="text" class="read-only" readonly [value]="product.upcCd2" />
+          <input type="text" class="read-only" readonly [value]="product.productEntity.upcCd2" />
         </div>
       </div>
 
@@ -454,14 +454,21 @@
       <div class="form-grid-2 section-divider">
         <div class="form-group">
           <label>推奨倉庫</label>
-          <select class="select-arrow">
-            <option value=""></option>
+          <select class="select-arrow" (change)="onWarehouseChange($event)"
+            [value]="product.productEntity.repositoryId">
+            <option value=" ">選択</option>
+            <option *ngFor="let repo of repositories()" [value]="repo.repositoryId">
+              {{repo.repositoryCode}}
+            </option>
           </select>
         </div>
         <div class="form-group">
           <label>推奨ロケーション</label>
-          <select class="select-arrow">
-            <option value=""></option>
+          <select class="select-arrow" [value]="product.productEntity.locationId">
+            <option value="">選択</option>
+            <option *ngFor="let loc of locations()" [value]="loc.locationCode">
+              {{loc.locationCode}}
+            </option>
           </select>
         </div>
       </div>
@@ -472,11 +479,13 @@
           <label>補充管理</label>
           <div class="radio-group-row">
             <div class="radio-item">
-              <input type="radio" name="replenishment" id="rep-do" />
+              <input type="radio" name="replenishment" id="rep-do"
+                [checked]="product.productEntity.isDateTimeMng === '1'" />
               <label for="rep-do">する</label>
             </div>
             <div class="radio-item">
-              <input type="radio" name="replenishment" id="rep-dont" checked />
+              <input type="radio" name="replenishment" id="rep-dont"
+                [checked]="product.productEntity.isDateTimeMng === '0'" />
               <label for="rep-dont">しない</label>
             </div>
           </div>

@@ -6,7 +6,8 @@
         <label>商品コード</label>
         <div class="code-range">
           <div class="code-input">
-            <input type="text" [ngModel]="productCodeFrom()" (ngModelChange)="productCodeFrom.set($event)" name="productCodeFrom" />
+            <input type="text" [ngModel]="productCodeFrom()" (ngModelChange)="productCodeFrom.set($event)"
+              name="productCodeFrom" />
             <button type="button" (click)="openProductCodeSearch('from')">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="14" height="14" rx="1" fill="#4392BB" />
@@ -18,7 +19,8 @@
           </div>
           <span>~</span>
           <div class="code-input">
-            <input type="text" [ngModel]="productCodeTo()" (ngModelChange)="productCodeTo.set($event)" name="productCodeTo" />
+            <input type="text" [ngModel]="productCodeTo()" (ngModelChange)="productCodeTo.set($event)"
+              name="productCodeTo" />
             <button type="button" (click)="openProductCodeSearch('to')">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect width="14" height="14" rx="1" fill="#4392BB" />
@@ -79,21 +81,20 @@
         <input type="text" placeholder="コード、名称で検索" [(ngModel)]="categoryCode5" name="categoryCode5" />
       </div>
 
-      <!-- 推奨倉庫 -->
       <div class="form-group">
         <label>推奨倉庫</label>
-        <select class="select-arrow" [(ngModel)]="repositoryId" name="repositoryId">
-          <option [value]="0">選択</option>
-          <option *ngFor="let repo of repositories" [value]="repo">{{repo}}</option>
+        <select class="select-arrow" [(ngModel)]="repositoryId" name="repositoryId"
+          (change)="onWarehouseChange($event)">
+          <option [value]=" ">選択</option>
+          <option *ngFor="let repo of repositories()" [value]="repo.repositoryId">{{repo.repositoryCode}}</option>
         </select>
       </div>
 
-      <!-- 推奨ロケーション -->
       <div class="form-group">
         <label>推奨ロケーション</label>
         <select class="select-arrow" [(ngModel)]="locationId" name="locationId">
-          <option [value]="0">選択</option>
-          <option *ngFor="let loc of locations" [value]="loc">{{loc}}</option>
+          <option [value]= " ">選択</option>
+          <option *ngFor="let loc of locations()" [value]="loc.locationId">{{loc.locationCode}}</option>
         </select>
       </div>
 

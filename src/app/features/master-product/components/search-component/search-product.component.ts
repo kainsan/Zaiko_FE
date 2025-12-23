@@ -4,7 +4,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CommonSearchDialogComponent } from '../common-search-dialog/common-search-dialog.component';
-import { Product, MasterProductDTO } from '../../model/product.model';
+import { Product, MasterProductDTO, Repository, Location } from '../../model/product.model';
 import { ProductService } from '../../services/product.service';
 import { ProductType } from '../list-product-component/list-product.component';
 import { ProductSearchParams } from '../../request/ProductSearchRequest';
@@ -22,8 +22,8 @@ export class SearchProductComponent implements OnChanges, OnInit {
   allProducts: Product[] = [];
   repositoryId: number = 0;
   locationId: number = 0;
-  repositories: number[] = [];
-  locations: number[] = [];
+  repositories = signal<Repository[]>([]);
+  locations = signal<Location[]>([]);
 
   // Search fields
   productCodeFrom = signal('');
@@ -47,30 +47,37 @@ export class SearchProductComponent implements OnChanges, OnInit {
     this.productService.getProducts(0, 100).subscribe(response => {
       this.allProducts = response.content.map(item => item.productEntity);
     });
+    this.loadRepositories();
+  }
+
+  loadRepositories(): void {
+    this.productService.getRepositories().subscribe(repos => {
+      this.repositories.set(repos);
+    });
+  }
+
+  loadLocations(repositoryId: number): void {
+    this.productService.getLocationsByRepository(repositoryId).subscribe(locs => {
+      this.locations.set(locs);
+    });
+  }
+
+  onWarehouseChange(event: any): void {
+    const repositoryId = event.target.value;
+    if (repositoryId && repositoryId !== '0') {
+      this.loadLocations(Number(repositoryId));
+    } else {
+      this.locations.set([]);
+      this.locationId = 0;
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedType'] && !changes['selectedType'].firstChange) {
       this.searchProduct(); // auto search khi radio đổi
     }
-    if (changes['products'] && this.products) {
-      this.extractDistinctValues();
-    }
   }
 
-  private extractDistinctValues(): void {
-    const repoSet = new Set<number>();
-    const locSet = new Set<number>();
-
-    this.products.forEach(p => {
-      const entity = p.productEntity;
-      if (entity.repositoryId != null) repoSet.add(entity.repositoryId);
-      if (entity.locationId != null) locSet.add(entity.locationId);
-    });
-
-    this.repositories = Array.from(repoSet).sort((a, b) => a - b);
-    this.locations = Array.from(locSet).sort((a, b) => a - b);
-  }
 
   searchProduct(): void {
     const searchParams: ProductSearchParams = {
@@ -89,8 +96,10 @@ export class SearchProductComponent implements OnChanges, OnInit {
       isSet: this.selectedType === 'ALL' ? undefined : (this.selectedType === 'SET' ? '1' : '0')
     };
     this.onSearchParams.emit(searchParams);
+    console.log(searchParams)
     this.productService.searchProducts(searchParams).subscribe((response) => {
       this.searchProducts.emit(response);
+      console.log(response)
     });
   }
 

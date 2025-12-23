@@ -74,7 +74,7 @@
           </thead>
           <tbody>
             <ng-container *ngIf="filteredProducts().length > 0">
-              <tr *ngFor="let product of filteredProducts()" (click)="openProductDetail(product.productEntity)">
+              <tr *ngFor="let product of filteredProducts()" (click)="openProductDetail(product)">
                 <td class="sticky-left">
                   {{product.productEntity.productId }}</td>
                 <td>{{ product.productEntity.productCode }}</td>
@@ -101,11 +101,11 @@
                 <td>{{ product.category4Entity?.categoryName }}</td>
                 <td>{{ product.productEntity.categoryCode5 }}</td>
                 <td>{{ product.category5Entity?.categoryName }}</td>
-                <td>{{product.productEntity.repositoryId}}</td>
-                <td>{{product.productEntity.locationId}}</td>
-                <td>{{product.productEntity.fifoType}}</td>
-                <td>{{product.productEntity.isDateTimeMng}}</td>
-                <td>{{product.productEntity.isNumberMng}}</td>
+                <td>{{product.repositoryEntity ? product.repositoryEntity.repositoryCode : '-'}}</td>
+                <td>{{product.locationEntity ? product.locationEntity.locationCode : '-'}}</td>
+                <td>{{product.productEntity.fifoType === '0' ? '先入先出' : '後入先出'}}</td>
+                <td>{{product.productEntity.isDateTimeMng === '1' ? 'する' : 'しない'}}</td>
+                <td>{{product.productEntity.isNumberMng === '1' ? 'する' : 'しない'}}</td>
                 <td>{{getInputPackagingString(product.productEntity)}}</td>
                 <td>{{getOutputPackagingString(product.productEntity)}}</td>
                 <td>{{product.productEntity.packCsUnitCode}}</td>

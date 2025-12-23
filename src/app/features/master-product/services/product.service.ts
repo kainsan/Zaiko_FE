@@ -2,19 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PageResponse } from '../response/PageResponse';
-import { MasterProductDTO } from '../model/product.model';
+import { MasterProductDTO, Repository, Location } from '../model/product.model';
 import { ProductSearchParams } from '../request/ProductSearchRequest';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = 'http://localhost:8080/api/master-product';
+  private apiUrl = 'http://localhost:8080/api';
 
   constructor(private http: HttpClient) { }
 
   getProducts(page: number, limit: number): Observable<PageResponse<MasterProductDTO>> {
-    return this.http.get<PageResponse<MasterProductDTO>>(this.apiUrl, {
+    return this.http.get<PageResponse<MasterProductDTO>>(this.apiUrl + '/master-product', {
       params: {
         page,
         limit
@@ -40,7 +40,7 @@ export class ProductService {
     if (searchParams.page) params = params.set('page', searchParams.page);
     if (searchParams.pageSize) params = params.set('pageSize', searchParams.pageSize);
 
-    return this.http.get<PageResponse<MasterProductDTO>>(this.apiUrl + '/search', { params });
+    return this.http.get<PageResponse<MasterProductDTO>>(this.apiUrl + '/master-product/search', { params });
   }
 
   loadMoreProducts(searchParams: ProductSearchParams): Observable<PageResponse<MasterProductDTO>> {
@@ -65,5 +65,13 @@ export class ProductService {
         pageSize: searchParams.pageSize?.toString() || '50'
       }
     });
+  }
+
+  getRepositories(): Observable<Repository[]> {
+    return this.http.get<Repository[]>(`${this.apiUrl}/repositories`);
+  }
+
+  getLocationsByRepository(repositoryId: number): Observable<Location[]> {
+    return this.http.get<Location[]>(`${this.apiUrl}/repositories/${repositoryId}/locations`);
   }
 }

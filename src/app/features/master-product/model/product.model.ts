@@ -62,6 +62,19 @@ export interface Product {
   freeItem5?: string | null;
 }
 
+export interface Repository {
+  repositoryId: number;
+  repositoryCode: string;
+  repositoryName: string;
+}
+
+export interface Location {
+  locationId: number;
+  repositoryId: number;
+  locationCode: string;
+  locationName: string;
+}
+
 export interface CategoryEntity {
   companyId: number;
   categoryCode: string;
@@ -76,4 +89,6 @@ export interface MasterProductDTO {
   category3Entity: CategoryEntity | null;
   category4Entity: CategoryEntity | null;
   category5Entity: CategoryEntity | null;
+  repositoryEntity: Repository | null;
+  locationEntity: Location | null;
 }

@@ -25,7 +25,7 @@ export class ListProductComponent implements OnChanges {
   @Input() products: MasterProductDTO[] = [];
   @Input() totalPages: number = 0;
   @Input() currentPage: number = 0;
-  @Output() openDetail: EventEmitter<Product> = new EventEmitter<Product>();
+  @Output() openDetail: EventEmitter<MasterProductDTO> = new EventEmitter<MasterProductDTO>();
   @Output() selectedTypeChange = new EventEmitter<ProductType>();
   @Output() loadMore = new EventEmitter<void>();
 
@@ -58,7 +58,7 @@ export class ListProductComponent implements OnChanges {
     }
   }
 
-  openProductDetail(product: Product): void {
+  openProductDetail(product: MasterProductDTO): void {
     this.openDetail.emit(product);
   }
 

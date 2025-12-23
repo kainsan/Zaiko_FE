@@ -28,7 +28,7 @@ export class MasterProduct implements OnInit {
   }).replace(/\//g, '/');
 
   products = signal<MasterProductDTO[]>([]);
-  selectedProduct = signal<Product | null>(null);
+  selectedProduct = signal<MasterProductDTO | null>(null);
   isSearchVisible = signal<boolean>(true);
   selectedTypeFromList: ProductType = 'ALL';
   currentSearchParams: ProductSearchParams = {};
@@ -49,7 +49,7 @@ export class MasterProduct implements OnInit {
     this.selectedTypeFromList = type;
   }
 
-  openProductDetail(product: Product): void {
+  openProductDetail(product: MasterProductDTO): void {
     this.selectedProduct.set(product);
   }
 
