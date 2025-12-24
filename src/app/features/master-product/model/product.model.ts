@@ -82,6 +82,33 @@ export interface CategoryEntity {
   sortIdx: number | null;
 }
 
+export interface packCsUnitName {
+  companyId: number;
+  unitCode: string;
+  unitName: string;
+  notes: string;
+}
+
+export interface packBlUnitName {
+  companyId: number;
+  unitCode: string;
+  unitName: string;
+  notes: string;
+}
+export interface pieceUnitName {
+  companyId: number;
+  unitCode: string;
+  unitName: string;
+  notes: string;
+}
+
+export interface UnitName {
+  companyId: number;
+  unitCode: string;
+  unitName: string;
+  notes: string;
+}
+
 export interface MasterProductDTO {
   productEntity: Product;
   category1Entity: CategoryEntity | null;
@@ -91,4 +118,7 @@ export interface MasterProductDTO {
   category5Entity: CategoryEntity | null;
   repositoryEntity: Repository | null;
   locationEntity: Location | null;
+  packCsUnitName: packCsUnitName | null;
+  packBlUnitName: packBlUnitName | null;
+  pieceUnitName: pieceUnitName | null;
 }

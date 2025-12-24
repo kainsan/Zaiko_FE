@@ -96,10 +96,8 @@ export class SearchProductComponent implements OnChanges, OnInit {
       isSet: this.selectedType === 'ALL' ? undefined : (this.selectedType === 'SET' ? '1' : '0')
     };
     this.onSearchParams.emit(searchParams);
-    console.log(searchParams)
     this.productService.searchProducts(searchParams).subscribe((response) => {
       this.searchProducts.emit(response);
-      console.log(response)
     });
   }
 

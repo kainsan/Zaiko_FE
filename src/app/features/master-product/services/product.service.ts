@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { PageResponse } from '../response/PageResponse';
 import { MasterProductDTO, Repository, Location } from '../model/product.model';
 import { ProductSearchParams } from '../request/ProductSearchRequest';
@@ -73,5 +74,23 @@ export class ProductService {
 
   getLocationsByRepository(repositoryId: number): Observable<Location[]> {
     return this.http.get<Location[]>(`${this.apiUrl}/repositories/${repositoryId}/locations`);
+  }
+
+  getProductById(productId: number): Observable<MasterProductDTO> {
+    return this.http.get<MasterProductDTO>(`${this.apiUrl}/master-product/${productId}`);
+  }
+
+  getUnitNames(): Observable<any[]> {
+    return this.http.get<any>(`${this.apiUrl}/unit-name`).pipe(
+      map(response => response.content || [])
+    );
+  }
+
+  getCategoriesByType(categoryType: string): Observable<any[]> {
+    return this.http.get<any>(`${this.apiUrl}/categories`, {
+      params: { categoryType }
+    }).pipe(
+      map(response => response.content || [])
+    );
   }
 }
