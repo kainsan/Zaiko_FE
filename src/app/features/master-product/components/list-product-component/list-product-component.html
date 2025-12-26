@@ -118,7 +118,7 @@
                 <td>{{product.productEntity.packCsUnitCode}}</td>
                 <td>{{product.productEntity.packBlUnitCode}}</td>
                 <td class="sticky-right">
-                  <button class="delete-btn">
+                  <button class="delete-btn" (click)="onDelete(product.productEntity.productId)">
                     <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M10.125 0.75C10.3125 0.75 10.5 0.9375 10.5 1.125V1.875C10.5 2.08594 10.3125 2.25 10.125 2.25H0.375C0.164062 2.25 0 2.08594 0 1.875V1.125C0 0.9375 0.164062 0.75 0.375 0.75H3.1875L3.39844 0.328125C3.49219 0.140625 3.67969 0 3.89062 0H6.58594C6.79688 0 6.98438 0.140625 7.07812 0.328125L7.3125 0.75H10.125ZM1.24219 10.9453L0.75 3H9.75L9.23438 10.9453C9.21094 11.5547 8.71875 12 8.10938 12H2.36719C1.75781 12 1.26562 11.5547 1.24219 10.9453Z"

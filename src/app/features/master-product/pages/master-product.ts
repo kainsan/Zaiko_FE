@@ -63,6 +63,44 @@ export class MasterProduct implements OnInit {
     this.selectedProduct.set(product);
   }
 
+  openAddProduct(): void {
+    const newProduct: MasterProductDTO = {
+      productEntity: {
+        isSet: '0',
+        isDateTimeMng: '0',
+        isNumberMng: '0',
+        isReplenishMng: '0',
+        isVarious: '0',
+        tax: '0',
+        cartonWeight: 0,
+        cartonVolume: 0,
+        cartonVertical: 0,
+        cartonHorizontal: 0,
+        cartonHigh: 0,
+        pieceWeight: 0,
+        pieceVolume: 0,
+        pieceVertical: 0,
+        pieceHorizontal: 0,
+        pieceHigh: 0,
+        packCsAmount: 0,
+        packBlAmount: 0,
+        leadTime: 0
+      },
+      category1Entity: null,
+      category2Entity: null,
+      category3Entity: null,
+      category4Entity: null,
+      category5Entity: null,
+      repositoryEntity: null,
+      locationEntity: null,
+      packCsUnitName: null,
+      packBlUnitName: null,
+      pieceUnitName: null,
+      supplierEntity: null
+    };
+    this.selectedProduct.set(newProduct);
+  }
+
   closeProductDetail(): void {
     this.selectedProduct.set(null);
   }

@@ -9,7 +9,7 @@
           d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
       </svg>
       <span class="current-page">商品</span>
-      <button class="add-button">
+      <button class="add-button" (click)="openAddProduct()">
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path
             d="M10.5625 4.46875C10.9941 4.46875 11.375 4.84961 11.375 5.28125V6.09375C11.375 6.55078 10.9941 6.90625 10.5625 6.90625H6.90625V10.5625C6.90625 11.0195 6.52539 11.375 6.09375 11.375H5.28125C4.82422 11.375 4.46875 11.0195 4.46875 10.5625V6.90625H0.8125C0.355469 6.90625 0 6.55078 0 6.09375V5.28125C0 4.84961 0.355469 4.46875 0.8125 4.46875H4.46875V0.8125C4.46875 0.380859 4.82422 0 5.28125 0H6.09375C6.52539 0 6.90625 0.380859 6.90625 0.8125V4.46875H10.5625Z"
@@ -51,7 +51,8 @@
   <div class="container">
     <div class="left">
       <list-product (selectedTypeChange)="onSelectedTypeChange($event)" [products]="products()"
-        (openDetail)="openProductDetail($event)" (loadMore)="handleLoadMore()"></list-product>
+        (openDetail)="openProductDetail($event)" (loadMore)="handleLoadMore()"
+        (saved)="refreshProducts()"></list-product>
     </div>
     <mat-sidenav #drawer mode="side" position="end" [opened]="!!selectedProduct()" class="detail-drawer">
       <div class="right" *ngIf="selectedProduct()">

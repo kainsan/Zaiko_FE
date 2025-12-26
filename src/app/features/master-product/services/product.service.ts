@@ -82,4 +82,12 @@ export class ProductService {
     console.log(productData);
     return this.http.post(`${this.apiUrl}/master-product/${productId}`, productData);
   }
+
+  deleteProduct(productId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/master-product/delete/${productId}`, {});
+  }
+
+  createProduct(productData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/master-product/add-product`, productData);
+  }
 }

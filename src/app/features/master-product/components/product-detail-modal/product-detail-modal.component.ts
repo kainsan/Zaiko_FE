@@ -241,6 +241,11 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
     const cat4 = this.product.category4Entity;
     const cat5 = this.product.category5Entity;
 
+    if (p.productId) {
+      this.productForm.get('productCode')?.disable();
+    } else {
+      this.productForm.get('productCode')?.enable();
+    }
 
     this.productForm.patchValue({
       productCode: p.productCode,
@@ -381,8 +386,11 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
       dialogRef.afterClosed().subscribe((result) => {
         if (result) {
           const productId = this.product.productEntity.productId;
+          const productData = this.productForm.getRawValue();
+
           if (productId) {
-            this.productService.updateProduct(productId, this.productForm.getRawValue()).subscribe({
+            // Update existing product
+            this.productService.updateProduct(productId, productData).subscribe({
               next: () => {
                 console.log('Product updated successfully');
                 this.isFormDirty.set(false);
@@ -392,7 +400,21 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
               },
               error: (err) => {
                 console.error('Error updating product:', err);
-                // TODO: Show error message to user
+              }
+            });
+          } else {
+            // Create new product
+            this.productService.createProduct(productData).subscribe({
+              next: () => {
+                console.log('Product created successfully');
+                console.log(productData);
+                this.isFormDirty.set(false);
+                this.productForm.markAsPristine();
+                this.saved.emit();
+                this.onClose();
+              },
+              error: (err) => {
+                console.error('Error creating product:', err);
               }
             });
           }
@@ -402,6 +424,7 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
       console.log('Form is invalid');
     }
   }
+
   openPackagingCodeSearch(type: 'Cs' | 'Bl' | 'Piece'): void {
     this.productService.getUnitNames().subscribe((units: any) => {
       const dialogRef = this.dialog.open(CommonSearchDialogComponent, {

@@ -11,12 +11,14 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { Product, MasterProductDTO } from '../../model/product.model';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { ProductService } from '../../services/product.service';
 
 export type ProductType = 'ALL' | 'SET' | 'PRODUCT';
 @Component({
   selector: 'list-product',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ConfirmDialogComponent],
   templateUrl: './list-product-component.html',
   styleUrls: ['./list-product-component.scss'],
 })
@@ -27,11 +29,15 @@ export class ListProductComponent implements OnChanges {
   @Output() openDetail: EventEmitter<MasterProductDTO> = new EventEmitter<MasterProductDTO>();
   @Output() selectedTypeChange = new EventEmitter<ProductType>();
   @Output() loadMore = new EventEmitter<void>();
+  @Output() close = new EventEmitter<void>();
+  @Output() saved = new EventEmitter<void>();
 
   selectedType = signal<ProductType>('ALL');
   productList = signal<MasterProductDTO[]>([]);
 
-  constructor(private dialog: MatDialog) { }
+  constructor(
+    private dialog: MatDialog,
+    private productService: ProductService,) { }
 
   filteredProducts = computed(() => {
     let type = this.selectedType();
@@ -83,5 +89,33 @@ export class ListProductComponent implements OnChanges {
       case '2': return '賞';
       default: return '';
     }
+  }
+
+
+  onDelete(productId: number | any): void {
+    if (!productId) return;
+    
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '450px',
+      data: { message: '削除します。よろしいでしょうか。' },
+      panelClass: 'custom-confirm-dialog'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.productService.deleteProduct(productId).subscribe({
+          next: () => {
+            console.log('Product deleted successfully');
+            console.log(result)
+            this.saved.emit();
+            this.close.emit();
+          },
+          error: (err) => {
+            console.error('Error deleting product:', err);
+            // TODO: Show error message to user
+          }
+        });
+      }
+    });
   }
 }
