@@ -11,7 +11,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { Product, MasterProductDTO } from '../../model/product.model';
-import { I } from '@angular/cdk/keycodes';
 
 export type ProductType = 'ALL' | 'SET' | 'PRODUCT';
 @Component({
@@ -74,5 +73,15 @@ export class ListProductComponent implements OnChanges {
     const bl = product.isPackBlOutput === '1' ? 'Y' : 'N';
     const pc = product.isPieceOutput === '1' ? 'Y' : 'N';
     return `${cs} ${bl} ${pc}`;
+  }
+
+  getDateMngKanji(product: any): string {
+    if (product.isDateTimeMng !== '1') return '';
+    switch (product.dateTimeMngType) {
+      case '0': return '入';
+      case '1': return '製';
+      case '2': return '賞';
+      default: return '';
+    }
   }
 }

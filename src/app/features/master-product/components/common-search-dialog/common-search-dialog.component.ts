@@ -15,7 +15,7 @@ export class CommonSearchDialogComponent implements OnInit {
     items: any[] = [];
     filteredItems: any[] = [];
     searchQuery: string = '';
-    searchType: 'product' | 'unit' | 'category' = 'product';
+    searchType: 'product' | 'unit' | 'category' | 'supplier' = 'product';
     title: string = '';
     placeholder: string = '';
 
@@ -27,7 +27,7 @@ export class CommonSearchDialogComponent implements OnInit {
     ngOnInit(): void {
         if (this.data) {
             this.searchType = this.data.searchType || 'product';
-            this.items = this.data.items || this.data.products || [];
+            this.items = this.data.items || this.data.products || this.data.suppliers || [];
             this.filteredItems = [...this.items];
 
             if (this.searchType === 'product') {
@@ -38,6 +38,9 @@ export class CommonSearchDialogComponent implements OnInit {
                 this.placeholder = '単位コード、名称で検索';
             } else if (this.searchType === 'category') {
                 this.title = '商品分類検索';
+                this.placeholder = 'コード、名称で検索';
+            } else if (this.searchType === 'supplier') {
+                this.title = '供給元検索';
                 this.placeholder = 'コード、名称で検索';
             }
         }
@@ -65,7 +68,13 @@ export class CommonSearchDialogComponent implements OnInit {
                 item.categoryCode?.toLowerCase().includes(query) ||
                 item.categoryName?.toLowerCase().includes(query)
             );
+        } else if (this.searchType === 'supplier') {
+            this.filteredItems = this.items.filter((item: any) =>
+                item.supplierCode?.toLowerCase().includes(query) ||
+                item.supplierName?.toLowerCase().includes(query)
+            );
         }
+
     }
 
     selectItem(item: any): void {

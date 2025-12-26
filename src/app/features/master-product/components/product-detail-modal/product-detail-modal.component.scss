@@ -561,8 +561,13 @@
             &.save-btn {
                 background-color: #4392BB;
 
-                &:hover {
+                &:hover:not(:disabled) {
                     background-color: #3B7A9C;
+                }
+
+                &:disabled {
+                    background-color: #ccc;
+                    cursor: not-allowed;
                 }
             }
         }

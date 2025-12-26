@@ -104,7 +104,14 @@
                 <td>{{product.repositoryEntity ? product.repositoryEntity.repositoryCode : '-'}}</td>
                 <td>{{product.locationEntity ? product.locationEntity.locationCode : '-'}}</td>
                 <td>{{product.productEntity.fifoType === '0' ? '先入先出' : '後入先出'}}</td>
-                <td>{{product.productEntity.isDateTimeMng === '1' ? 'する' : 'しない'}}</td>
+                <td>
+                  <div class="date-mng-cell">
+                    <span>{{product.productEntity.isDateTimeMng === '1' ? 'する' : 'しない'}}</span>
+                    <span *ngIf="product.productEntity.isDateTimeMng !== '4'" class="date-mng-badge">
+                      {{ getDateMngKanji(product.productEntity) }}
+                    </span>
+                  </div>
+                </td>
                 <td>{{product.productEntity.isNumberMng === '1' ? 'する' : 'しない'}}</td>
                 <td>{{getInputPackagingString(product.productEntity)}}</td>
                 <td>{{getOutputPackagingString(product.productEntity)}}</td>

@@ -68,14 +68,6 @@ export class ProductService {
     });
   }
 
-  getRepositories(): Observable<Repository[]> {
-    return this.http.get<Repository[]>(`${this.apiUrl}/repositories`);
-  }
-
-  getLocationsByRepository(repositoryId: number): Observable<Location[]> {
-    return this.http.get<Location[]>(`${this.apiUrl}/repositories/${repositoryId}/locations`);
-  }
-
   getProductById(productId: number): Observable<MasterProductDTO> {
     return this.http.get<MasterProductDTO>(`${this.apiUrl}/master-product/${productId}`);
   }
@@ -86,11 +78,8 @@ export class ProductService {
     );
   }
 
-  getCategoriesByType(categoryType: string): Observable<any[]> {
-    return this.http.get<any>(`${this.apiUrl}/categories`, {
-      params: { categoryType }
-    }).pipe(
-      map(response => response.content || [])
-    );
+  updateProduct(productId: number, productData: any): Observable<any> {
+    console.log(productData);
+    return this.http.post(`${this.apiUrl}/master-product/${productId}`, productData);
   }
 }

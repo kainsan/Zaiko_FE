@@ -38,10 +38,19 @@ export class MasterProduct implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.productService.getProducts(this.currentPage(), this.pageSize).subscribe(response => {
+    this.refreshProducts();
+  }
+
+  refreshProducts(): void {
+    const params = {
+      ...this.currentSearchParams,
+      page: this.currentPage(),
+      pageSize: this.pageSize
+    };
+
+    this.productService.searchProducts(params).subscribe(response => {
       this.products.set(response.content);
       this.totalPages.set(response.page.totalPages);
-      this.currentPage.set(0);
     });
   }
 
@@ -50,6 +59,7 @@ export class MasterProduct implements OnInit {
   }
 
   openProductDetail(product: MasterProductDTO): void {
+    console.log(product)
     this.selectedProduct.set(product);
   }
 

@@ -62,6 +62,13 @@ export interface Product {
   freeItem5?: string | null;
 }
 
+export interface Supplier {
+  supplierId: number;
+  supplierCode: string;
+  supplierName: string;
+  notes: string;
+}
+
 export interface Repository {
   repositoryId: number;
   repositoryCode: string;
@@ -121,4 +128,5 @@ export interface MasterProductDTO {
   packCsUnitName: packCsUnitName | null;
   packBlUnitName: packBlUnitName | null;
   pieceUnitName: pieceUnitName | null;
+  supplierEntity: Supplier | null;
 }

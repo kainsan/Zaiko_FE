@@ -5,7 +5,10 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CommonSearchDialogComponent } from '../common-search-dialog/common-search-dialog.component';
 import { Product, MasterProductDTO, Repository, Location } from '../../model/product.model';
-import { ProductService } from '../../services/product.service';
+import { CategoriesService } from '../../services/categories.service';
+import { ProductService } from '../../services/product.service'
+import { RepositoriesService} from '../../services/repostories.service';
+
 import { ProductType } from '../list-product-component/list-product.component';
 import { ProductSearchParams } from '../../request/ProductSearchRequest';
 import { PageResponse } from '../../response/PageResponse';
@@ -41,7 +44,11 @@ export class SearchProductComponent implements OnChanges, OnInit {
   @Output() searchProducts = new EventEmitter<PageResponse<MasterProductDTO>>();
   @Output() onSearchParams = new EventEmitter<ProductSearchParams>();
 
-  constructor(private dialog: MatDialog, private productService: ProductService) { }
+  constructor(
+    private dialog: MatDialog,
+    private productService: ProductService ,
+    private categoriesService : CategoriesService,
+    private repositoriesService : RepositoriesService) { }
 
   ngOnInit(): void {
     this.productService.getProducts(0, 100).subscribe(response => {
@@ -51,13 +58,13 @@ export class SearchProductComponent implements OnChanges, OnInit {
   }
 
   loadRepositories(): void {
-    this.productService.getRepositories().subscribe(repos => {
+    this.repositoriesService.getRepositories().subscribe(repos => {
       this.repositories.set(repos);
     });
   }
 
   loadLocations(repositoryId: number): void {
-    this.productService.getLocationsByRepository(repositoryId).subscribe(locs => {
+    this.repositoriesService.getLocationsByRepository(repositoryId).subscribe(locs => {
       this.locations.set(locs);
     });
   }

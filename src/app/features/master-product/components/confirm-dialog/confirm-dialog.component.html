@@ -1,0 +1,19 @@
+<div class="confirm-dialog-container">
+    <div class="dialog-header">
+        <span>確認</span>
+        <button class="close-btn" (click)="onCancel()">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M6.72656 4.89453L9.46094 7.65625C9.81641 7.98438 9.81641 8.53125 9.46094 8.85938L8.85938 9.46094C8.53125 9.81641 7.98438 9.81641 7.65625 9.46094L4.92188 6.72656L2.16016 9.46094C1.83203 9.81641 1.28516 9.81641 0.957031 9.46094L0.355469 8.85938C0 8.53125 0 7.98438 0.355469 7.65625L3.08984 4.89453L0.355469 2.16016C0 1.83203 0 1.28516 0.355469 0.957031L0.957031 0.355469C1.28516 0 1.83203 0 2.16016 0.355469L4.92188 3.08984L7.65625 0.355469C7.98438 0 8.53125 0 8.85938 0.355469L9.46094 0.957031C9.81641 1.28516 9.81641 1.83203 9.46094 2.16016L6.72656 4.89453Z"
+                    fill="white" />
+            </svg>
+        </button>
+    </div>
+    <div class="dialog-content">
+        <p>{{ data.message }}</p>
+    </div>
+    <div class="dialog-actions">
+        <button class="btn-no" (click)="onCancel()">いいえ</button>
+        <button class="btn-yes" (click)="onConfirm()">はい</button>
+    </div>
+</div>

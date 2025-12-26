@@ -55,7 +55,8 @@
     </div>
     <mat-sidenav #drawer mode="side" position="end" [opened]="!!selectedProduct()" class="detail-drawer">
       <div class="right" *ngIf="selectedProduct()">
-        <product-detail-modal [product]="selectedProduct()!" (close)="closeProductDetail()"></product-detail-modal>
+        <product-detail-modal [product]="selectedProduct()!" (close)="closeProductDetail()"
+          (saved)="refreshProducts()"></product-detail-modal>
       </div>
     </mat-sidenav>
   </div>

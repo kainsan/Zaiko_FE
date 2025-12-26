@@ -14,7 +14,11 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MasterProductDTO, Product, Repository, Location } from '../../model/product.model';
 import { CommonSearchDialogComponent } from '../common-search-dialog/common-search-dialog.component';
-import { ProductService } from '../../services/product.service';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { CategoriesService } from '../../services/categories.service';
+import { ProductService } from '../../services/product.service'
+import { RepositoriesService } from '../../services/repostories.service';
+import { SupplierService } from '../../services/supplier.service';
 
 @Component({
   selector: 'product-detail-modal',
@@ -26,8 +30,10 @@ import { ProductService } from '../../services/product.service';
 export class ProductDetailModalComponent implements OnInit, OnChanges {
   @Input() product!: MasterProductDTO;
   @Output() close = new EventEmitter<void>();
+  @Output() saved = new EventEmitter<void>();
   activeTab: string = 'general'; // Default tab
   productForm!: FormGroup;
+  isFormDirty = signal<boolean>(false);
 
   repositories = signal<Repository[]>([]);
   locations = signal<Location[]>([]);
@@ -40,18 +46,12 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
   constructor(
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private productService: ProductService
+    private productService: ProductService,
+    private categoriesService: CategoriesService,
+    private repositoriesService: RepositoriesService,
+    private supplierService: SupplierService
   ) {
     this.initForm();
-  }
-
-  openSupplierSearch(): void {
-    this.dialog.open(CommonSearchDialogComponent, {
-      width: '800px',
-      height: '600px',
-      panelClass: 'custom-dialog-container',
-      autoFocus: false,
-    });
   }
 
   ngOnInit(): void {
@@ -62,14 +62,47 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
       'isPackBlOutput',
       'isPieceInput',
       'isPieceOutput',
+      'isDateTimeMng',
+      'isNumberMng',
+      'isReplenishMng'
     ].forEach((name) => {
       this.productForm.get(name)!.valueChanges.subscribe(() => {
+        console.log(this.productForm)
         this.togglePackagingUnits();
       });
     });
 
+    // Sync isDateTimeMng and dateTimeMngType
+    this.productForm.get('isDateTimeMng')!.valueChanges.subscribe((checked: boolean) => {
+      const typeCtrl = this.productForm.get('dateTimeMngType')!;
+
+      if (checked && [!typeCtrl.value || typeCtrl.value === undefined]) {
+
+        typeCtrl.patchValue('0', { emitEvent: false });
+      }
+
+      if (!checked) {
+        typeCtrl.patchValue(null, { emitEvent: false });
+      }
+    }
+    );
+
+    this.productForm.get('dateTimeMngType')!.valueChanges.subscribe((val: string | null) => {
+      const dateMngCtrl = this.productForm.get('isDateTimeMng')!;
+
+      // Nếu chọn type mà isDateTimeMng đang false → bật lại
+      if (val && !dateMngCtrl.value && val !== '4') {
+        dateMngCtrl.patchValue(true, { emitEvent: false });
+      }
+    });
+
     // gọi lần đầu để sync trạng thái
     this.togglePackagingUnits();
+
+    // Track form changes
+    this.productForm.valueChanges.subscribe(() => {
+      this.isFormDirty.set(this.productForm.dirty);
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -80,11 +113,13 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
       if (this.product.productEntity.productId) {
         this.productService
           .getProductById(this.product.productEntity.productId)
-          .subscribe((detail) => {
+          .subscribe((detail: any) => {
             this.product = detail;
             this.patchForm();
-            if (this.product.productEntity.repositoryId) {
-              this.loadRepositories();
+            this.loadRepositories();
+            if (!this.product.productEntity.repositoryId) {
+              this.loadLocations(0);
+            } else {
               this.loadLocations(this.product.productEntity.repositoryId);
             }
           });
@@ -93,13 +128,13 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
   }
 
   loadRepositories(): void {
-    this.productService.getRepositories().subscribe((repos) => {
+    this.repositoriesService.getRepositories().subscribe((repos: any) => {
       this.repositories.set(repos);
     });
   }
 
   loadLocations(repositoryId: number): void {
-    this.productService.getLocationsByRepository(repositoryId).subscribe((locs) => {
+    this.repositoriesService.getLocationsByRepository(repositoryId).subscribe((locs: any) => {
       this.locations.set(locs);
     });
   }
@@ -136,6 +171,11 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
       categoryCode3: [''],
       categoryCode4: [''],
       categoryCode5: [''],
+      categoryName1: [''],
+      categoryName2: [''],
+      categoryName3: [''],
+      categoryName4: [''],
+      categoryName5: [''],
 
       // ===== PACKAGING =====
       fifoType: ['0'],
@@ -171,7 +211,16 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
       // ===== STOCK =====
       repositoryId: [null],
       locationId: [null],
-      isDateTimeMng: ['0'],
+      isDateTimeMng: [false],
+      isNumberMng: [false],
+      dateTimeMngType: [null],
+      isReplenishMng: ['0'],
+      minInventoryQuantity: [{ value: 0, disabled: true }],
+      minInputQuantity: [{ value: 0, disabled: true }],
+      supplierId: [{ value: null, disabled: true }],
+      supplierCode: [{ value: '', disabled: true }],
+      supplierName: [{ value: '', disabled: true }],
+      leadTime: [{ value: null, disabled: true }],
       repositoryCode: [{ value: '', disabled: true }],
       locationCode: [{ value: '', disabled: true }],
     });
@@ -185,7 +234,13 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
     const pcu = this.product.packCsUnitName;
     const pbu = this.product.packBlUnitName;
     const peu = this.product.pieceUnitName;
-    console.log(pcu)
+    const sup = this.product.supplierEntity;
+    const cat1 = this.product.category1Entity;
+    const cat2 = this.product.category2Entity;
+    const cat3 = this.product.category3Entity;
+    const cat4 = this.product.category4Entity;
+    const cat5 = this.product.category5Entity;
+
 
     this.productForm.patchValue({
       productCode: p.productCode,
@@ -202,10 +257,15 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
       notes: p.notes,
 
       categoryCode1: p.categoryCode1,
+      categoryName1: cat1?.categoryName,
       categoryCode2: p.categoryCode2,
-      categoryCode3: p.categoryCode3,
-      categoryCode4: p.categoryCode4,
-      categoryCode5: p.categoryCode5,
+      categoryName2: cat2?.categoryName,
+      categoryCode3: p.categoryCode3 ?? '',
+      categoryName3: cat3?.categoryName ?? '',
+      categoryCode4: p.categoryCode4 ?? '',
+      categoryName4: cat4?.categoryName ?? '',
+      categoryCode5: p.categoryCode5 ?? '',
+      categoryName5: cat5?.categoryName ?? '',
 
       fifoType: p.fifoType,
       cartonWeight: p.cartonWeight,
@@ -231,7 +291,10 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
 
       repositoryId: p.repositoryId,
       locationId: p.locationId,
-      isDateTimeMng: p.isDateTimeMng,
+      isDateTimeMng: p.isDateTimeMng === '1',
+      isNumberMng: p?.isNumberMng === '1',
+      isReplenishMng: p?.isReplenishMng || '0',
+      dateTimeMngType: p?.dateTimeMngType ?? null,
       repositoryCode: re?.repositoryCode,
       locationCode: loc?.locationCode,
       packagingCsUnitCode: pcu?.unitCode,
@@ -242,7 +305,14 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
       packagingBlUnitAmount: p?.packBlAmount,
       packagingPieceUnitCode: peu?.unitCode,
       packagingPieceUnitName: peu?.unitName,
-    });
+      supplierId: p?.supplierId,
+      supplierCode: sup?.supplierCode,
+      supplierName: sup?.supplierName,
+      leadTime: p?.leadTime,
+    }, { emitEvent: false });
+
+    this.isFormDirty.set(false);
+    this.productForm.markAsPristine();
 
     this.packagingCsUnitName.set(pcu?.unitName || '');
     this.packagingBlUnitName.set(pbu?.unitName || '');
@@ -251,6 +321,7 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
     this.packagingBlUnitAmount.set(p?.packBlAmount || null);
 
     this.togglePackagingUnits();
+    // this.toggleManagement();
   }
 
   togglePackagingUnits() {
@@ -272,6 +343,10 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
         enabled:
           this.productForm.get('isPieceInput')!.value ||
           this.productForm.get('isPieceOutput')!.value,
+      },
+      {
+        controls: ['minInventoryQuantity', 'minInputQuantity', 'supplierId', 'supplierCode', 'supplierName', 'leadTime'],
+        enabled: this.productForm.get('isReplenishMng')!.value === '1',
       },
     ];
 
@@ -297,14 +372,38 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
 
   onSave(): void {
     if (this.productForm.valid) {
-      console.log('Form Data:', this.productForm.getRawValue());
-      // TODO: Implement save logic calling service
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        width: '450px',
+        data: { message: '保存します。よろしいでしょうか。' },
+        panelClass: 'custom-confirm-dialog'
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          const productId = this.product.productEntity.productId;
+          if (productId) {
+            this.productService.updateProduct(productId, this.productForm.getRawValue()).subscribe({
+              next: () => {
+                console.log('Product updated successfully');
+                this.isFormDirty.set(false);
+                this.productForm.markAsPristine();
+                this.saved.emit();
+                this.onClose();
+              },
+              error: (err) => {
+                console.error('Error updating product:', err);
+                // TODO: Show error message to user
+              }
+            });
+          }
+        }
+      });
     } else {
       console.log('Form is invalid');
     }
   }
   openPackagingCodeSearch(type: 'Cs' | 'Bl' | 'Piece'): void {
-    this.productService.getUnitNames().subscribe((units) => {
+    this.productService.getUnitNames().subscribe((units: any) => {
       const dialogRef = this.dialog.open(CommonSearchDialogComponent, {
         width: '800px',
         height: '600px',
@@ -315,18 +414,18 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
         },
       });
 
-      dialogRef.afterClosed().subscribe((unit: any | null) => {
+      dialogRef.afterClosed().subscribe((unit: any) => {
         if (!unit) return;
-
+        console.log(unit);
         if (type === 'Cs') {
           this.productForm.patchValue({ packagingCsUnitCode: unit.unitCode });
-          this.packagingCsUnitName.set(unit.unitName);
+          this.productForm.patchValue({ packagingCsUnitName: unit.unitName });
         } else if (type === 'Bl') {
           this.productForm.patchValue({ packagingBlUnitCode: unit.unitCode });
-          this.packagingBlUnitName.set(unit.unitName);
+          this.productForm.patchValue({ packagingBlUnitName: unit.unitName });
         } else if (type === 'Piece') {
           this.productForm.patchValue({ packagingPieceUnitCode: unit.unitCode });
-          this.packagingPieceUnitName.set(unit.unitName);
+          this.productForm.patchValue({ packagingPieceUnitName: unit.unitName });
         }
       });
     });
@@ -336,7 +435,7 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
     // Map type to category number (1-5)
     const categoryType = type.replace('cat', '');
 
-    this.productService.getCategoriesByType(categoryType).subscribe((categories) => {
+    this.categoriesService.getCategoriesByType(categoryType).subscribe((categories: any) => {
       const dialogRef = this.dialog.open(CommonSearchDialogComponent, {
         width: '800px',
         height: '600px',
@@ -352,14 +451,45 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
 
         if (type === 'cat1') {
           this.productForm.patchValue({ categoryCode1: category.categoryCode });
+          this.productForm.patchValue({ categoryName1: category.categoryName });
         } else if (type === 'cat2') {
           this.productForm.patchValue({ categoryCode2: category.categoryCode });
+          this.productForm.patchValue({ categoryName2: category.categoryName });
         } else if (type === 'cat3') {
           this.productForm.patchValue({ categoryCode3: category.categoryCode });
+          this.productForm.patchValue({ categoryName3: category.categoryName });
         } else if (type === 'cat4') {
           this.productForm.patchValue({ categoryCode4: category.categoryCode });
+          this.productForm.patchValue({ categoryName4: category.categoryName });
         } else if (type === 'cat5') {
           this.productForm.patchValue({ categoryCode5: category.categoryCode });
+          this.productForm.patchValue({ categoryName5: category.categoryName });
+        }
+      });
+    });
+  }
+
+  openSupplierSearch(): void {
+    this.supplierService.getSuppliers().subscribe((suppliers: any) => {
+      const dialogRef = this.dialog.open(CommonSearchDialogComponent, {
+        width: '800px',
+        height: '600px',
+        panelClass: 'custom-dialog-container',
+        data: {
+          searchType: 'supplier',
+          items: suppliers,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe((supplier: any | null) => {
+        if (!supplier) return;
+
+        if (supplier) {
+          this.productForm.patchValue({
+            supplierId: supplier.supplierId,
+            supplierCode: supplier.supplierCode,
+            supplierName: supplier.supplierName
+          });
         }
       });
     });

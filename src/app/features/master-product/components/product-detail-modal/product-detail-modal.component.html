@@ -94,7 +94,7 @@
                   </svg>
                 </button>
               </div>
-              <input type="text" class="flex-input" readonly [value]="product.category1Entity?.categoryName" />
+              <input type="text" class="flex-input" readonly formControlName="categoryName1" />
             </div>
           </div>
           <!-- Category 2 -->
@@ -111,7 +111,7 @@
                   </svg>
                 </button>
               </div>
-              <input type="text" class="flex-input" readonly [value]="product.category2Entity?.categoryName" />
+              <input type="text" class="flex-input" readonly formControlName="categoryName2" />
             </div>
           </div>
           <!-- Category 3 -->
@@ -128,7 +128,7 @@
                   </svg>
                 </button>
               </div>
-              <input type="text" class="flex-input" readonly [value]="product.category3Entity?.categoryName" />
+              <input type="text" class="flex-input" readonly formControlName="categoryName3" />
             </div>
           </div>
           <!-- Category 4 -->
@@ -145,7 +145,7 @@
                   </svg>
                 </button>
               </div>
-              <input type="text" class="flex-input" readonly [value]="product.category4Entity?.categoryName" />
+              <input type="text" class="flex-input" readonly formControlName="categoryName4" />
             </div>
           </div>
           <!-- Category 5 -->
@@ -162,7 +162,7 @@
                   </svg>
                 </button>
               </div>
-              <input type="text" class="flex-input" readonly [value]="product.category5Entity?.categoryName" />
+              <input type="text" class="flex-input" readonly formControlName="categoryName5" />
             </div>
           </div>
         </div>
@@ -206,23 +206,23 @@
         <div class="packaging-options">
           <div class="section-label">ロット管理</div>
           <div class="checkbox-group option-row indent-1">
-            <input type="checkbox" name="lot" id="lot" />
-            <span>管理日付で管理をする</span>
+            <input type="checkbox" name="lot" id="lot" formControlName="isDateTimeMng" />
+            <span>管理日付で管理をする {{product.productEntity.isDateTimeMng}}</span>
           </div>
           <div class="checkbox-group option-row indent-2">
-            <input type="radio" name="lot-type" id="lot-in" />
+            <input type="radio" id="lot-in" value="0" formControlName="dateTimeMngType" />
             <span>入庫日管理をする</span>
           </div>
           <div class="checkbox-group option-row indent-2">
-            <input type="radio" name="lot-type" id="lot-mfg" />
+            <input type="radio" id="lot-mfg" value="1" formControlName="dateTimeMngType" />
             <span>製造年月日管理をする</span>
           </div>
           <div class="checkbox-group option-row indent-2">
-            <input type="radio" name="lot-type" id="lot-exp" />
+            <input type="radio" id="lot-exp" value="2" formControlName="dateTimeMngType" />
             <span>賞味期限管理をする</span>
           </div>
           <div class="checkbox-group option-row indent-1">
-            <input type="checkbox" name="lot-no" id="lot-no" />
+            <input type="checkbox" name="lot-no" formControlName="isNumberMng" />
             <span>管理番号で管理をする</span>
           </div>
         </div>
@@ -351,8 +351,7 @@
                 </td>
                 <td>
                   <div class="unit-input-wrapper">
-                    <input type="text" readonly [value]="packagingCsUnitName()"
-                      [disabled]="!productForm.get('isPackCsInput')?.value && !productForm.get('isPackCsOutput')?.value" />
+                    <input type="text" readonly formControlName="packagingCsUnitName" />
                     <input type="hidden" formControlName="packagingCsUnitCode" />
                     <button (click)="openPackagingCodeSearch('Cs')"
                       [disabled]="!productForm.get('isPackCsInput')?.value && !productForm.get('isPackCsOutput')?.value">
@@ -366,8 +365,7 @@
                 </td>
                 <td class="no-padding">
                   <input type="text" [value]="packagingCsUnitAmount()" class="qty-input"
-                    formControlName="packagingCsUnitAmount"
-                    [disabled]="!productForm.get('isPackCsInput')?.value && !productForm.get('isPackCsOutput')?.value" />
+                    formControlName="packagingCsUnitAmount" />
                 </td>
                 <td class="no-padding">
                   <input type="text" value="マスターカートン／インナーカートン" readonly class="ratio-display" />
@@ -387,8 +385,7 @@
                 </td>
                 <td>
                   <div class="unit-input-wrapper">
-                    <input type="text" readonly [value]="packagingBlUnitName()"
-                      [disabled]="!productForm.get('isPackBlInput')?.value && !productForm.get('isPackBlOutput')?.value" />
+                    <input type="text" readonly formControlName="packagingBlUnitName" />
                     <input type="hidden" formControlName="packagingBlUnitCode" />
                     <button (click)="openPackagingCodeSearch('Bl')"
                       [disabled]="!productForm.get('isPackBlInput')?.value && !productForm.get('isPackBlOutput')?.value">
@@ -401,9 +398,7 @@
                   </div>
                 </td>
                 <td class="no-padding">
-                  <input
-                    [disabled]="!productForm.get('isPackBlInput')?.value && !productForm.get('isPackBlOutput')?.value"
-                    type="text" [value]="packagingBlUnitAmount()" class="qty-input"
+                  <input type="text" [value]="packagingBlUnitAmount()" class="qty-input"
                     formControlName="packagingBlUnitAmount" />
                 </td>
                 <td class="no-padding">
@@ -424,8 +419,7 @@
                 </td>
                 <td>
                   <div class="unit-input-wrapper">
-                    <input type="text" readonly [value]="packagingPieceUnitName()"
-                      [disabled]="!productForm.get('isPieceInput')?.value && !productForm.get('isPieceOutput')?.value" />
+                    <input type="text" readonly formControlName="packagingPieceUnitName" />
                     <input type="hidden" formControlName="packagingPieceUnitCode" />
                     <button (click)="openPackagingCodeSearch('Piece')"
                       [disabled]="!productForm.get('isPieceInput')?.value && !productForm.get('isPieceOutput')?.value">
@@ -493,22 +487,22 @@
             <label>補充管理</label>
             <div class="radio-group-row">
               <div class="radio-item">
-                <input type="radio" id="rep-do" value="1" formControlName="isDateTimeMng" />
+                <input type="radio" id="rep-do" value="1" formControlName="isReplenishMng" />
                 <label for="rep-do">する</label>
               </div>
               <div class="radio-item">
-                <input type="radio" id="rep-dont" value="0" formControlName="isDateTimeMng" />
+                <input type="radio" id="rep-dont" value="0" formControlName="isReplenishMng" />
                 <label for="rep-dont">しない</label>
               </div>
             </div>
           </div>
           <div class="form-group">
             <label>補充点</label>
-            <input type="text" value="0" class="text-right read-only" readonly />
+            <input type="text" formControlName="minInventoryQuantity" class="text-right" />
           </div>
           <div class="form-group">
             <label>最低補充数（バラ）</label>
-            <input type="text" value="0" class="text-right read-only" readonly />
+            <input type="text" formControlName="minInputQuantity" class="text-right" />
           </div>
         </div>
 
@@ -526,7 +520,7 @@
             <label>仕入先コード</label>
             <div class="input-with-button">
               <div class="relative-wrapper">
-                <input type="text" value="000320" class="small-input" />
+                <input type="text" formControlName="supplierCode" class="small-input" />
                 <button class="icon-btn" (click)="openSupplierSearch()">
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -539,11 +533,11 @@
           </div>
           <div class="form-group name-col">
             <label>&nbsp;</label>
-            <input type="text" value="株式会社トライフ" class="read-only" readonly />
+            <input type="text" formControlName="supplierName" />
           </div>
           <div class="form-group lead-time-col">
             <label>リードタイム</label>
-            <input type="text" value="1" class="read-only" readonly />
+            <input type="text" formControlName="leadTime" />
           </div>
         </div>
       </div>
@@ -551,7 +545,7 @@
       <!-- Footer Actions -->
       <div class="modal-footer">
         <button class="delete-btn">削除</button>
-        <button class="save-btn" (click)="onSave()">保存</button>
+        <button class="save-btn" (click)="onSave()" [disabled]="!isFormDirty()">保存</button>
       </div>
     </div>
   </form>

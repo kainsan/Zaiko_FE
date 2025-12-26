@@ -32,6 +32,7 @@
               <th *ngIf="searchType === 'product'">商品コード</th>
               <th *ngIf="searchType === 'unit'">単位コード</th>
               <th *ngIf="searchType === 'category'">分類コード</th>
+              <th *ngIf="searchType === 'supplier'">供給元コード</th>
               <th>名称</th>
             </tr>
           </thead>
@@ -41,9 +42,11 @@
               <td *ngIf="searchType === 'product'">{{ item.productCode }}</td>
               <td *ngIf="searchType === 'unit'">{{ item.unitCode }}</td>
               <td *ngIf="searchType === 'category'">{{ item.categoryCode }}</td>
+              <td *ngIf="searchType === 'supplier'">{{ item.supplierCode }}</td>
               <td *ngIf="searchType === 'product'">{{ item.name1 }}</td>
               <td *ngIf="searchType === 'unit'">{{ item.unitName }}</td>
               <td *ngIf="searchType === 'category'">{{ item.categoryName }}</td>
+              <td *ngIf="searchType === 'supplier'">{{ item.supplierName }}</td>
             </tr>
           </tbody>
         </table>
