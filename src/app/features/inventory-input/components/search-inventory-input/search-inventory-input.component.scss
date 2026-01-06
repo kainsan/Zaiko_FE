@@ -1,0 +1,232 @@
+.search-form {
+  background: #f9fcff;
+  padding: 8px 16px;
+  font-family: "Segoe UI", "Noto Sans JP", sans-serif;
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    row-gap: 8px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    input[type="text"],
+    select {
+      border: 1px solid #ccc;
+      border-radius: 2px;
+      padding: 0 8px;
+      height: 24px; // Smaller height
+      font-size: 12px; // Slightly smaller font
+      outline: none;
+      box-sizing: border-box;
+      width: 100%;
+      background-color: white;
+
+      &:focus {
+        border-color: #2b80d8;
+      }
+    }
+  }
+
+  .range-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    input,
+    select,
+    .search-input,
+    .date-picker-field {
+      flex: 1;
+    }
+
+    span {
+      font-size: 12px;
+      color: #666;
+    }
+  }
+
+  .select-arrow {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iNiIgdmlld0JveD0iMCAwIDEwIDYiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTUgNkwwLjY2OTczIDBMOS4zMzAyIDBMMi41eDYiIGZpbGw9IiM0MzkzQkIiLz48L3N2Zz4=');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 8px 5px;
+    padding-right: 24px;
+  }
+
+  .date-picker-field {
+    width: 100%;
+    position: relative;
+
+    ::ng-deep .mat-mdc-text-field-wrapper {
+      height: 24px;
+      padding: 0;
+      background: #fff;
+    }
+
+    ::ng-deep .mat-mdc-form-field-flex {
+      height: 24px;
+      align-items: center;
+    }
+
+    ::ng-deep .mat-mdc-form-field-infix {
+      padding: 0 8px;
+      min-height: 24px;
+      display: flex;
+      align-items: center;
+    }
+
+    ::ng-deep input.mat-mdc-input-element {
+      height: 24px;
+      font-size: 12px;
+      line-height: 24px;
+    }
+
+    /* Ẩn label + hint */
+    ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+      display: none;
+    }
+
+    /* outline giống input thường */
+    ::ng-deep .mdc-notched-outline {
+      border: 1px solid #ccc;
+      border-radius: 2px;
+    }
+
+    ::ng-deep .mdc-notched-outline__leading,
+    ::ng-deep .mdc-notched-outline__trailing,
+    ::ng-deep .mdc-notched-outline__notch {
+      border: none;
+    }
+
+    /* focus giống input thường */
+    ::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline {
+      border-color: #2b80d8;
+    }
+
+    /* icon calendar */
+    ::ng-deep .mat-datepicker-toggle {
+      position: absolute;
+      right: 4px;
+      top: -16px;
+      width: 20px;
+      height: 20px;
+    }
+
+    ::ng-deep .mat-mdc-icon-button {
+      width: 20px;
+      height: 20px;
+      padding: 2px;
+      min-width: unset;
+      border-radius: 0;
+    }
+
+    ::ng-deep .mat-mdc-icon-button:hover,
+    ::ng-deep .mat-mdc-icon-button:focus {
+      background: none;
+    }
+
+    ::ng-deep svg {
+      width: 14px;
+      height: 14px;
+      fill: #4392BB;
+    }
+  }
+
+
+  .search-input {
+    position: relative;
+    display: flex;
+
+    input {
+      padding-right: 24px !important;
+    }
+
+    button {
+      position: absolute;
+      right: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+
+      svg {
+        width: 12px;
+        height: 12px;
+      }
+    }
+  }
+
+  .radio-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 24px; // Smaller height
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    padding: 0 8px;
+
+    label {
+      font-size: 12px;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+  }
+
+  .form-group-button {
+    grid-column: 4;
+    justify-content: flex-end;
+  }
+
+  .form-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+
+    .btn {
+      border-radius: 3px;
+      padding: 0 13px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      height: 24px; // Smaller height
+      width: 64px;
+
+      &.btn-search {
+        background: #4392BB;
+        color: #fff;
+        border: none;
+      }
+
+      &.btn-clear {
+        background: #fff;
+        color: #EB5757;
+        border: 1px solid #ccc;
+      }
+    }
+  }
+}

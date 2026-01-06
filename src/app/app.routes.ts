@@ -11,4 +11,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/master-product/pages/master-product').then(m => m.MasterProduct),
   },
+  {
+    path: 'dashboard/inventory-input-list',
+    loadComponent: () =>
+      import('./features/inventory-input/pages/inventory-input-list/inventory-input-list').then(m => m.InventoryInputList),
+  },
 ];

@@ -1,0 +1,292 @@
+<section class="search-inventory-container">
+    <form (ngSubmit)="onSearch()" class="search-form">
+        <div class="grid-container">
+            <!-- Row 1 -->
+            <div class="form-group">
+                <label>入庫予定日</label>
+                <div class="range-input">
+                    <mat-form-field class="date-picker-field" appearance="outline">
+                        <input matInput [matDatepicker]="expectedArrivalDateFromPicker"
+                            [ngModel]="expectedArrivalDateFrom()" (ngModelChange)="expectedArrivalDateFrom.set($event)"
+                            name="expectedArrivalDateFrom" placeholder="yyyy/mm/dd">
+                        <mat-datepicker-toggle matIconSuffix
+                            [for]="expectedArrivalDateFromPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #expectedArrivalDateFromPicker></mat-datepicker>
+                    </mat-form-field>
+                    <span>~</span>
+                    <mat-form-field class="date-picker-field" appearance="outline">
+                        <input matInput [matDatepicker]="expectedArrivalDateToPicker"
+                            [ngModel]="expectedArrivalDateTo()" (ngModelChange)="expectedArrivalDateTo.set($event)"
+                            name="expectedArrivalDateTo" placeholder="yyyy/mm/dd">
+                        <mat-datepicker-toggle matIconSuffix
+                            [for]="expectedArrivalDateToPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #expectedArrivalDateToPicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>入庫実績日</label>
+                <div class="range-input">
+                    <mat-form-field class="date-picker-field" appearance="outline">
+                        <input matInput [matDatepicker]="actualArrivalDateFromPicker"
+                            [ngModel]="actualArrivalDateFrom()" (ngModelChange)="actualArrivalDateFrom.set($event)"
+                            name="actualArrivalDateFrom" placeholder="yyyy/mm/dd">
+                        <mat-datepicker-toggle matIconSuffix
+                            [for]="actualArrivalDateFromPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #actualArrivalDateFromPicker></mat-datepicker>
+                    </mat-form-field>
+                    <span>~</span>
+                    <mat-form-field class="date-picker-field" appearance="outline">
+                        <input matInput [matDatepicker]="actualArrivalDateToPicker" [ngModel]="actualArrivalDateTo()"
+                            (ngModelChange)="actualArrivalDateTo.set($event)" name="actualArrivalDateTo"
+                            placeholder="yyyy/mm/dd">
+                        <mat-datepicker-toggle matIconSuffix [for]="actualArrivalDateToPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #actualArrivalDateToPicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>伝票番号</label>
+                <div class="range-input">
+                    <input type="text" [ngModel]="slipNumberFrom()" (ngModelChange)="slipNumberFrom.set($event)"
+                        name="slipNumberFrom" />
+                    <span>~</span>
+                    <input type="text" [ngModel]="slipNumberTo()" (ngModelChange)="slipNumberTo.set($event)"
+                        name="slipNumberTo" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>客先伝票番号</label>
+                <div class="range-input">
+                    <input type="text" [ngModel]="customerSlipNumberFrom()"
+                        (ngModelChange)="customerSlipNumberFrom.set($event)" name="customerSlipNumberFrom" />
+                    <span>~</span>
+                    <input type="text" [ngModel]="customerSlipNumberTo()"
+                        (ngModelChange)="customerSlipNumberTo.set($event)" name="customerSlipNumberTo" />
+                </div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="form-group">
+                <label>納品先コード</label>
+                <div class="range-input">
+                    <div class="search-input">
+                        <input type="text" [ngModel]="deliveryCodeFrom()" (ngModelChange)="deliveryCodeFrom.set($event)"
+                            name="deliveryCodeFrom" />
+                        <button type="button" (click)="openSearchDialog('deliveryFrom')">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect width="14" height="14" rx="1" fill="#4392BB" />
+                                <path
+                                    d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
+                                    fill="white" />
+                            </svg>
+                        </button>
+                    </div>
+                    <span>~</span>
+                    <div class="search-input">
+                        <input type="text" [ngModel]="deliveryCodeTo()" (ngModelChange)="deliveryCodeTo.set($event)"
+                            name="deliveryCodeTo" />
+                        <button type="button" (click)="openSearchDialog('deliveryTo')">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect width="14" height="14" rx="1" fill="#4392BB" />
+                                <path
+                                    d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
+                                    fill="white" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>納品先名称</label>
+                <input type="text" [ngModel]="deliveryName()" (ngModelChange)="deliveryName.set($event)"
+                    name="deliveryName" />
+            </div>
+
+            <div class="form-group">
+                <label>仕入先コード</label>
+                <div class="range-input">
+                    <div class="search-input">
+                        <input type="text" [ngModel]="supplierCodeFrom()" (ngModelChange)="supplierCodeFrom.set($event)"
+                            name="supplierCodeFrom" />
+                        <button type="button" (click)="openSearchDialog('supplierFrom')">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect width="14" height="14" rx="1" fill="#4392BB" />
+                                <path
+                                    d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
+                                    fill="white" />
+                            </svg>
+                        </button>
+                    </div>
+                    <span>~</span>
+                    <div class="search-input">
+                        <input type="text" [ngModel]="supplierCodeTo()" (ngModelChange)="supplierCodeTo.set($event)"
+                            name="supplierCodeTo" />
+                        <button type="button" (click)="openSearchDialog('supplierTo')">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect width="14" height="14" rx="1" fill="#4392BB" />
+                                <path
+                                    d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
+                                    fill="white" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>仕入先名称</label>
+                <input type="text" [ngModel]="supplierName()" (ngModelChange)="supplierName.set($event)"
+                    name="supplierName" />
+            </div>
+
+            <!-- Row 3 -->
+            <div class="form-group">
+                <label>所有者コード</label>
+                <div class="range-input">
+                    <div class="search-input">
+                        <input type="text" [ngModel]="ownerCodeFrom()" (ngModelChange)="ownerCodeFrom.set($event)"
+                            name="ownerCodeFrom" />
+                        <button type="button" (click)="openSearchDialog('ownerFrom')">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect width="14" height="14" rx="1" fill="#4392BB" />
+                                <path
+                                    d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
+                                    fill="white" />
+                            </svg>
+                        </button>
+                    </div>
+                    <span>~</span>
+                    <div class="search-input">
+                        <input type="text" [ngModel]="ownerCodeTo()" (ngModelChange)="ownerCodeTo.set($event)"
+                            name="ownerCodeTo" />
+                        <button type="button" (click)="openSearchDialog('ownerTo')">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect width="14" height="14" rx="1" fill="#4392BB" />
+                                <path
+                                    d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
+                                    fill="white" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>所有者名称</label>
+                <input type="text" [ngModel]="ownerName()" (ngModelChange)="ownerName.set($event)" name="ownerName" />
+            </div>
+
+            <div class="form-group">
+                <label>商品コード</label>
+                <div class="range-input">
+                    <div class="search-input">
+                        <input type="text" [ngModel]="productCodeFrom()" (ngModelChange)="productCodeFrom.set($event)"
+                            name="productCodeFrom" />
+                        <button type="button" (click)="openSearchDialog('productFrom')">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect width="14" height="14" rx="1" fill="#4392BB" />
+                                <path
+                                    d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
+                                    fill="white" />
+                            </svg>
+                        </button>
+                    </div>
+                    <span>~</span>
+                    <div class="search-input">
+                        <input type="text" [ngModel]="productCodeTo()" (ngModelChange)="productCodeTo.set($event)"
+                            name="productCodeTo" />
+                        <button type="button" (click)="openSearchDialog('productTo')">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <rect width="14" height="14" rx="1" fill="#4392BB" />
+                                <path
+                                    d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
+                                    fill="white" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>商品名称</label>
+                <input type="text" [ngModel]="productName()" (ngModelChange)="productName.set($event)"
+                    name="productName" />
+            </div>
+
+            <!-- Row 4 -->
+            <div class="form-group">
+                <label>倉庫</label>
+                <div class="range-input">
+                    <select class="select-arrow" [ngModel]="warehouseFrom()" (ngModelChange)="warehouseFrom.set($event)"
+                        name="warehouseFrom">
+                        <option value="">選択</option>
+                    </select>
+                    <span>~</span>
+                    <select class="select-arrow" [ngModel]="warehouseTo()" (ngModelChange)="warehouseTo.set($event)"
+                        name="warehouseTo">
+                        <option value="">選択</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>入庫タイプ</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="arrivalType" value="ALL" [ngModel]="arrivalType()"
+                            (ngModelChange)="arrivalType.set($event)"> 全て</label>
+                    <label><input type="radio" name="arrivalType" value="SCHEDULED" [ngModel]="arrivalType()"
+                            (ngModelChange)="arrivalType.set($event)"> 予定あり</label>
+                    <label><input type="radio" name="arrivalType" value="ACTUAL" [ngModel]="arrivalType()"
+                            (ngModelChange)="arrivalType.set($event)"> 実績のみ</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>入庫状態</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="arrivalStatus" value="ALL" [ngModel]="arrivalStatus()"
+                            (ngModelChange)="arrivalStatus.set($event)"> 全て</label>
+                    <label><input type="radio" name="arrivalStatus" value="NOT_ARRIVED" [ngModel]="arrivalStatus()"
+                            (ngModelChange)="arrivalStatus.set($event)"> 未入庫</label>
+                    <label><input type="radio" name="arrivalStatus" value="REMAINING" [ngModel]="arrivalStatus()"
+                            (ngModelChange)="arrivalStatus.set($event)"> 入庫残</label>
+                    <label><input type="radio" name="arrivalStatus" value="ARRIVED" [ngModel]="arrivalStatus()"
+                            (ngModelChange)="arrivalStatus.set($event)"> 入庫済</label>
+                </div>
+            </div>
+
+            <!-- Row 5 -->
+            <div class="form-group">
+                <label>クローズ区分</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="closeDivision" value="ALL" [ngModel]="closeDivision()"
+                            (ngModelChange)="closeDivision.set($event)"> 全て</label>
+                    <label><input type="radio" name="closeDivision" value="NOT_CLOSED" [ngModel]="closeDivision()"
+                            (ngModelChange)="closeDivision.set($event)"> 未クローズ</label>
+                    <label><input type="radio" name="closeDivision" value="CLOSED" [ngModel]="closeDivision()"
+                            (ngModelChange)="closeDivision.set($event)"> クローズ済</label>
+                </div>
+            </div>
+
+            <div class="form-group form-group-button">
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-search">検索</button>
+                    <button type="button" (click)="onClear()" class="btn btn-clear">クリア</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
