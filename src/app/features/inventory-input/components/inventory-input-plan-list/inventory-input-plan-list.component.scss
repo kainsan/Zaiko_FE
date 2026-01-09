@@ -1,0 +1,235 @@
+.list-container {
+    background-color: #fff;
+    padding: 16px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-family: "Yu Gothic", "YuGothic", sans-serif;
+}
+
+.list-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+
+    h3 {
+        margin: 0;
+        font-size: 16px;
+        color: #4392BB;
+        font-weight: bold;
+    }
+
+    .btn-add {
+        background-color: #4392BB;
+        color: #fff;
+        border: none;
+        padding: 6px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+
+        &:hover {
+            background-color: #3B7A9C;
+        }
+    }
+}
+
+.table-wrapper {
+    overflow-x: auto;
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1000px;
+
+        th,
+        td {
+            border: 1px solid #e0e0e0;
+            padding: 6px;
+            vertical-align: middle;
+            font-size: 12px;
+        }
+
+        thead {
+            background-color: #f0f5f9;
+
+            th {
+                text-align: left;
+                font-weight: bold;
+                color: #333;
+                background-color: #f0f5f9;
+            }
+        }
+
+        tbody {
+            tr.row-top {
+                background-color: #fff;
+            }
+
+            tr.row-bottom {
+                background-color: #fff;
+            }
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 4px 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 3px;
+            box-sizing: border-box;
+            height: 30px;
+            font-size: 12px;
+
+            &.readonly-input,
+            &.readonly-num {
+                background-color: #f5f5f5;
+            }
+
+            &.readonly-num {
+                text-align: right;
+            }
+        }
+
+        /* Column Widths & Specific Styles */
+        .col-no,
+        .cell-no {
+            width: 50px;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+
+        .cell-product {
+            .input-group {
+                display: flex;
+                gap: 4px;
+
+                .code-input-wrapper {
+                    position: relative;
+                    width: 120px;
+                    flex-shrink: 0;
+
+                    input {
+                        padding-right: 24px;
+                    }
+
+                    .search-btn {
+                        position: absolute;
+                        right: 2px;
+                        top: 2px;
+                        width: 20px;
+                        height: 26px;
+                        background-color: #4392BB;
+                        color: white;
+                        border: none;
+                        border-radius: 2px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        cursor: pointer;
+                        font-size: 10px;
+                        padding: 0;
+                    }
+                }
+
+                .name-input {
+                    flex-grow: 1;
+                }
+            }
+        }
+
+        .cell-date {
+            .date-group {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+
+                .badge-input {
+                    background-color: #fff0f0;
+                    color: #d32f2f;
+                    padding: 2px 6px;
+                    border: 1px solid #ffcdd2;
+                    border-radius: 2px;
+                    font-size: 10px;
+                    height: 30px;
+                    display: flex;
+                    align-items: center;
+                }
+
+                .date-input-wrapper {
+                    position: relative;
+                    flex-grow: 1;
+                    display: flex;
+                    align-items: center;
+
+                    input.date-field {
+                        padding-right: 40px;
+                    }
+
+                    ::ng-deep .mat-datepicker-toggle {
+                        position: absolute;
+                        right: 0;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        color: #4392BB;
+
+                        button {
+                            width: 30px;
+                            height: 30px;
+                        }
+                    }
+                }
+            }
+        }
+
+        .cell-qty {
+            .qty-group {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+
+                .qty-small {
+                    width: 50px;
+                    background-color: #f5f5f5;
+                }
+
+                .qty-medium {
+                    width: 70px;
+                }
+            }
+        }
+
+        .cell-actions {
+            width: 40px;
+            text-align: center;
+
+            .action-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                align-items: center;
+
+                button {
+                    width: 30px;
+                    height: 30px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+
+                    &.btn-delete {
+                        background-color: #d9534f;
+                    }
+
+                    &.btn-copy {
+                        background-color: #4392BB;
+                    }
+                }
+            }
+        }
+    }
+}

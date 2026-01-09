@@ -1,0 +1,142 @@
+<header class="header">
+    <div class="breadcrumb">
+        <a routerLink="/admin" class="breadcrumb-link">
+            入庫
+        </a>
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="7" viewBox="0 0 256 512">
+            <path fill="#9f9f9f"
+                d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+        </svg>
+        <span class="breadcrumb-link">入庫一覧</span>
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="7" viewBox="0 0 256 512">
+            <path fill="#9f9f9f"
+                d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+        </svg>
+        <span class="current-page">入庫予定入力</span>
+    </div>
+
+    <div class="header-actions">
+        <div class="date-container">
+            <span class="date-label">業務日付</span>
+            <span class="date-value">{{currentDate}}</span>
+        </div>
+    </div>
+</header>
+
+<div class="header-container">
+    <div class="top-bar">
+        <button class="back-btn" (click)="onBack()">
+            <svg width="8" height="13" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M0.246094 5.57812L5.55078 0.246094C5.82422 0 6.23438 0 6.48047 0.246094L7.10938 0.875C7.35547 1.12109 7.35547 1.53125 7.10938 1.80469L2.89844 6.01562L7.10938 10.2539C7.35547 10.5273 7.35547 10.9375 7.10938 11.1836L6.48047 11.8125C6.23438 12.0586 5.82422 12.0586 5.55078 11.8125L0.246094 6.48047C0 6.23438 0 5.82422 0.246094 5.57812Z"
+                    fill="#4392BB" />
+            </svg>
+            戻る
+        </button>
+        <div class="actions">
+            <div class="status-label">入庫状態 <span class="status-badge">未入庫</span></div>
+            <button class="btn-close">クローズ</button>
+            <button class="btn-delete">削除</button>
+            <button class="btn-save">保存</button>
+        </div>
+    </div>
+
+    <div class="form-grid">
+        <!-- Row 1 -->
+        <div class="form-group">
+            <label>入庫予定日</label>
+            <div class="input-wrapper date-input">
+                <input [matDatepicker]="picker" class="date-field" [value]="">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>伝票区分</label>
+            <select>
+                <option>通常入庫（自動採番）</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>伝票番号</label>
+            <input type="text" readonly class="readonly-input" [value]=" ">
+        </div>
+        <div class="form-group">
+            <label>客先伝票番号</label>
+            <input type="text">
+        </div>
+
+        <!-- Row 2 -->
+        <div class="form-group">
+            <label>納品先コード</label>
+            <div class="input-wrapper search-input">
+                <input type="text" [value]="">
+                <button class="search-btn">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="14" height="14" rx="1" fill="#4392BB" />
+                        <path
+                            d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
+                            fill="white" />
+                    </svg>
+
+                </button>
+            </div>
+        </div>
+        <div class="form-group full-width">
+            <label>納品先名称</label>
+            <input type="text" readonly class="readonly-input" [value]="">
+        </div>
+
+        <!-- Row 3 -->
+        <div class="form-group">
+            <label>仕入先コード</label>
+            <div class="input-wrapper search-input">
+                <input type="text" [value]=" ">
+                <button class="search-btn">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="14" height="14" rx="1" fill="#4392BB" />
+                        <path
+                            d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
+                            fill="white" />
+                    </svg>
+
+                </button>
+            </div>
+        </div>
+        <div class="form-group full-width">
+            <label>仕入先名称</label>
+            <input type="text" [value]=" " readonly class="readonly-input">
+        </div>
+
+        <!-- Row 4 -->
+        <div class="form-group">
+            <label>所有者コード</label>
+            <div class="input-wrapper search-input">
+                <input type="text" [value]=" ">
+                <button class="search-btn">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="14" height="14" rx="1" fill="#4392BB" />
+                        <path
+                            d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
+                            fill="white" />
+                    </svg>
+
+                </button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>所有者名称</label>
+            <input type="text" [value]="" readonly class="readonly-input">
+        </div>
+        <div class="form-group">
+            <label>倉庫</label>
+            <select>
+                <option></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>伝票備考</label>
+            <input type="text">
+        </div>
+    </div>
+</div>

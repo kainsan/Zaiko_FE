@@ -1,16 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 import { SearchInventoryInputComponent } from '../../components/search-inventory-input/search-inventory-input.component';
 import { ListInventoryInputComponent } from '../../components/list-inventory-input/list-inventory-input.component';
 import { InventoryInputService } from '../../services/inventory-input.service';
 import { InventoryInputDTO, InventoryInputSearchParams } from '../../models/inventory-input.model';
 import { PageResponse } from '../../../master-product/response/PageResponse';
+import { InventoryInputPlanComponent } from '../../components/inventory-input-plan/inventory-input-plan.component';
 
 @Component({
     selector: 'app-inventory-input-list',
-    imports: [RouterModule, CommonModule, SearchInventoryInputComponent, ListInventoryInputComponent],
+    imports: [RouterModule, CommonModule, SearchInventoryInputComponent, ListInventoryInputComponent, InventoryInputPlanComponent],
     standalone: true,
     templateUrl: './inventory-input-list.html',
     styleUrls: ['./inventory-input-list.scss'],
@@ -29,11 +30,24 @@ export class InventoryInputList implements OnInit {
     pageSize = 50;
     currentSearchParams = signal<InventoryInputSearchParams>({});
 
-    constructor(private inventoryInputService: InventoryInputService) { }
+    viewMode = signal<'list' | 'plan'>('list');
+    selectedId = signal<number | null>(null);
+
+    constructor(private inventoryInputService: InventoryInputService, private router: Router) { }
 
     ngOnInit(): void {
-       this.loadInventoryInputs();
+        this.loadInventoryInputs();
         this.refreshInventInput();
+    }
+
+    handleOpenPlan(item: InventoryInputDTO): void {
+        this.selectedId.set(item.inventoryInputEntity.inventoryInputId);
+        this.viewMode.set('plan');
+    }
+
+    handleBackToList(): void {
+        this.viewMode.set('list');
+        this.selectedId.set(null);
     }
 
     loadInventoryInputs(): void {
@@ -68,8 +82,6 @@ export class InventoryInputList implements OnInit {
             this.inventoryInputs.set(response.content || []);
         });
     }
-
-
 
     handleLoadMore(): void {
         const nextPage = this.currentPage() + 1;

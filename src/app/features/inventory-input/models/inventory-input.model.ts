@@ -68,3 +68,42 @@ export interface InventoryInputSearchParams {
     pageSize?: number;
     sort?: string;
 }
+export interface InventoryPlanInputDetailEntity {
+    datetimeMng: string | null;
+    planDetailId: number;
+    inventoryInputId: number;
+    companyId: number;
+    productId: number;
+    repositoryId: number;
+    locationId: number | null;
+    dateTimeMng: string | null;
+    numberMng: string | null;
+    csPlanQuantity: number | null;
+    blPlanQuantity: number | null;
+    psPlanQuantity: number | null;
+    totalPlanQuantity: number;
+    inventoryProductType: string;
+    detailNote: string | null;
+    // Add other fields as needed based on BE
+}
+
+export interface InventoryInputPlanDTO {
+    inventoryInputEntity: InventoryInputEntity;
+    destinationCode: string;
+    departmentName: string;
+    supplierCode: string;
+    supplierName: string;
+    customerCode: string;
+    customerName: string;
+    repositoryCode: string;
+    repositoryName: string;
+
+    detailEntity: InventoryPlanInputDetailEntity;
+    productCode: string;
+    productName: string;
+    detailRepositoryCode: string;
+    locationCode: string;
+    packCsUnitName: string;
+    packBlUnitName: string;
+    pieceUnitName: string;
+}

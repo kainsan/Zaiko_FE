@@ -67,7 +67,6 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
       'isReplenishMng'
     ].forEach((name) => {
       this.productForm.get(name)!.valueChanges.subscribe(() => {
-        console.log(this.productForm)
         this.togglePackagingUnits();
       });
     });

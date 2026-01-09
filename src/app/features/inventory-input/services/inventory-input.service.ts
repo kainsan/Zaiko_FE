@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PageResponse } from '../../master-product/response/PageResponse';
-import { InventoryInputDTO, InventoryInputSearchParams } from '../models/inventory-input.model';
+import { InventoryInputDTO, InventoryInputPlanDTO, InventoryInputSearchParams } from '../models/inventory-input.model';
 import { Product, Repository } from '../../master-product/model/product.model';
 
 @Injectable({
@@ -22,32 +22,36 @@ export class InventoryInputService {
         });
     }
 
+    getInventoryInputById(id: number): Observable<InventoryInputPlanDTO[]> {
+        return this.http.get<InventoryInputPlanDTO[]>(`${this.apiUrl}/inventory-input/inventory-input-plan/${id}`);
+    }
+
     searchInventoryInputs(searchParams: InventoryInputSearchParams): Observable<PageResponse<InventoryInputDTO>> {
-      const page = searchParams.page ?? 0;
-      const limit = searchParams.pageSize ?? 50;
+        const page = searchParams.page ?? 0;
+        const limit = searchParams.pageSize ?? 50;
 
-      const body: Record<string, any> = {};
+        const body: Record<string, any> = {};
 
-      Object.entries(searchParams).forEach(([key, value]) => {
-        if (value === undefined || value === null || value === '' || value === 'ALL' || key === 'page' || key === 'pageSize') {
-          return;
-        }
+        Object.entries(searchParams).forEach(([key, value]) => {
+            if (value === undefined || value === null || value === '' || value === 'ALL' || key === 'page' || key === 'pageSize') {
+                return;
+            }
 
-        body[key] =
-          value instanceof Date ? value.toISOString().substring(0, 10) : value; // yyyy-MM-dd
-      });
+            body[key] =
+                value instanceof Date ? value.toISOString().substring(0, 10) : value; // yyyy-MM-dd
+        });
 
-      return this.http.post<PageResponse<InventoryInputDTO>>(
-        `${this.apiUrl}/inventory-input/search`,
-        body,
-        {
-          params: {
-            page: String(page),
-            limit: String(limit)
-          }
-        }
-      );
-}
+        return this.http.post<PageResponse<InventoryInputDTO>>(
+            `${this.apiUrl}/inventory-input/search`,
+            body,
+            {
+                params: {
+                    page: String(page),
+                    limit: String(limit)
+                }
+            }
+        );
+    }
 
     // downloadCsv(searchParams: InventoryInputSearchParams): Observable<Blob> {
     //     const params: any = {};

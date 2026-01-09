@@ -1,0 +1,100 @@
+<div class="list-container">
+    <div class="list-header">
+        <h3>入庫予定明細一覧 </h3>
+        <button class="btn-add" (click)="addItem()">+ 追加</button>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2" class="col-no">No.</th>
+                    <th class="col-product">商品</th>
+                    <th class="col-warehouse">倉庫</th>
+                    <th class="col-location">ロケーション</th>
+                    <th class="col-remarks">明細備考</th>
+                    <th class="col-unentered">未入庫</th>
+                    <th rowspan="2" class="col-actions"></th>
+                </tr>
+                <tr>
+                    <th class="col-spec">規格</th>
+                    <th class="col-date">管理日付</th>
+                    <th class="col-mng-no">管理番号</th>
+                    <th class="col-qty">入庫数量 <span class="spacer"></span> 合計</th>
+                    <th class="col-entered">入庫済</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let item of data(); let i = index">
+                    <tr class="row-top">
+                        <td rowspan="2" class="cell-no">{{item?.productCode}}</td>
+                        <td class="cell-product">
+                            <div class="input-group">
+                                <div class="code-input-wrapper">
+                                    <input type="text" [value]="item?.productCode">
+                                    <button class="search-btn">🔍</button>
+                                </div>
+                                <input type="text" [value]="item?.productName" class="name-input">
+                            </div>
+                        </td>
+                        <td class="cell-warehouse">
+                            <select [value]="item.detailRepositoryCode">
+                                <option>{{ item.detailRepositoryCode }}</option>
+                                <option>1 本社</option>
+                            </select>
+                        </td>
+                        <td class="cell-location">
+                            <select>
+                                <option>{{ item.locationCode }}</option>
+                            </select>
+                        </td>
+                        <td class="cell-remarks">
+                            <input type="text" [value]="item.detailEntity.detailNote">
+                        </td>
+                        <td class="cell-unentered">
+                            <input type="text" [value]="item.detailEntity" readonly class="readonly-num">
+                        </td>
+                        <td rowspan="2" class="cell-actions">
+                            <div class="action-buttons">
+                                <button class="btn-delete" (click)="removeItem(i)">🗑️</button>
+                                <button class="btn-copy">📄</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="row-bottom">
+                        <td class="cell-spec">
+                            <input type="text" value="" readonly class="readonly-input">
+                        </td>
+                        <td class="cell-date">
+                            <div class="date-group">
+                                <span class="badge-input">入</span>
+                                <div class="date-input-wrapper">
+                                    <input [matDatepicker]="picker" class="date-field" placeholder="yyyy/mm/dd">
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="cell-mng-no">
+                            <input type="text">
+                        </td>
+                        <td class="cell-qty">
+                            <div class="qty-group">
+                                <input type="text" class="qty-small" [value]="item.detailEntity.csPlanQuantity">
+                                <span>-</span>
+                                <input type="text" class="qty-small" [value]="item.detailEntity.blPlanQuantity">
+                                <span>-</span>
+                                <input type="text" class="qty-medium" [value]="item.detailEntity.psPlanQuantity">
+
+                                <input type="text" class="qty-medium" readonly [value]="item.detailEntity">
+                            </div>
+                        </td>
+                        <td class="cell-entered">
+                            <input type="text" [value]="item.detailEntity.totalPlanQuantity" readonly class="readonly-num">
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+</div>
