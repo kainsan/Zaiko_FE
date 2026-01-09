@@ -86,15 +86,17 @@
         <select class="select-arrow" [(ngModel)]="repositoryId" name="repositoryId"
           (change)="onWarehouseChange($event)">
           <option [value]=" ">選択</option>
-          <option *ngFor="let repo of repositories()" [value]="repo.repositoryId">{{repo.repositoryCode}} {{repo.repositoryName}}</option>
+          <option *ngFor="let repo of repositories()" [value]="repo.repositoryId">{{repo.repositoryCode}}
+            {{repo.repositoryName}}</option>
         </select>
       </div>
 
       <div class="form-group">
         <label>推奨ロケーション</label>
         <select class="select-arrow" [(ngModel)]="locationId" name="locationId">
-          <option [value]= " ">選択</option>
-          <option *ngFor="let loc of locations()" [value]="loc.locationId">{{loc.locationCode}} {{loc.locationName}}</option>
+          <option [value]=" ">選択</option>
+          <option *ngFor="let loc of locations()" [value]="loc.locationId">{{loc.locationCode}} {{loc.locationName}}
+          </option>
         </select>
       </div>
 

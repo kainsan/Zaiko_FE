@@ -6,21 +6,23 @@
                 <label>入庫予定日</label>
                 <div class="range-input">
                     <mat-form-field class="date-picker-field" appearance="outline">
-                        <input matInput [matDatepicker]="expectedArrivalDateFromPicker"
-                            [ngModel]="expectedArrivalDateFrom()" (ngModelChange)="expectedArrivalDateFrom.set($event)"
-                            name="expectedArrivalDateFrom" placeholder="yyyy/mm/dd">
-                        <mat-datepicker-toggle matIconSuffix
-                            [for]="expectedArrivalDateFromPicker"></mat-datepicker-toggle>
-                        <mat-datepicker #expectedArrivalDateFromPicker></mat-datepicker>
+                        <input matInput [matDatepicker]="inputPlanDateFromPicker" [ngModel]="inputPlanDateFrom()"
+                            (ngModelChange)="inputPlanDateFrom.set($event)" name="inputPlanDateFrom"
+                            placeholder="yyyy/mm/dd"
+                            [matTooltip]="getRangeErrorMessage(inputPlanDateFrom(), inputPlanDateTo(), '入庫予定日', 'from')"
+                            matTooltipClass="error-tooltip">
+                        <mat-datepicker-toggle matIconSuffix [for]="inputPlanDateFromPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #inputPlanDateFromPicker></mat-datepicker>
                     </mat-form-field>
                     <span>~</span>
                     <mat-form-field class="date-picker-field" appearance="outline">
-                        <input matInput [matDatepicker]="expectedArrivalDateToPicker"
-                            [ngModel]="expectedArrivalDateTo()" (ngModelChange)="expectedArrivalDateTo.set($event)"
-                            name="expectedArrivalDateTo" placeholder="yyyy/mm/dd">
-                        <mat-datepicker-toggle matIconSuffix
-                            [for]="expectedArrivalDateToPicker"></mat-datepicker-toggle>
-                        <mat-datepicker #expectedArrivalDateToPicker></mat-datepicker>
+                        <input matInput [matDatepicker]="inputPlanDateToPicker" [ngModel]="inputPlanDateTo()"
+                            (ngModelChange)="inputPlanDateTo.set($event)" name="inputPlanDateTo"
+                            placeholder="yyyy/mm/dd"
+                            [matTooltip]="getRangeErrorMessage(inputPlanDateFrom(), inputPlanDateTo(), '入庫予定日', 'to')"
+                            matTooltipClass="error-tooltip">
+                        <mat-datepicker-toggle matIconSuffix [for]="inputPlanDateToPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #inputPlanDateToPicker></mat-datepicker>
                     </mat-form-field>
                 </div>
             </div>
@@ -29,20 +31,23 @@
                 <label>入庫実績日</label>
                 <div class="range-input">
                     <mat-form-field class="date-picker-field" appearance="outline">
-                        <input matInput [matDatepicker]="actualArrivalDateFromPicker"
-                            [ngModel]="actualArrivalDateFrom()" (ngModelChange)="actualArrivalDateFrom.set($event)"
-                            name="actualArrivalDateFrom" placeholder="yyyy/mm/dd">
-                        <mat-datepicker-toggle matIconSuffix
-                            [for]="actualArrivalDateFromPicker"></mat-datepicker-toggle>
-                        <mat-datepicker #actualArrivalDateFromPicker></mat-datepicker>
+                        <input matInput [matDatepicker]="inputActualDateFromPicker" [ngModel]="inputActualDateFrom()"
+                            (ngModelChange)="inputActualDateFrom.set($event)" name="inputActualDateFrom"
+                            placeholder="yyyy/mm/dd"
+                            [matTooltip]="getRangeErrorMessage(inputActualDateFrom(), inputActualDateTo(), '入庫実績日', 'from')"
+                            matTooltipClass="error-tooltip">
+                        <mat-datepicker-toggle matIconSuffix [for]="inputActualDateFromPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #inputActualDateFromPicker></mat-datepicker>
                     </mat-form-field>
                     <span>~</span>
                     <mat-form-field class="date-picker-field" appearance="outline">
-                        <input matInput [matDatepicker]="actualArrivalDateToPicker" [ngModel]="actualArrivalDateTo()"
-                            (ngModelChange)="actualArrivalDateTo.set($event)" name="actualArrivalDateTo"
-                            placeholder="yyyy/mm/dd">
-                        <mat-datepicker-toggle matIconSuffix [for]="actualArrivalDateToPicker"></mat-datepicker-toggle>
-                        <mat-datepicker #actualArrivalDateToPicker></mat-datepicker>
+                        <input matInput [matDatepicker]="inputActualDateToPicker" [ngModel]="inputActualDateTo()"
+                            (ngModelChange)="inputActualDateTo.set($event)" name="inputActualDateTo"
+                            placeholder="yyyy/mm/dd"
+                            [matTooltip]="getRangeErrorMessage(inputActualDateFrom(), inputActualDateTo(), '入庫実績日', 'to')"
+                            matTooltipClass="error-tooltip">
+                        <mat-datepicker-toggle matIconSuffix [for]="inputActualDateToPicker"></mat-datepicker-toggle>
+                        <mat-datepicker #inputActualDateToPicker></mat-datepicker>
                     </mat-form-field>
                 </div>
             </div>
@@ -50,11 +55,10 @@
             <div class="form-group">
                 <label>伝票番号</label>
                 <div class="range-input">
-                    <input type="text" [ngModel]="slipNumberFrom()" (ngModelChange)="slipNumberFrom.set($event)"
-                        name="slipNumberFrom" />
+                    <input type="text" [ngModel]="slipNoFrom()" (ngModelChange)="slipNoFrom.set($event)"
+                        name="slipNoFrom" />
                     <span>~</span>
-                    <input type="text" [ngModel]="slipNumberTo()" (ngModelChange)="slipNumberTo.set($event)"
-                        name="slipNumberTo" />
+                    <input type="text" [ngModel]="slipNoTo()" (ngModelChange)="slipNoTo.set($event)" name="slipNoTo" />
                 </div>
             </div>
 
@@ -77,7 +81,7 @@
                         <input type="text" [ngModel]="deliveryCodeFrom()" (ngModelChange)="deliveryCodeFrom.set($event)"
                             name="deliveryCodeFrom" />
                         <button type="button" (click)="openSearchDialog('deliveryFrom')">
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                            <svg width="18" height="18" viewBox="0 0 14 14" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <rect width="14" height="14" rx="1" fill="#4392BB" />
                                 <path
@@ -91,7 +95,7 @@
                         <input type="text" [ngModel]="deliveryCodeTo()" (ngModelChange)="deliveryCodeTo.set($event)"
                             name="deliveryCodeTo" />
                         <button type="button" (click)="openSearchDialog('deliveryTo')">
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                            <svg width="18" height="18" viewBox="0 0 14 14" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <rect width="14" height="14" rx="1" fill="#4392BB" />
                                 <path
@@ -130,7 +134,7 @@
                         <input type="text" [ngModel]="supplierCodeTo()" (ngModelChange)="supplierCodeTo.set($event)"
                             name="supplierCodeTo" />
                         <button type="button" (click)="openSearchDialog('supplierTo')">
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                            <svg width="18" height="18" viewBox="0 0 14 14" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <rect width="14" height="14" rx="1" fill="#4392BB" />
                                 <path
@@ -150,13 +154,13 @@
 
             <!-- Row 3 -->
             <div class="form-group">
-                <label>所有者コード</label>
+                <label>得意先コード</label>
                 <div class="range-input">
                     <div class="search-input">
-                        <input type="text" [ngModel]="ownerCodeFrom()" (ngModelChange)="ownerCodeFrom.set($event)"
-                            name="ownerCodeFrom" />
-                        <button type="button" (click)="openSearchDialog('ownerFrom')">
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                        <input type="text" [ngModel]="customerCodeFrom()" (ngModelChange)="customerCodeFrom.set($event)"
+                            name="customerCodeFrom" />
+                        <button type="button" (click)="openSearchDialog('customerFrom')">
+                            <svg width="18" height="18" viewBox="0 0 14 14" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <rect width="14" height="14" rx="1" fill="#4392BB" />
                                 <path
@@ -167,10 +171,10 @@
                     </div>
                     <span>~</span>
                     <div class="search-input">
-                        <input type="text" [ngModel]="ownerCodeTo()" (ngModelChange)="ownerCodeTo.set($event)"
-                            name="ownerCodeTo" />
-                        <button type="button" (click)="openSearchDialog('ownerTo')">
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                        <input type="text" [ngModel]="customerCodeTo()" (ngModelChange)="customerCodeTo.set($event)"
+                            name="customerCodeTo" />
+                        <button type="button" (click)="openSearchDialog('customerTo')">
+                            <svg width="18" height="18" viewBox="0 0 14 14" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <rect width="14" height="14" rx="1" fill="#4392BB" />
                                 <path
@@ -183,8 +187,9 @@
             </div>
 
             <div class="form-group">
-                <label>所有者名称</label>
-                <input type="text" [ngModel]="ownerName()" (ngModelChange)="ownerName.set($event)" name="ownerName" />
+                <label>得意先名称</label>
+                <input type="text" [ngModel]="customerName()" (ngModelChange)="customerName.set($event)"
+                    name="customerName" />
             </div>
 
             <div class="form-group">
@@ -194,7 +199,7 @@
                         <input type="text" [ngModel]="productCodeFrom()" (ngModelChange)="productCodeFrom.set($event)"
                             name="productCodeFrom" />
                         <button type="button" (click)="openSearchDialog('productFrom')">
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                            <svg width="18" height="18" viewBox="0 0 14 14" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <rect width="14" height="14" rx="1" fill="#4392BB" />
                                 <path
@@ -208,7 +213,7 @@
                         <input type="text" [ngModel]="productCodeTo()" (ngModelChange)="productCodeTo.set($event)"
                             name="productCodeTo" />
                         <button type="button" (click)="openSearchDialog('productTo')">
-                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                            <svg width="18" height="18" viewBox="0 0 14 14" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <rect width="14" height="14" rx="1" fill="#4392BB" />
                                 <path
@@ -230,14 +235,20 @@
             <div class="form-group">
                 <label>倉庫</label>
                 <div class="range-input">
-                    <select class="select-arrow" [ngModel]="warehouseFrom()" (ngModelChange)="warehouseFrom.set($event)"
-                        name="warehouseFrom">
+                    <select class="select-arrow" [ngModel]="planRepositoryId()"
+                        (ngModelChange)="planRepositoryId.set($event)" name="planRepositoryId">
                         <option value="">選択</option>
+                        <option *ngFor="let repo of repositories()" [value]="repo.repositoryId">
+                            {{repo.repositoryCode}} {{repo.repositoryName}}
+                        </option>
                     </select>
                     <span>~</span>
-                    <select class="select-arrow" [ngModel]="warehouseTo()" (ngModelChange)="warehouseTo.set($event)"
-                        name="warehouseTo">
+                    <select class="select-arrow" [ngModel]="actualRepositoryId()"
+                        (ngModelChange)="actualRepositoryId.set($event)" name="actualRepositoryId">
                         <option value="">選択</option>
+                        <option *ngFor="let repo of repositories()" [value]="repo.repositoryId">
+                            {{repo.repositoryCode}} {{repo.repositoryName}}
+                        </option>
                     </select>
                 </div>
             </div>
@@ -245,26 +256,26 @@
             <div class="form-group">
                 <label>入庫タイプ</label>
                 <div class="radio-group">
-                    <label><input type="radio" name="arrivalType" value="ALL" [ngModel]="arrivalType()"
-                            (ngModelChange)="arrivalType.set($event)"> 全て</label>
-                    <label><input type="radio" name="arrivalType" value="SCHEDULED" [ngModel]="arrivalType()"
-                            (ngModelChange)="arrivalType.set($event)"> 予定あり</label>
-                    <label><input type="radio" name="arrivalType" value="ACTUAL" [ngModel]="arrivalType()"
-                            (ngModelChange)="arrivalType.set($event)"> 実績のみ</label>
+                    <label><input type="radio" name="receiptType" value="ALL" [ngModel]="receiptType()"
+                            (ngModelChange)="receiptType.set($event)"> 全て</label>
+                    <label><input type="radio" name="receiptType" value="PLAN" [ngModel]="receiptType()"
+                            (ngModelChange)="receiptType.set($event)"> 予定あり</label>
+                    <label><input type="radio" name="receiptType" value="ACTUAL" [ngModel]="receiptType()"
+                            (ngModelChange)="receiptType.set($event)"> 実績のみ</label>
                 </div>
             </div>
 
             <div class="form-group">
                 <label>入庫状態</label>
                 <div class="radio-group">
-                    <label><input type="radio" name="arrivalStatus" value="ALL" [ngModel]="arrivalStatus()"
-                            (ngModelChange)="arrivalStatus.set($event)"> 全て</label>
-                    <label><input type="radio" name="arrivalStatus" value="NOT_ARRIVED" [ngModel]="arrivalStatus()"
-                            (ngModelChange)="arrivalStatus.set($event)"> 未入庫</label>
-                    <label><input type="radio" name="arrivalStatus" value="REMAINING" [ngModel]="arrivalStatus()"
-                            (ngModelChange)="arrivalStatus.set($event)"> 入庫残</label>
-                    <label><input type="radio" name="arrivalStatus" value="ARRIVED" [ngModel]="arrivalStatus()"
-                            (ngModelChange)="arrivalStatus.set($event)"> 入庫済</label>
+                    <label><input type="radio" name="receiptStatus" value="ALL" [ngModel]="receiptStatus()"
+                            (ngModelChange)="receiptStatus.set($event)"> 全て</label>
+                    <label><input type="radio" name="receiptStatus" value="NOT_YET" [ngModel]="receiptStatus()"
+                            (ngModelChange)="receiptStatus.set($event)"> 未入庫</label>
+                    <label><input type="radio" name="receiptStatus" value="REMAINING" [ngModel]="receiptStatus()"
+                            (ngModelChange)="receiptStatus.set($event)"> 入庫残</label>
+                    <label><input type="radio" name="receiptStatus" value="DONE" [ngModel]="receiptStatus()"
+                            (ngModelChange)="receiptStatus.set($event)"> 入庫済</label>
                 </div>
             </div>
 
@@ -272,12 +283,12 @@
             <div class="form-group">
                 <label>クローズ区分</label>
                 <div class="radio-group">
-                    <label><input type="radio" name="closeDivision" value="ALL" [ngModel]="closeDivision()"
-                            (ngModelChange)="closeDivision.set($event)"> 全て</label>
-                    <label><input type="radio" name="closeDivision" value="NOT_CLOSED" [ngModel]="closeDivision()"
-                            (ngModelChange)="closeDivision.set($event)"> 未クローズ</label>
-                    <label><input type="radio" name="closeDivision" value="CLOSED" [ngModel]="closeDivision()"
-                            (ngModelChange)="closeDivision.set($event)"> クローズ済</label>
+                    <label><input type="radio" name="isClosed" value="ALL" [ngModel]="isClosed()"
+                            (ngModelChange)="isClosed.set($event)"> 全て</label>
+                    <label><input type="radio" name="isClosed" value="UNCLOSED" [ngModel]="isClosed()"
+                            (ngModelChange)="isClosed.set($event)"> 未クローズ</label>
+                    <label><input type="radio" name="isClosed" value="CLOSED" [ngModel]="isClosed()"
+                            (ngModelChange)="isClosed.set($event)"> クローズ済</label>
                 </div>
             </div>
 

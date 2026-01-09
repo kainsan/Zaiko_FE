@@ -39,12 +39,12 @@ export interface InventoryInputDTO {
 }
 
 export interface InventoryInputSearchParams {
-    expectedArrivalDateFrom?: string;
-    expectedArrivalDateTo?: string;
-    actualArrivalDateFrom?: string;
-    actualArrivalDateTo?: string;
-    slipNumberFrom?: string;
-    slipNumberTo?: string;
+    inputPlanDateFrom?: string;
+    inputPlanDateTo?: string;
+    inputActualDateFrom?: string;
+    inputActualDateTo?: string;
+    slipNoFrom?: string;
+    slipNoTo?: string;
     customerSlipNumberFrom?: string;
     customerSlipNumberTo?: string;
     deliveryCodeFrom?: string;
@@ -53,17 +53,18 @@ export interface InventoryInputSearchParams {
     supplierCodeFrom?: string;
     supplierCodeTo?: string;
     supplierName?: string;
-    ownerCodeFrom?: string;
-    ownerCodeTo?: string;
-    ownerName?: string;
+    customerCodeFrom?: string;
+    customerCodeTo?: string;
+    customerName?: string;
     productCodeFrom?: string;
     productCodeTo?: string;
     productName?: string;
-    warehouseFrom?: string;
-    warehouseTo?: string;
-    arrivalType?: string;
-    arrivalStatus?: string;
-    closeDivision?: string;
+    planRepositoryId?: string;
+    actualRepositoryId?: string;
+    receiptType?: string;
+    receiptStatus?: string;
+    isClosed?: string;
     page?: number;
     pageSize?: number;
+    sort?: string;
 }

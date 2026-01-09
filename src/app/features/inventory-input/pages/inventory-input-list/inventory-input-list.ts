@@ -6,6 +6,7 @@ import { SearchInventoryInputComponent } from '../../components/search-inventory
 import { ListInventoryInputComponent } from '../../components/list-inventory-input/list-inventory-input.component';
 import { InventoryInputService } from '../../services/inventory-input.service';
 import { InventoryInputDTO, InventoryInputSearchParams } from '../../models/inventory-input.model';
+import { PageResponse } from '../../../master-product/response/PageResponse';
 
 @Component({
     selector: 'app-inventory-input-list',
@@ -23,44 +24,61 @@ export class InventoryInputList implements OnInit {
 
     isSearchVisible = signal<boolean>(true);
     inventoryInputs = signal<InventoryInputDTO[]>([]);
-    totalItems = signal(0);
+    totalPages = signal(0);
     currentPage = signal(0);
-    pageSize = signal(50);
+    pageSize = 50;
     currentSearchParams = signal<InventoryInputSearchParams>({});
 
     constructor(private inventoryInputService: InventoryInputService) { }
 
     ngOnInit(): void {
-        this.loadInventoryInputs();
+       this.loadInventoryInputs();
+        this.refreshInventInput();
     }
 
     loadInventoryInputs(): void {
-        this.inventoryInputService.getInventoryInputs(this.currentPage(), this.pageSize()).subscribe(response => {
+        this.inventoryInputService.getInventoryInputs(this.currentPage(), this.pageSize).subscribe(response => {
             this.inventoryInputs.set(response.content || []);
-            this.totalItems.set(response.page?.totalElements ?? (response as any).totalElements ?? 0);
+            this.totalPages.set(response.page?.totalPages ?? 0);
         });
+    }
+
+    handleSearchResults(response: PageResponse<InventoryInputDTO>): void {
+        this.inventoryInputs.set(response.content || []);
+        this.totalPages.set(response.page?.totalPages ?? 0);
+        this.currentPage.set(0);
+    }
+
+    handleSearchParams(params: InventoryInputSearchParams): void {
+        this.currentSearchParams.set(params);
     }
 
     toggleSearch(): void {
         this.isSearchVisible.set(!this.isSearchVisible());
     }
 
-    handleSearch(params: InventoryInputSearchParams): void {
-        this.currentSearchParams.set(params);
-        this.currentPage.set(0);
-        this.inventoryInputService.searchInventoryInputs({ ...params, page: 0, pageSize: this.pageSize() }).subscribe(response => {
+    refreshInventInput(): void {
+        const params = {
+            ...this.currentSearchParams(),
+            page: 0,
+            pageSize: (this.currentPage() + 1) * this.pageSize
+        };
+
+        this.inventoryInputService.searchInventoryInputs(params).subscribe(response => {
             this.inventoryInputs.set(response.content || []);
-            this.totalItems.set(response.page?.totalElements ?? (response as any).totalElements ?? 0);
         });
     }
+
+
 
     handleLoadMore(): void {
         const nextPage = this.currentPage() + 1;
         this.currentPage.set(nextPage);
-        const params = { ...this.currentSearchParams(), page: nextPage, pageSize: this.pageSize() };
+        const params = { ...this.currentSearchParams(), page: nextPage, pageSize: this.pageSize };
 
         this.inventoryInputService.searchInventoryInputs(params).subscribe(response => {
             this.inventoryInputs.update(items => [...items, ...(response.content || [])]);
+            this.totalPages.set(response.page?.totalPages ?? 0);
         });
     }
 

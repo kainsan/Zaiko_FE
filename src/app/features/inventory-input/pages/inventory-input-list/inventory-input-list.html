@@ -36,12 +36,14 @@
     </header>
 
     <section *ngIf="isSearchVisible()">
-        <search-inventory-input (search)="handleSearch($event)" (clear)="handleClear()"></search-inventory-input>
+        <search-inventory-input (searchInventoryInputs)="handleSearchResults($event)"
+            (onSearchParams)="handleSearchParams($event)" (clear)="handleClear()"></search-inventory-input>
     </section>
 
     <div class="container">
         <div class="list-section">
-            <list-inventory-input [items]="inventoryInputs()" (loadMore)="handleLoadMore()"></list-inventory-input>
+            <list-inventory-input [inventoryInputs]="inventoryInputs()" [totalPages]="totalPages()"
+                [currentPage]="currentPage()" (loadMore)="handleLoadMore()"></list-inventory-input>
         </div>
     </div>
 </div>

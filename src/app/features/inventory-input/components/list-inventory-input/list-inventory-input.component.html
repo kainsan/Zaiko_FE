@@ -11,7 +11,9 @@
                 CSV
             </button>
         </div>
-        <span class="results-count">総計 0 / 100 件</span>
+        <span class="results-count">
+            総計 <span class="count-value">{{currentPage()}}</span> / {{ totalPages() }} 件
+        </span>
     </div>
 
     <div class="table-wrapper">
@@ -42,16 +44,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of items; let i = index">
+                <tr *ngFor="let item of displayItems(); let i = index">
                     <td class="status-cell">
                         <div class="status-content">
                             <span class="lock-icon">
-                                <svg *ngIf="item.inventoryInputEntity.isClosed !== '1'" width="11" height="12"
+                                <!-- Unlock icon for Unclose (0) -->
+                                <svg *ngIf="item.inventoryInputEntity.isClosed === '0'" width="11" height="12"
                                     viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path
                                         d="M7.875 0C6.42755 0 5.25 1.17755 5.25 2.625V5.25H0.75C0.335812 5.25 0 5.58581 0 6V11.25C0 11.6642 0.335812 12 0.75 12H7.5C7.91419 12 8.25 11.6642 8.25 11.25V6C8.25 5.58581 7.91419 5.25 7.5 5.25H6.75V2.625C6.75 2.00463 7.25463 1.5 7.875 1.5C8.49537 1.5 9 2.00463 9 2.625V4.5C9 4.91419 9.33581 5.25 9.75 5.25C10.1642 5.25 10.5 4.91419 10.5 4.5V2.625C10.5 1.17755 9.32245 0 7.875 0ZM4.5 9.30616V10.125C4.5 10.3321 4.33209 10.5 4.125 10.5C3.91791 10.5 3.75 10.3321 3.75 10.125V9.30614C3.31402 9.15115 3 8.73907 3 8.24998C3 7.6286 3.50362 7.12498 4.125 7.12498C4.74638 7.12498 5.25 7.6286 5.25 8.24998C5.25 8.73907 4.93598 9.15115 4.5 9.30616Z"
                                         fill="#9F9F9F" />
                                 </svg>
+                                <!-- Lock icon for Closed (1) -->
                                 <svg *ngIf="item.inventoryInputEntity.isClosed === '1'" width="11" height="12"
                                     viewBox="0 0 640 640" xmlns="http://www.w3.org/2000/svg">
                                     <path
@@ -65,8 +69,10 @@
                     <td class="no-cell">{{i + 1}}</td>
                     <td class="slip-cell">{{item.inventoryInputEntity.slipNo}}</td>
                     <td class="type-cell">
-                        <span class="type-badge">{{item.inventoryInputEntity.inputPlanDate ? '予定あり' :
-                            '実績のみ'}}</span>
+                        <span class="type-badge" [class.plan]="item.inventoryInputEntity.inputPlanDate"
+                            [class.actual]="!item.inventoryInputEntity.inputPlanDate">
+                            {{item.inventoryInputEntity.inputPlanDate ? '予定あり' : '実績のみ'}}
+                        </span>
                     </td>
                     <td class="date-cell">
                         <div class="multi-line">
@@ -112,9 +118,9 @@
                     </td>
                     <td class="actions-cell">
                         <div class="action-buttons">
-                            <button class="btn btn-scheduled">予定</button>
-                            <button class="btn btn-actual">実績</button>
-                            <button class="btn btn-edit">訂正</button>
+                            <button class="btn btn-scheduled" [disabled]="isPlanDisabled(item)">予定</button>
+                            <button class="btn btn-actual" [disabled]="isActualDisabled(item)">実績</button>
+                            <button class="btn btn-edit" [disabled]="isCorrectionDisabled(item)">訂正</button>
                         </div>
                     </td>
                 </tr>

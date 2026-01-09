@@ -18,7 +18,7 @@ export type ProductType = 'ALL' | 'SET' | 'PRODUCT';
 @Component({
   selector: 'list-product',
   standalone: true,
-  imports: [CommonModule, ConfirmDialogComponent],
+  imports: [CommonModule],
   templateUrl: './list-product-component.html',
   styleUrls: ['./list-product-component.scss'],
 })
@@ -94,7 +94,7 @@ export class ListProductComponent implements OnChanges {
 
   onDelete(productId: number | any): void {
     if (!productId) return;
-    
+
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '450px',
       data: { message: '削除します。よろしいでしょうか。' },
