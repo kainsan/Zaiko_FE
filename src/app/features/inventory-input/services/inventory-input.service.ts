@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PageResponse } from '../../master-product/response/PageResponse';
-import { InventoryInputDTO, InventoryInputPlanDTO, InventoryInputSearchParams } from '../models/inventory-input.model';
+import { InventoryInputDTO, InventoryInputPlanResponse, InventoryInputSearchParams } from '../models/inventory-input.model';
 import { Product, Repository } from '../../master-product/model/product.model';
 
 @Injectable({
@@ -22,8 +22,8 @@ export class InventoryInputService {
         });
     }
 
-    getInventoryInputById(id: number): Observable<InventoryInputPlanDTO[]> {
-        return this.http.get<InventoryInputPlanDTO[]>(`${this.apiUrl}/inventory-input/inventory-input-plan/${id}`);
+    getInventoryInputById(id: number): Observable<InventoryInputPlanResponse> {
+        return this.http.get<InventoryInputPlanResponse>(`${this.apiUrl}/inventory-input/inventory-input-plan/${id}`);
     }
 
     searchInventoryInputs(searchParams: InventoryInputSearchParams): Observable<PageResponse<InventoryInputDTO>> {
@@ -71,6 +71,11 @@ export class InventoryInputService {
 
     getDeliveryDestinations(limit: number = 100): Observable<any> {
         return this.http.get(`${this.apiUrl}/delivery-destinations`, {
+            params: { page: '0', limit: limit.toString() }
+        });
+    }
+    getSupplierDestinations(limit: number = 100): Observable<any>{
+       return this.http.get(`${this.apiUrl}/supplier-delivery-destinations`, {
             params: { page: '0', limit: limit.toString() }
         });
     }

@@ -7,7 +7,7 @@ import { CommonSearchDialogComponent } from '../common-search-dialog/common-sear
 import { Product, MasterProductDTO, Repository, Location } from '../../model/product.model';
 import { CategoriesService } from '../../services/categories.service';
 import { ProductService } from '../../services/product.service'
-import { RepositoriesService} from '../../services/repostories.service';
+import { RepositoriesService } from '../../services/repostories.service';
 
 import { ProductType } from '../list-product-component/list-product.component';
 import { ProductSearchParams } from '../../request/ProductSearchRequest';
@@ -46,13 +46,14 @@ export class SearchProductComponent implements OnChanges, OnInit {
 
   constructor(
     private dialog: MatDialog,
-    private productService: ProductService ,
-    private categoriesService : CategoriesService,
-    private repositoriesService : RepositoriesService) { }
+    private productService: ProductService,
+    private repositoriesService: RepositoriesService) { }
 
   ngOnInit(): void {
     this.productService.getProducts(0, 100).subscribe(response => {
-      this.allProducts = response.content.map(item => item.productEntity);
+      this.allProducts = response.content
+        .map(item => item.productEntity)
+        .filter(p => p !== null && p !== undefined);
     });
     this.loadRepositories();
   }

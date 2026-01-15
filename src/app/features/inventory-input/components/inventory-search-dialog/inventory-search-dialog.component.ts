@@ -1,7 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
+import { ProductService } from '../../../master-product/services/product.service';
+import { MasterProductDTO } from '../../../master-product/model/product.model';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-inventory-search-dialog',
@@ -14,13 +17,15 @@ export class InventorySearchDialogComponent implements OnInit {
     items: any[] = [];
     filteredItems: any[] = [];
     searchQuery: string = '';
-    searchType: 'product' | 'supplier' | 'delivery' | 'customer' = 'product';
+    searchType: 'product' | 'supplier' | 'delivery' | 'customer' | 'supplierDelivery' | 'planProduct' = 'product';
     title: string = '';
     placeholder: string = '';
 
     constructor(
         public dialogRef: MatDialogRef<InventorySearchDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        @Inject(MAT_DIALOG_DATA) public data: any,
+        private productService: ProductService,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit(): void {
@@ -46,8 +51,13 @@ export class InventorySearchDialogComponent implements OnInit {
                     this.title = '得意先検索';
                     this.placeholder = 'コード、名称で検索';
                     break;
+                case 'supplierDelivery':
+                    this.title = '仕入先名称';
+                    this.placeholder = 'コード、名称で検索';
+                    break;
             }
         }
+
     }
 
     search(): void {
@@ -59,10 +69,42 @@ export class InventorySearchDialogComponent implements OnInit {
 
         switch (this.searchType) {
             case 'product':
-                this.filteredItems = this.items.filter((item: any) =>
-                    item.productCode?.toLowerCase().includes(query) ||
-                    item.name1?.toLowerCase().includes(query)
-                );
+                // Call API to search products by name OR code
+                const searchByName = this.productService.searchProducts({ name1: query });
+                // Search by Code (Starts With logic: From query to query + high char)
+                const searchByCode = this.productService.searchProducts({
+                    productCodeFrom: query,
+                    productCodeTo: query + '\uffff'
+                });
+
+                forkJoin([searchByName, searchByCode]).subscribe({
+                    next: ([nameRes, codeRes]) => {
+                        // Merge results and remove duplicates
+                        const allContent = [...nameRes.content, ...codeRes.content];
+                        const uniqueProducts = new Map();
+
+                        allContent.forEach(dto => {
+                            if (dto.productEntity?.productId && !uniqueProducts.has(dto.productEntity.productId)) {
+                                uniqueProducts.set(dto.productEntity.productId, dto);
+                            }
+                        });
+
+                        this.filteredItems = Array.from(uniqueProducts.values()).map((dto: MasterProductDTO) => {
+                            const product = { ...dto.productEntity } as any;
+                            product.packCsUnitName = dto.packCsUnitName?.unitName || '';
+                            product.packBlUnitName = dto.packBlUnitName?.unitName || '';
+                            product.pieceUnitName = dto.pieceUnitName?.unitName || '';
+                            product.packCsAmount = dto.productEntity.packCsAmount || 0;
+                            product.packBlAmount = dto.productEntity.packBlAmount || 0;
+                            product.totalPlanQuantity = dto.totalPlanQuantity;
+                            return product;
+                        });
+                        this.cdr.detectChanges();
+                    },
+                    error: (err) => {
+                        console.error('Error searching products:', err);
+                    }
+                });
                 break;
             case 'supplier':
                 this.filteredItems = this.items.filter((item: any) =>
@@ -80,6 +122,12 @@ export class InventorySearchDialogComponent implements OnInit {
                 this.filteredItems = this.items.filter((item: any) =>
                     item.customerCode?.toLowerCase().includes(query) ||
                     item.customerName?.toLowerCase().includes(query)
+                );
+                break;
+            case 'supplierDelivery':
+                this.filteredItems = this.items.filter((item: any) =>
+                    item.supplierDeliveryDestinationId?.toLowerCase().includes(query) ||
+                    item.destinationCode?.toLowerCase().includes(query)
                 );
                 break;
         }

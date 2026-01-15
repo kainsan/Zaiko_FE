@@ -81,9 +81,11 @@
             box-sizing: border-box;
             height: 30px;
             font-size: 12px;
+            background-color: #fff;
 
             &.readonly-input,
-            &.readonly-num {
+            &.readonly-num,
+            &[readonly] {
                 background-color: #f5f5f5;
             }
 
@@ -187,15 +189,24 @@
             .qty-group {
                 display: flex;
                 align-items: center;
-                gap: 4px;
+                gap: 8px;
 
                 .qty-small {
-                    width: 50px;
-                    background-color: #f5f5f5;
+                    width: 60px;
+                    background-color: #fff;
+                    text-align: right;
                 }
 
                 .qty-medium {
-                    width: 70px;
+                    width: 80px;
+                    background-color: #fff;
+                    text-align: right;
+                }
+
+                span {
+                    color: #666;
+                    font-size: 12px;
+                    margin: 0 4px;
                 }
             }
         }
@@ -209,10 +220,12 @@
                 flex-direction: column;
                 gap: 4px;
                 align-items: center;
+                justify-content: center;
+                height: 100%;
 
                 button {
-                    width: 30px;
-                    height: 30px;
+                    width: 32px;
+                    height: 32px;
                     border: none;
                     border-radius: 4px;
                     cursor: pointer;
@@ -220,9 +233,15 @@
                     align-items: center;
                     justify-content: center;
                     color: white;
+                    font-size: 14px;
+                    transition: opacity 0.2s;
+
+                    &:hover {
+                        opacity: 0.8;
+                    }
 
                     &.btn-delete {
-                        background-color: #d9534f;
+                        background-color: #E57373; // Softer red
                     }
 
                     &.btn-copy {
@@ -231,5 +250,33 @@
                 }
             }
         }
+    }
+}
+
+.list-container {
+    .table-wrapper {
+        table {
+
+            input,
+            select {
+
+                &[disabled],
+                &.disabled-input {
+                    background-color: #f5f5f5;
+                    color: #a0a0a0;
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+}
+
+// Override styles for disabled inputs
+.list-container .table-wrapper table .cell-qty .qty-group {
+
+    .qty-small:disabled,
+    .qty-medium:disabled {
+        background-color: #f5f5f5 !important;
+        cursor: not-allowed;
     }
 }

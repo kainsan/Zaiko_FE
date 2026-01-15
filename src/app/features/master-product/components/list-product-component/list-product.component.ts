@@ -44,11 +44,11 @@ export class ListProductComponent implements OnChanges {
     let list = this.productList();
 
     if (type === 'ALL') {
-      return list;
+      return list.filter((p) => p.productEntity);
     } else if (type === 'SET') {
-      return list.filter((p) => p.productEntity.isSet === '1');
+      return list.filter((p) => p.productEntity && p.productEntity.isSet === '1');
     } else {
-      return list.filter((p) => p.productEntity.isSet === '0');
+      return list.filter((p) => p.productEntity && p.productEntity.isSet === '0');
     }
   });
 

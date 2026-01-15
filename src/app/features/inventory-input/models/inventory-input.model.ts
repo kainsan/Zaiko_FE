@@ -68,7 +68,43 @@ export interface InventoryInputSearchParams {
     pageSize?: number;
     sort?: string;
 }
-export interface InventoryPlanInputDetailEntity {
+export interface InventoryInputPlanHeader {
+    inventoryInputId: number;
+    companyId: number;
+    inputPlanDate: string;
+    inputActualDate: string;
+    createSlipType: string;
+    slipNo: string;
+    planSupplierSlipNo: string | null;
+    actualSupplierSlipNo: string | null;
+    planSlipNote: string | null;
+    actualSlipNote: string | null;
+    planSupplierDeliveryDestinationId: number;
+    actualSupplierDeliveryDestinationId: number;
+    planSupplierId: number;
+    actualSupplierId: number;
+    productOwnerId: number;
+    planRepositoryId: number;
+    actualRepositoryId: number;
+    inputStatus: string;
+    sumPlanQuantity: number;
+    sumActualQuantity: number;
+    isClosed: string;
+    freeItem1: string | null;
+    freeItem2: string | null;
+    freeItem3: string | null;
+    contactStatus: string;
+    destinationCode: string;
+    departmentName: string | null;
+    supplierCode: string;
+    supplierName: string;
+    customerCode: string;
+    customerName: string;
+    repositoryCode: string;
+    repositoryName: string;
+}
+
+export interface InventoryInputPlanDetail {
     datetimeMng: string | null;
     planDetailId: number;
     inventoryInputId: number;
@@ -76,7 +112,6 @@ export interface InventoryPlanInputDetailEntity {
     productId: number;
     repositoryId: number;
     locationId: number | null;
-    dateTimeMng: string | null;
     numberMng: string | null;
     csPlanQuantity: number | null;
     blPlanQuantity: number | null;
@@ -84,26 +119,31 @@ export interface InventoryPlanInputDetailEntity {
     totalPlanQuantity: number;
     inventoryProductType: string;
     detailNote: string | null;
-    // Add other fields as needed based on BE
-}
-
-export interface InventoryInputPlanDTO {
-    inventoryInputEntity: InventoryInputEntity;
-    destinationCode: string;
-    departmentName: string;
-    supplierCode: string;
-    supplierName: string;
-    customerCode: string;
-    customerName: string;
-    repositoryCode: string;
-    repositoryName: string;
-
-    detailEntity: InventoryPlanInputDetailEntity;
+    freeItem1: string | null;
+    freeItem2: string | null;
+    freeItem3: string | null;
     productCode: string;
     productName: string;
     detailRepositoryCode: string;
-    locationCode: string;
+    detailRepositoryName: string;
+    locationCode: string | null;
     packCsUnitName: string;
     packBlUnitName: string;
     pieceUnitName: string;
+    datetimeMngType: string | null;
+    isDatetimeMng: string;
+    isNumberMng: string;
+    isPackCsInput: string;
+    isPackBlInput: string;
+    isPieceInput: string;
+    totalQuantityInput: number;
+    standardInfo: string | null;
+    totalActualQuantity: number | null;
+    packCsAmount?: number;
+    packBlAmount?: number;
+}
+
+export interface InventoryInputPlanResponse {
+    inventoryInputPlanHeader: InventoryInputPlanHeader;
+    inventoryInputPlanDetails: InventoryInputPlanDetail[];
 }

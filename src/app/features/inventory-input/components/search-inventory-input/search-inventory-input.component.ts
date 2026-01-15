@@ -142,7 +142,13 @@ export class SearchInventoryInputComponent implements OnInit {
         }
 
         searchObservable.subscribe((response: any) => {
-            const items = response.content || (Array.isArray(response) ? response : []);
+            let items = response.content || (Array.isArray(response) ? response : []);
+
+            // Map MasterProductDTO to Product if searchType is product
+            if (searchType === 'product' && items.length > 0 && items[0].productEntity) {
+                items = items.map((item: any) => item.productEntity);
+            }
+
             const dialogRef = this.dialog.open(InventorySearchDialogComponent, {
                 width: '450px',
                 height: '600px',

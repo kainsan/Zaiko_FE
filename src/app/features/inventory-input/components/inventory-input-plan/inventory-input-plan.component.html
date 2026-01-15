@@ -1,5 +1,11 @@
-<div class="plan-container">
-    <app-inventory-input-plan-header [inventoryInputId]="inventoryInputId"
-        (back)="onBack()"></app-inventory-input-plan-header>
-    <app-inventory-input-plan-list [inventoryInputId]="inventoryInputId"></app-inventory-input-plan-list>
+<div class="plan-container" *ngIf="inventoryForm">
+    <form [formGroup]="inventoryForm">
+        <app-inventory-input-plan-header [headerFormGroup]="headerFormGroup" (back)="onBack()"
+            (repositoryChanged)="onRepositoryChanged($event)">
+        </app-inventory-input-plan-header>
+
+        <app-inventory-input-plan-list [detailsFormArray]="detailsFormArray" (addItem)="addDetail()"
+            (removeItem)="removeDetail($event)">
+        </app-inventory-input-plan-list>
+    </form>
 </div>

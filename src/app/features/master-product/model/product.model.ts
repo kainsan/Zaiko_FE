@@ -129,4 +129,8 @@ export interface MasterProductDTO {
   packBlUnitName: packBlUnitName | null;
   pieceUnitName: pieceUnitName | null;
   supplierEntity: Supplier | null;
+  csPlanQuantity?: number | null;
+  blPlanQuantity?: number | null;
+  psPlanQuantity?: number | null;
+  totalPlanQuantity?: number | null;
 }

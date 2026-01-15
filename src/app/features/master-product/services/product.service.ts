@@ -79,7 +79,7 @@ export class ProductService {
   }
 
   updateProduct(productId: number, productData: any): Observable<any> {
-    console.log(productData);
+
     return this.http.post(`${this.apiUrl}/master-product/${productId}`, productData);
   }
 

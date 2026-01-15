@@ -34,7 +34,6 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
   activeTab: string = 'general'; // Default tab
   productForm!: FormGroup;
   isFormDirty = signal<boolean>(false);
-
   repositories = signal<Repository[]>([]);
   locations = signal<Location[]>([]);
   packagingCsUnitName = signal<string>('');
@@ -109,17 +108,19 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
       this.product = changes['product'].currentValue;
       this.patchForm();
 
-      if (this.product.productEntity.productId) {
+      if (this.product?.productEntity?.productId) {
         this.productService
           .getProductById(this.product.productEntity.productId)
           .subscribe((detail: any) => {
-            this.product = detail;
-            this.patchForm();
-            this.loadRepositories();
-            if (!this.product.productEntity.repositoryId) {
-              this.loadLocations(0);
-            } else {
-              this.loadLocations(this.product.productEntity.repositoryId);
+            if (detail && detail.productEntity) {
+              this.product = detail;
+              this.patchForm();
+              this.loadRepositories();
+              if (!this.product.productEntity.repositoryId) {
+                this.loadLocations(0);
+              } else {
+                this.loadLocations(this.product.productEntity.repositoryId);
+              }
             }
           });
       }
@@ -384,7 +385,7 @@ export class ProductDetailModalComponent implements OnInit, OnChanges {
 
       dialogRef.afterClosed().subscribe((result) => {
         if (result) {
-          const productId = this.product.productEntity.productId;
+          const productId = this.product?.productEntity?.productId;
           const productData = this.productForm.getRawValue();
 
           if (productId) {

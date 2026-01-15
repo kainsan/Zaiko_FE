@@ -35,20 +35,24 @@
                             <th *ngIf="searchType === 'supplier'">仕入先コード</th>
                             <th *ngIf="searchType === 'delivery'">納品先コード</th>
                             <th *ngIf="searchType === 'customer'">得意先コード</th>
+                            <th *ngIf="searchType === 'supplierDelivery'">仕入先コード</th>
                             <th>名称</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let item of filteredItems; let i = index" [class.even]="i % 2 === 0"
                             [class.odd]="i % 2 !== 0" (click)="selectItem(item)" style="cursor: pointer;">
-                            <td *ngIf="searchType === 'product'">{{ item.productEntity.productCode }}</td>
+                            <td *ngIf="searchType === 'product'">{{ item.productCode }}</td>
                             <td *ngIf="searchType === 'supplier'">{{ item.supplierCode }}</td>
                             <td *ngIf="searchType === 'delivery'">{{ item.destinationCode }}</td>
                             <td *ngIf="searchType === 'customer'">{{ item.customerCode }}</td>
-                            <td *ngIf="searchType === 'product'">{{ item.productEntity.name1 }}</td>
+                            <td *ngIf="searchType === 'supplierDelivery'">{{ item.supplierDeliveryDestinationCode }}
+                            </td>
+                            <td *ngIf="searchType === 'product'">{{ item.name1 }}</td>
                             <td *ngIf="searchType === 'supplier'">{{ item.supplierName }}</td>
                             <td *ngIf="searchType === 'delivery'">{{ item.departmentName }}</td>
                             <td *ngIf="searchType === 'customer'">{{ item.customerName }}</td>
+                            <td *ngIf="searchType === 'supplierDelivery'">{{ item.destinationCode }}</td>
                         </tr>
                     </tbody>
                 </table>

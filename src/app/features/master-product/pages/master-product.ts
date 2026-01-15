@@ -59,7 +59,6 @@ export class MasterProduct implements OnInit {
   }
 
   openProductDetail(product: MasterProductDTO): void {
-    console.log(product)
     this.selectedProduct.set(product);
   }
 
