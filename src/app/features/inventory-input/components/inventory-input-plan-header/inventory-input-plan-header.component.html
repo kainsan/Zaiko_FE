@@ -11,8 +11,7 @@
         <div class="actions">
             <div class="status-label">
                 入庫状態
-                <span class="status-badge">{{ headerFormGroup.get('isClosed')?.value === '1' ? '完了' :
-                    inputStatusMap[headerFormGroup.get('inputStatus')?.value || '0'] }}</span>
+                <span class="status-badge">{{ inputStatusMap[headerFormGroup.get('inputStatus')?.value || '0'] }}</span>
             </div>
             <button class="btn-close" (click)="toggleClose()">{{ headerFormGroup.get('isClosed')?.value === '1' ?
                 ' クローズ解除' : 'クローズ' }}</button>
