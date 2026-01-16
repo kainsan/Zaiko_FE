@@ -256,87 +256,88 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
       console.log(result)
-      const formGroup = this.detailsFormArray.at(index);
+      setTimeout(() => {
+        const formGroup = this.detailsFormArray.at(index);
 
-      // ✅ 1. Chỉ update thông tin PRODUCT (KHÔNG đụng form khác)
-      formGroup.patchValue(
-        {
-          productCode: result.productCode,
-          productName: result.name1,
-          productId: result.productId,
-          datetimeMngType: result.dateTimeMngType,
-          isDatetimeMng: result.isDateTimeMng,
-          isNumberMng: result.isNumberMng,
-          packCsUnitName: result.packCsUnitName,
-          packBlUnitName: result.packBlUnitName,
-          pieceUnitName: result.pieceUnitName,
-          isPackCsInput: result.isPackCsInput,
-          isPackBlInput: result.isPackBlInput,
-          isPieceInput: result.isPieceInput,
-          packCsAmount: result.packCsAmount,
-          packBlAmount: result.packBlAmount,
-          totalPlanQuantity: result.totalPlanQuantity,
-          standardInfo: result.standardInfo,
-          totalActualQuantity: result.totalActualQuantity || 0,
-          // Reset quantities when new product is selected
-          csPlanQuantity: null,
-          blPlanQuantity: null,
-          psPlanQuantity: null,
-          totalQuantityInput: null
-        },
-        { emitEvent: false }
-      ); // 🚫 không trigger valueChanges
+        // ✅ 1. Chỉ update thông tin PRODUCT (KHÔNG đụng form khác)
+        formGroup.patchValue(
+          {
+            productCode: result.productCode,
+            productName: result.name1,
+            productId: result.productId,
+            datetimeMngType: result.dateTimeMngType,
+            isDatetimeMng: result.isDateTimeMng,
+            isNumberMng: result.isNumberMng,
+            packCsUnitName: result.packCsUnitName,
+            packBlUnitName: result.packBlUnitName,
+            pieceUnitName: result.pieceUnitName,
+            isPackCsInput: result.isPackCsInput,
+            isPackBlInput: result.isPackBlInput,
+            isPieceInput: result.isPieceInput,
+            packCsAmount: result.packCsAmount,
+            packBlAmount: result.packBlAmount,
+            totalPlanQuantity: result.totalPlanQuantity,
+            standardInfo: result.standardInfo,
+            totalActualQuantity: result.totalActualQuantity || 0,
+            // Reset quantities when new product is selected
+            csPlanQuantity: null,
+            blPlanQuantity: null,
+            psPlanQuantity: null,
+            totalQuantityInput: null
+          },
+          { emitEvent: false }
+        ); // 🚫 không trigger valueChanges
 
-      // ✅ 4. Enable / Disable datetimeMng bằng API FormControl
-      const datetimeCtrl = formGroup.get('datetimeMng');
-      if (result.isDateTimeMng === '0') {
-        datetimeCtrl?.disable({ emitEvent: false }); // giữ value, chỉ disable
-      } else {
-        datetimeCtrl?.enable({ emitEvent: false });
-      }
+        // ✅ 4. Enable / Disable datetimeMng bằng API FormControl
+        const datetimeCtrl = formGroup.get('datetimeMng');
+        if (result.isDateTimeMng === '0') {
+          datetimeCtrl?.disable({ emitEvent: false }); // giữ value, chỉ disable
+        } else {
+          datetimeCtrl?.enable({ emitEvent: false });
+        }
 
-      // ✅ 5. Enable / Disable numberMng bằng API FormControl
-      const numberCtrl = formGroup.get('numberMng');
-      if (result.isNumberMng === '0') {
-        numberCtrl?.disable({ emitEvent: false });
-      } else {
-        numberCtrl?.enable({ emitEvent: false });
-      }
+        // ✅ 5. Enable / Disable numberMng bằng API FormControl
+        const numberCtrl = formGroup.get('numberMng');
+        if (result.isNumberMng === '0') {
+          numberCtrl?.disable({ emitEvent: false });
+        } else {
+          numberCtrl?.enable({ emitEvent: false });
+        }
 
-      // ✅ 6. Enable / Disable quantity fields
-      const csCtrl = formGroup.get('csPlanQuantity');
-      if (result.isPackCsInput === '0') {
-        csCtrl?.disable({ emitEvent: false });
-      } else {
-        csCtrl?.enable({ emitEvent: false });
-      }
+        // ✅ 6. Enable / Disable quantity fields
+        const csCtrl = formGroup.get('csPlanQuantity');
+        if (result.isPackCsInput === '0') {
+          csCtrl?.disable({ emitEvent: false });
+        } else {
+          csCtrl?.enable({ emitEvent: false });
+        }
 
-      const blCtrl = formGroup.get('blPlanQuantity');
-      if (result.isPackBlInput === '0') {
-        blCtrl?.disable({ emitEvent: false });
-      } else {
-        blCtrl?.enable({ emitEvent: false });
-      }
+        const blCtrl = formGroup.get('blPlanQuantity');
+        if (result.isPackBlInput === '0') {
+          blCtrl?.disable({ emitEvent: false });
+        } else {
+          blCtrl?.enable({ emitEvent: false });
+        }
 
-      const psCtrl = formGroup.get('psPlanQuantity');
-      if (result.isPieceInput === '0') {
-        psCtrl?.disable({ emitEvent: false });
-      } else {
-        psCtrl?.enable({ emitEvent: false });
-      }
+        const psCtrl = formGroup.get('psPlanQuantity');
+        if (result.isPieceInput === '0') {
+          psCtrl?.disable({ emitEvent: false });
+        } else {
+          psCtrl?.enable({ emitEvent: false });
+        }
 
-      this.calculateTotal(index);
+        this.calculateTotal(index);
 
-      // ✅ 7. Enable / Disable locationCode
-      const repoId = formGroup.get('repositoryId')?.value;
-      if (repoId) {
-        this.loadLocations(index, repoId);
-        formGroup.get('locationCode')?.enable({ emitEvent: false });
-      } else {
-        formGroup.get('locationCode')?.disable({ emitEvent: false });
-      }
+        // ✅ 7. Enable / Disable locationCode
+        const repoId = formGroup.get('repositoryId')?.value;
+        if (repoId) {
+          this.loadLocations(index, repoId);
+          formGroup.get('locationCode')?.enable({ emitEvent: false });
+        } else {
+          formGroup.get('locationCode')?.disable({ emitEvent: false });
+        }
 
-      this.cdr.detectChanges();
+      });
     });
   }
 
