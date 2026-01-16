@@ -148,6 +148,12 @@
             &.btn-save {
                 background: #4392BB;
             }
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                filter: grayscale(0.2);
+            }
         }
     }
 }

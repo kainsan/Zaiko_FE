@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, signal, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, signal, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InventoryInputPlanHeaderComponent } from '../inventory-input-plan-header/inventory-input-plan-header.component';
 import { InventoryInputPlanListComponent } from '../inventory-input-plan-list/inventory-input-plan-list.component';
 import { InventoryInputService } from '../../services/inventory-input.service';
@@ -9,6 +9,9 @@ import { RepositoriesService } from '../../../master-product/services/repostorie
 import { Repository } from '../../../master-product/model/product.model';
 import { Location } from '../../../master-product/model/product.model';
 import { Observable } from 'rxjs/internal/Observable';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'app-inventory-input-plan',
@@ -31,7 +34,10 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
     constructor(
         private fb: FormBuilder,
         private inventoryInputService: InventoryInputService,
-        private repositoriesService: RepositoriesService
+        private repositoriesService: RepositoriesService,
+        private dialog: MatDialog,
+        private snackBar: MatSnackBar,
+        private cdr: ChangeDetectorRef
     ) {
         this.initializeForm();
     }
@@ -58,7 +64,7 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
                 inventoryInputId: [inventoryInputData?.inventoryInputPlanHeader && inventoryInputData?.inventoryInputPlanHeader.inventoryInputId
                     ? inventoryInputData?.inventoryInputPlanHeader.inventoryInputId : null],
                 companyId: [null],
-                inputPlanDate: [''],
+                inputPlanDate: ['', Validators.required],
                 inputActualDate: [''],
                 createSlipType: ['0'], // Default to Auto
                 slipNo: [{ value: '', disabled: false }], // Default to disabled
@@ -128,6 +134,7 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
         this.inventoryInputService.getInventoryInputById(id).subscribe({
             next: (data: InventoryInputPlanResponse) => {
                 // Patch header data
+
                 const headerData = { ...data.inventoryInputPlanHeader };
                 if (headerData.inputPlanDate) {
                     headerData.inputPlanDate = new Date(headerData.inputPlanDate) as any;
@@ -146,14 +153,14 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
 
     private createDetailFormGroup(detail?: InventoryInputPlanDetail): FormGroup {
         let datetimeMng = detail?.datetimeMng ? new Date(detail.datetimeMng) : '';
-
+        console.log(detail)
         return this.fb.group({
             datetimeMng: [{ value: datetimeMng, disabled: detail?.isDatetimeMng === '0' }],
             planDetailId: [detail?.planDetailId || null],
             inventoryInputId: [detail?.inventoryInputId || null],
             companyId: [detail?.companyId || null],
             productId: [detail?.productId || null],
-            repositoryId: [detail?.repositoryId || null],
+            repositoryId: [detail?.repositoryId || null, Validators.required],
             locationId: [detail?.locationId || null],
             numberMng: [{ value: detail?.numberMng || '', disabled: detail?.isNumberMng === '0' }],
             csPlanQuantity: [{ value: detail?.csPlanQuantity || null, disabled: !detail?.productId || detail?.isPackCsInput === '0' }],
@@ -165,7 +172,7 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
             freeItem1: [detail?.freeItem1 || ''],
             freeItem2: [detail?.freeItem2 || ''],
             freeItem3: [detail?.freeItem3 || ''],
-            productCode: [detail?.productCode || ''],
+            productCode: [detail?.productCode || '', Validators.required],
             productName: [detail?.productName || ''],
             detailRepositoryCode: [detail?.detailRepositoryCode || ''],
             detailRepositoryName: [detail?.detailRepositoryName || ''],
@@ -183,18 +190,137 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
             standardInfo: [detail?.standardInfo || ''],
             totalActualQuantity: [detail?.totalActualQuantity || 0],
             packCsAmount: [detail?.packCsAmount || 0],
-            packBlAmount: [detail?.packBlAmount || 0]
+            packBlAmount: [detail?.packBlAmount || 0],
+            delFlg: [detail?.delFlg || '0']
         });
     }
 
     addDetail(): void {
         const detailsArray = this.inventoryForm.get('details') as FormArray;
         detailsArray.push(this.createDetailFormGroup());
+        // Trigger re-render by re-assigning the control with a fresh array
+        this.inventoryForm.setControl('details', this.fb.array([...detailsArray.controls]));
+        this.cdr.detectChanges();
     }
 
     removeDetail(index: number): void {
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '450px',
+            panelClass: 'custom-dialog-container',
+            data: {
+                title: '確認',
+                message: '商品を削除します。よろしいでしょうか。'
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                const detailsArray = this.inventoryForm.get('details') as FormArray;
+                const formGroup = detailsArray.at(index) as FormGroup;
+
+                // Soft delete: set delFlg to '1'
+                formGroup.get('delFlg')?.setValue('1');
+
+                // Check if there are any visible records left (delFlg !== '1')
+                const visibleControls = detailsArray.controls.filter(c => c.get('delFlg')?.value !== '1');
+                if (visibleControls.length === 0) {
+                    detailsArray.push(this.createDetailFormGroup());
+                }
+
+                // Trigger re-render by re-assigning the control with a fresh array
+                this.inventoryForm.setControl('details', this.fb.array([...detailsArray.controls]));
+                this.cdr.detectChanges();
+            }
+        });
+    }
+
+    copyDetail(index: number): void {
         const detailsArray = this.inventoryForm.get('details') as FormArray;
-        detailsArray.removeAt(index);
+        const sourceGroup = detailsArray.at(index) as FormGroup;
+
+        // Clone the values but reset the ID
+        const copyValues = { ...sourceGroup.getRawValue() };
+        copyValues.planDetailId = null;
+
+        // Create new group with copied values
+        const newGroup = this.createDetailFormGroup(copyValues);
+
+        // Push to the end of the array
+        detailsArray.push(newGroup);
+
+        // Trigger re-render by re-assigning the control with a fresh array
+        this.inventoryForm.setControl('details', this.fb.array([...detailsArray.controls]));
+        this.cdr.detectChanges();
+    }
+
+    onSave(): void {
+        if (this.inventoryForm.invalid) return;
+
+        const id = this.inventoryForm.get('header.inventoryInputId')?.value;
+        const data = this.inventoryForm.getRawValue();
+
+        if (id) {
+            this.inventoryInputService.updateInventoryInputPlan(id, data as InventoryInputPlanResponse).subscribe({
+                next: () => {
+                    this.snackBar.open('保存しました。', '', {
+                        duration: 3000,
+                        panelClass: ['success-snackbar'],
+                        horizontalPosition: 'center',
+                        verticalPosition: 'bottom'
+                    });
+                },
+                error: (err) => {
+                    console.error('Error updating plan:', err);
+                    this.snackBar.open('登録に失敗しました。', '', {
+                        duration: 3000,
+                        panelClass: ['error-snackbar'],
+                        horizontalPosition: 'center',
+                        verticalPosition: 'bottom'
+                    });
+                }
+            });
+        } else {
+            console.log('Save (Create) not implemented yet in this task, but here is the data:', data);
+        }
+    }
+
+    onDelete(): void {
+        const id = this.inventoryForm.get('header.inventoryInputId')?.value;
+        if (!id) return;
+
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '450px',
+            panelClass: 'custom-dialog-container',
+            data: {
+                title: '確認',
+                message: '伝票を削除します。よろしいでしょうか。'
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.inventoryInputService.deleteInventoryInputPlan(id).subscribe({
+                    next: () => {
+                        this.snackBar.open('削除しました。', '', {
+                            duration: 3000,
+                            panelClass: ['success-snackbar'],
+                            horizontalPosition: 'center',
+                            verticalPosition: 'bottom'
+                        });
+                        this.onBack();
+                    },
+                    error: (err) => {
+                        console.error('Error deleting plan:', err);
+                        this.snackBar.open('削除に失敗しました。', '', {
+                            duration: 3000,
+                            panelClass: ['error-snackbar'],
+                            horizontalPosition: 'center',
+                            verticalPosition: 'bottom'
+                        });
+                    }
+                });
+            }
+        });
     }
 
     onBack(): void {

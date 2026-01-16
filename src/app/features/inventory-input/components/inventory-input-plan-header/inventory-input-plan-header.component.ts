@@ -29,12 +29,15 @@ import { ProductService } from '../../../master-product/services/product.service
 export class InventoryInputPlanHeaderComponent implements OnInit, OnChanges {
     // Reactive Forms pattern (from pages)
     @Input() headerFormGroup?: FormGroup;
+    @Input() isFormInvalid: boolean = false;
 
     // ID-based pattern (from components)
     @Input() inventoryInputId?: number | null;
 
     @Output() back = new EventEmitter<void>();
     @Output() repositoryChanged = new EventEmitter<Repository>();
+    @Output() save = new EventEmitter<void>();
+    @Output() delete = new EventEmitter<void>();
 
     headerData: InventoryInputPlanHeader | null = null;
 
@@ -45,6 +48,12 @@ export class InventoryInputPlanHeaderComponent implements OnInit, OnChanges {
     }).replace(/\//g, '/');
 
     repositories = signal<Repository[]>([]);
+
+    inputStatusMap: { [key: string]: string } = {
+        '0': '未入庫',
+        '1': '入庫残',
+        '2': '入庫済'
+    };
 
 
     constructor(
@@ -57,6 +66,19 @@ export class InventoryInputPlanHeaderComponent implements OnInit, OnChanges {
         if (this.inventoryInputId && !this.headerFormGroup) {
             this.loadData(this.inventoryInputId);
         }
+
+        this.headerFormGroup?.get('destinationCode')?.valueChanges.subscribe(value => {
+            if (!value) {
+                this.headerFormGroup?.patchValue({
+                    departmentName: '',
+                    planSupplierCode: '',
+                    planSupplierName: '',
+                    planSupplierDeliveryDestinationId: null,
+                    planSupplierId: null
+                });
+            }
+        });
+
         this.headerFormGroup?.get('planRepositoryId')?.valueChanges.subscribe(id => {
             const repo = this.repositories().find(r => r.repositoryId == id);
             if (repo) {
@@ -159,8 +181,8 @@ export class InventoryInputPlanHeaderComponent implements OnInit, OnChanges {
             case 'supplier':
                 this.headerFormGroup.patchValue({
                     planSupplierId: result.supplierId,
-                    supplierCode: result.supplierCode,
-                    supplierName: result.supplierName
+                    planSupplierCode: result.supplierCode,
+                    planSupplierName: result.supplierName
                 });
                 break;
             case 'customer':
@@ -171,5 +193,20 @@ export class InventoryInputPlanHeaderComponent implements OnInit, OnChanges {
                 });
                 break;
         }
+    }
+
+    toggleClose(): void {
+        if (!this.headerFormGroup) return;
+        const currentValue = this.headerFormGroup.get('isClosed')?.value;
+        const newValue = currentValue === '1' ? '0' : '1';
+        this.headerFormGroup.patchValue({ isClosed: newValue });
+    }
+
+    onSave(): void {
+        this.save.emit();
+    }
+
+    onDelete(): void {
+        this.delete.emit();
     }
 }

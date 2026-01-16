@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -26,10 +26,11 @@ import { Subscription } from 'rxjs';
   templateUrl: './inventory-input-plan-list.component.html',
   styleUrls: ['./inventory-input-plan-list.component.scss'],
 })
-export class InventoryInputPlanListComponent implements OnInit {
+export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDestroy {
   @Input() detailsFormArray!: FormArray;
   @Output() addItem = new EventEmitter<void>();
   @Output() removeItem = new EventEmitter<number>();
+  @Output() copyItem = new EventEmitter<number>();
 
   products = signal<Product[]>([]);
   repositories = signal<Repository[]>([]);
@@ -54,26 +55,44 @@ export class InventoryInputPlanListComponent implements OnInit {
   ngOnInit(): void {
     this.loadProducts();
     this.loadRepositories();
-    // 1. Xử lý ngay lần đầu tiên khi component chạy (để load location cho dữ liệu có sẵn)
-    this.handleRepositoryChanges(this.detailsFormArray.value);
+    this.setupFormLogic();
+  }
 
-    // Calculate initial totals for all rows
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['detailsFormArray'] && !changes['detailsFormArray'].firstChange) {
+      this.setupFormLogic();
+    }
+  }
+
+  private setupFormLogic(): void {
+    // 1. Clear old subscriptions
+    this.subscriptions.unsubscribe();
+    this.subscriptions = new Subscription();
+
+    // 2. Reset internal state
+    this.previousRepositoryIds = [];
+    this.locationsMap = {};
+
+    if (!this.detailsFormArray) return;
+
+    // 3. Initial processing - force load locations because locationsMap was reset
+    this.handleRepositoryChanges(this.detailsFormArray.value, true);
     for (let i = 0; i < this.detailsFormArray.length; i++) {
       this.calculateTotal(i);
     }
 
-    // 2. Đăng ký theo dõi sự thay đổi của form
-    // Khi người dùng sửa dữ liệu, hàm này sẽ được gọi
+    // 4. Subscribe to changes
     this.subscriptions.add(
       this.detailsFormArray.valueChanges.subscribe((values: any[]) => {
         this.handleRepositoryChanges(values);
         this.handleProductCodeChanges(values);
-        // Recalculate totals for all rows when values change
         for (let i = 0; i < this.detailsFormArray.length; i++) {
           this.calculateTotal(i);
         }
       })
     );
+
+    this.cdr.detectChanges();
   }
 
   ngOnDestroy(): void {
@@ -81,7 +100,7 @@ export class InventoryInputPlanListComponent implements OnInit {
   }
 
   // Hàm này kiểm tra xem repositoryId có thay đổi không
-  private handleRepositoryChanges(rows: any[]): void {
+  private handleRepositoryChanges(rows: any[], force: boolean = false): void {
     rows.forEach((row, index) => {
       // Lấy repositoryId hiện tại của dòng này
       const currentRepoId = row.repositoryId;
@@ -89,8 +108,8 @@ export class InventoryInputPlanListComponent implements OnInit {
       // Lấy repositoryId cũ đã lưu lần trước
       const previousRepoId = this.previousRepositoryIds[index];
 
-      // Nếu có ID và ID này KHÁC với ID cũ => Có sự thay đổi
-      if (currentRepoId && currentRepoId !== previousRepoId) {
+      // Nếu có ID và (ID này KHÁC với ID cũ HOẶC đang force load) => Có sự thay đổi
+      if (currentRepoId && (force || currentRepoId !== previousRepoId)) {
         // Gọi API load location mới
         this.loadLocations(index, currentRepoId);
 
@@ -140,6 +159,7 @@ export class InventoryInputPlanListComponent implements OnInit {
         formGroup.get('csPlanQuantity')?.disable({ emitEvent: false });
         formGroup.get('blPlanQuantity')?.disable({ emitEvent: false });
         formGroup.get('psPlanQuantity')?.disable({ emitEvent: false });
+        formGroup.get('locationCode')?.disable({ emitEvent: false });
 
         this.cdr.detectChanges();
       }
@@ -190,9 +210,9 @@ export class InventoryInputPlanListComponent implements OnInit {
   onDetailRepositoryChange(index: number, event: any): void {
     const repoId = Number(event.target.value);
     const repo = this.repositories().find((r) => r.repositoryId === repoId);
+    const formGroup = this.detailsFormArray.at(index);
 
     if (repo) {
-      const formGroup = this.detailsFormArray.at(index);
       formGroup.patchValue({
         detailRepositoryCode: repo.repositoryCode,
         detailRepositoryName: repo.repositoryName,
@@ -200,6 +220,23 @@ export class InventoryInputPlanListComponent implements OnInit {
         repositoryId: repo.repositoryId,
         locationId: null,
       });
+
+      const productCode = formGroup.get('productCode')?.value;
+      if (productCode) {
+        this.loadLocations(index, repoId);
+        formGroup.get('locationCode')?.enable({ emitEvent: false });
+      } else {
+        formGroup.get('locationCode')?.disable({ emitEvent: false });
+      }
+    } else {
+      formGroup.patchValue({
+        detailRepositoryCode: '',
+        detailRepositoryName: '',
+        locationCode: '',
+        repositoryId: null,
+        locationId: null,
+      });
+      this.locationsMap[index] = [];
     }
   }
 
@@ -291,6 +328,16 @@ export class InventoryInputPlanListComponent implements OnInit {
       }
 
       this.calculateTotal(index);
+
+      // ✅ 7. Enable / Disable locationCode
+      const repoId = formGroup.get('repositoryId')?.value;
+      if (repoId) {
+        this.loadLocations(index, repoId);
+        formGroup.get('locationCode')?.enable({ emitEvent: false });
+      } else {
+        formGroup.get('locationCode')?.disable({ emitEvent: false });
+      }
+
       this.cdr.detectChanges();
     });
   }
@@ -308,7 +355,7 @@ export class InventoryInputPlanListComponent implements OnInit {
     const isPackBlInput = formGroup.get('isPackBlInput')?.value;
     const isPieceInput = formGroup.get('isPieceInput')?.value;
 
-    let total = 0;
+    let total = formGroup.get('totalPlanInput')?.value || 0;
 
     if (isPackCsInput !== '0') {
       total += csQty * packCsAmount * packBlAmount;
@@ -330,5 +377,9 @@ export class InventoryInputPlanListComponent implements OnInit {
 
   onRemoveItem(index: number): void {
     this.removeItem.emit(index);
+  }
+
+  onCopyItem(index: number): void {
+    this.copyItem.emit(index);
   }
 }

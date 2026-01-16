@@ -53,29 +53,13 @@ export class InventoryInputService {
         );
     }
 
-    // downloadCsv(searchParams: InventoryInputSearchParams): Observable<Blob> {
-    //     const params: any = {};
-
-    //     for (const key in searchParams) {
-    //         const value = (searchParams as any)[key];
-    //         if (value !== undefined && value !== null && value !== '' && value !== 'ALL') {
-    //             params[key] = value;
-    //         }
-    //     }
-
-    //     return this.http.get(`${this.apiUrl}/inventory-input/download-csv`, {
-    //         params,
-    //         responseType: 'blob'
-    //     });
-    // }
-
     getDeliveryDestinations(limit: number = 100): Observable<any> {
         return this.http.get(`${this.apiUrl}/delivery-destinations`, {
             params: { page: '0', limit: limit.toString() }
         });
     }
-    getSupplierDestinations(limit: number = 100): Observable<any>{
-       return this.http.get(`${this.apiUrl}/supplier-delivery-destinations`, {
+    getSupplierDestinations(limit: number = 100): Observable<any> {
+        return this.http.get(`${this.apiUrl}/supplier-delivery-destinations`, {
             params: { page: '0', limit: limit.toString() }
         });
     }
@@ -102,4 +86,11 @@ export class InventoryInputService {
         return this.http.get<Repository[]>(`${this.apiUrl}/repositories`);
     }
 
+    updateInventoryInputPlan(id: number, data: InventoryInputPlanResponse): Observable<any> {
+        return this.http.put(`${this.apiUrl}/inventory-input/inventory-input-plan/${id}`, data);
+    }
+
+    deleteInventoryInputPlan(id: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/inventory-input/inventory-input-plan/${id}`);
+    }
 }

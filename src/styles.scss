@@ -47,3 +47,31 @@ body {
   margin: 0;
   font-family: Noto Sans JP
 }
+
+/* Custom SnackBar Styles */
+.success-snackbar {
+  --mdc-snackbar-container-color: #28a745;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  border-radius: 4px;
+}
+
+.error-snackbar {
+  --mdc-snackbar-container-color: #f44336;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  border-radius: 4px;
+}
+
+.error-snackbar .mdc-snackbar__surface::before {
+  content: "!";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  color: #f44336;
+  border-radius: 50%;
+  font-weight: bold;
+  margin-right: 12px;
+  vertical-align: middle;
+}

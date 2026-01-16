@@ -141,6 +141,7 @@ export interface InventoryInputPlanDetail {
     totalActualQuantity: number | null;
     packCsAmount?: number;
     packBlAmount?: number;
+    delFlg: string;
 }
 
 export interface InventoryInputPlanResponse {

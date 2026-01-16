@@ -1,0 +1,13 @@
+<div class="confirm-dialog">
+    <div class="dialog-header">
+        <span class="title">{{ data.title || '確認' }}</span>
+        <button class="close-btn" (click)="onCancel()">×</button>
+    </div>
+    <div class="dialog-body">
+        <p class="message">{{ data.message || '商品を削除します。よろしいでしょうか。' }}</p>
+    </div>
+    <div class="dialog-actions">
+        <button class="btn-no" (click)="onCancel()">いいえ</button>
+        <button class="btn-yes" (click)="onConfirm()">はい</button>
+    </div>
+</div>

@@ -19,7 +19,7 @@ export class RepositoriesService {
   }
 
   getLocationsByRepository(repositoryId: number): Observable<Location[]> {
-    return this.http.get<Location[]>(`${this.apiUrl}/repositories/${repositoryId}/locations`);
+    return this.http.get<Location[]>(`${this.apiUrl}/locations/${repositoryId}`);
   }
 
 
