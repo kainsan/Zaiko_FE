@@ -49,23 +49,19 @@
             </div>
         </div>
         <div class="form-group">
-            <label>入庫実績日</label>
-            <div class="input-wrapper date-input">
-                <input matInput [matDatepicker]="actualDatePicker" formControlName="inputActualDate" class="date-field">
-                <mat-datepicker-toggle matSuffix [for]="actualDatePicker"></mat-datepicker-toggle>
-                <mat-datepicker #actualDatePicker></mat-datepicker>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>伝票番号採番</label>
+            <label>伝票区分</label>
             <select formControlName="createSlipType">
-                <option value="0">自動</option>
-                <option value="1">手動</option>
+                <option value="0">通常入庫（自動採番）</option>
+                <option value="1">通常入庫（手動採番）</option>
             </select>
         </div>
         <div class="form-group">
-            <label>入庫伝票番号</label>
-            <input type="text" formControlName="slipNo">
+            <label>伝票番号</label>
+            <input type="text" formControlName="slipNo" class="readonly-input">
+        </div>
+        <div class="form-group">
+            <label>客先伝票番号</label>
+            <input type="text" formControlName="planSupplierSlipNo">
         </div>
 
         <!-- Row 2 -->
@@ -73,11 +69,17 @@
             <label>納品先コード</label>
             <div class="input-wrapper">
                 <input type="text" formControlName="destinationCode">
-                <button class="search-btn" (click)="openSearchDialog('supplierDelivery')">🔍</button>
+                <button class="search-btn" (click)="openSearchDialog('supplierDelivery')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
             </div>
         </div>
         <div class="form-group full-width">
-            <label>納品先名</label>
+            <label>納品先名称</label>
             <input type="text" formControlName="departmentName" class="readonly-input">
         </div>
 
@@ -86,61 +88,49 @@
             <label>仕入先コード</label>
             <div class="input-wrapper">
                 <input type="text" formControlName="planSupplierCode">
-                <button class="search-btn" (click)="openSearchDialog('supplier')">🔍</button>
+                <!-- <button class="search-btn" (click)="openSearchDialog('supplier')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button> -->
             </div>
         </div>
         <div class="form-group full-width">
-            <label>仕入先名</label>
+            <label>仕入先名称</label>
             <input type="text" formControlName="planSupplierName" class="readonly-input">
         </div>
 
         <!-- Row 4 -->
         <div class="form-group">
-            <label>荷主コード</label>
+            <label>所有者コード</label>
             <div class="input-wrapper">
                 <input type="text" formControlName="customerCode">
-                <button class="search-btn" (click)="openSearchDialog('customer')">🔍</button>
+                <button class="search-btn" (click)="openSearchDialog('customer')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
             </div>
         </div>
-        <div class="form-group full-width">
-            <label>荷主名</label>
+        <div class="form-group">
+            <label>所有者名称</label>
             <input type="text" formControlName="customerName" class="readonly-input">
         </div>
-
-        <!-- Row 5 -->
         <div class="form-group">
-            <label>予定倉庫</label>
+            <label>倉庫</label>
             <select formControlName="planRepositoryId">
                 <option *ngFor="let repo of repositories()" [value]="repo.repositoryId">
-                    {{ repo.repositoryCode }} : {{ repo.repositoryName }}
+                    {{ repo.repositoryCode }} {{ repo.repositoryName }}
                 </option>
             </select>
         </div>
         <div class="form-group">
-            <label>実績倉庫</label>
-            <select formControlName="actualRepositoryId">
-                <option *ngFor="let repo of repositories()" [value]="repo.repositoryId">
-                    {{ repo.repositoryCode }} : {{ repo.repositoryName }}
-                </option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>仕入先伝票番号</label>
-            <input type="text" formControlName="planSupplierSlipNo">
-        </div>
-        <div class="form-group">
-            <label>仕入先伝票番号（実績）</label>
-            <input type="text" formControlName="actualSupplierSlipNo">
-        </div>
-
-        <!-- Row 6 -->
-        <div class="form-group full-width">
-            <label>備考</label>
+            <label>伝票備考</label>
             <input type="text" formControlName="planSlipNote">
-        </div>
-        <div class="form-group">
-            <label>備考（実績）</label>
-            <input type="text" formControlName="actualSlipNote">
         </div>
     </div>
 </div>

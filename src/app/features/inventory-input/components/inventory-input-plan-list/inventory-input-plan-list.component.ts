@@ -76,10 +76,12 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
     if (!this.detailsFormArray) return;
 
     // 3. Initial processing - force load locations because locationsMap was reset
-    this.handleRepositoryChanges(this.detailsFormArray.value, true);
-    for (let i = 0; i < this.detailsFormArray.length; i++) {
-      this.calculateTotal(i);
-    }
+    setTimeout(() => {
+      this.handleRepositoryChanges(this.detailsFormArray.value, true);
+      for (let i = 0; i < this.detailsFormArray.length; i++) {
+        this.calculateTotal(i);
+      }
+    });
 
     // 4. Subscribe to changes
     this.subscriptions.add(
@@ -91,8 +93,6 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
         }
       })
     );
-
-    this.cdr.detectChanges();
   }
 
   ngOnDestroy(): void {
@@ -160,8 +160,6 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
         formGroup.get('blPlanQuantity')?.disable({ emitEvent: false });
         formGroup.get('psPlanQuantity')?.disable({ emitEvent: false });
         formGroup.get('locationCode')?.disable({ emitEvent: false });
-
-        this.cdr.detectChanges();
       }
     });
   }

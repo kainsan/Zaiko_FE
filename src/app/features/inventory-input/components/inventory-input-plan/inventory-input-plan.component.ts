@@ -31,6 +31,12 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
     locations = signal<Location[]>([]);
     inventoryForm!: FormGroup;
 
+    currentDate = new Date().toLocaleDateString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).replace(/\//g, '/');
+
     constructor(
         private fb: FormBuilder,
         private inventoryInputService: InventoryInputService,
@@ -260,25 +266,27 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
         const data = this.inventoryForm.getRawValue();
 
         if (id) {
-            this.inventoryInputService.updateInventoryInputPlan(id, data as InventoryInputPlanResponse).subscribe({
-                next: () => {
-                    this.snackBar.open('保存しました。', '', {
-                        duration: 3000,
-                        panelClass: ['success-snackbar'],
-                        horizontalPosition: 'center',
-                        verticalPosition: 'bottom'
-                    });
-                },
-                error: (err) => {
-                    console.error('Error updating plan:', err);
-                    this.snackBar.open('登録に失敗しました。', '', {
-                        duration: 3000,
-                        panelClass: ['error-snackbar'],
-                        horizontalPosition: 'center',
-                        verticalPosition: 'bottom'
-                    });
-                }
-            });
+            // this.inventoryInputService.updateInventoryInputPlan(id, data as InventoryInputPlanResponse).subscribe({
+            //     next: () => {
+            console.log('Update successful');
+            console.log(data);
+            // this.snackBar.open('保存しました。', '', {
+            //     duration: 3000,
+            //     panelClass: ['success-snackbar'],
+            //     horizontalPosition: 'center',
+            //     verticalPosition: 'bottom'
+            //     });
+            // },
+            // error: (err) => {
+            //     console.error('Error updating plan:', err);
+            //     this.snackBar.open('登録に失敗しました。', '', {
+            //         duration: 3000,
+            //         panelClass: ['error-snackbar'],
+            //         horizontalPosition: 'center',
+            //         verticalPosition: 'bottom'
+            //     });
+            // }
+            // });
         } else {
             console.log('Save (Create) not implemented yet in this task, but here is the data:', data);
         }

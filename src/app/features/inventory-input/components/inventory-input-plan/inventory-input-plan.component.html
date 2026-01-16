@@ -1,4 +1,28 @@
 <div class="inventory-plan-container">
+    <header class="header">
+        <div class="breadcrumb">
+            <a routerLink="/admin" class="breadcrumb-link">
+                入庫
+            </a>
+            <svg xmlns="http://www.w3.org/2000/svg" height="16" width="7" viewBox="0 0 256 512">
+                <path fill="#9f9f9f"
+                    d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+            </svg>
+            <span class="breadcrumb-link">入庫一覧</span>
+            <svg xmlns="http://www.w3.org/2000/svg" height="16" width="7" viewBox="0 0 256 512">
+                <path fill="#9f9f9f"
+                    d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
+            </svg>
+            <span class="current-page">入庫予定入力</span>
+        </div>
+
+        <div class="header-actions">
+            <div class="date-container">
+                <span class="date-label">業務日付</span>
+                <span class="date-value">{{currentDate}}</span>
+            </div>
+        </div>
+    </header>
     <app-inventory-input-plan-header [headerFormGroup]="headerFormGroup" [isFormInvalid]="inventoryForm.invalid"
         (save)="onSave()" (delete)="onDelete()" (back)="onBack()" (repositoryChanged)="onRepositoryChanged($event)">
     </app-inventory-input-plan-header>
