@@ -119,7 +119,7 @@
               </td>
               <td class="cell-mng-no">
                 <input type="text" formControlName="numberMng"
-                  [attr.disabled]="control.get('isNumberMng')?.value === '0' ? true : null"
+
                   [class.disabled-input]="control.get('isNumberMng')?.value === '0'">
               </td>
               <td class="cell-qty">

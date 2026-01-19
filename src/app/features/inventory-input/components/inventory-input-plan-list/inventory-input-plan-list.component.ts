@@ -147,6 +147,7 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
           isPackCsInput: '0',
           isPieceInput: '0',
           datetimeMngType: null,
+          datetimeMng: null,
           standardInfo: '',
           totalActualQuantity: 0,
           packCsAmount: 0,
@@ -255,7 +256,7 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
 
     dialogRef.afterClosed().subscribe((result) => {
       if (!result) return;
-      console.log(result)
+      // console.log(result)
       setTimeout(() => {
         const formGroup = this.detailsFormArray.at(index);
 
@@ -283,7 +284,8 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
             csPlanQuantity: null,
             blPlanQuantity: null,
             psPlanQuantity: null,
-            totalQuantityInput: null
+            totalQuantityInput: null,
+            datetimeMng: null
           },
           { emitEvent: false }
         ); // 🚫 không trigger valueChanges

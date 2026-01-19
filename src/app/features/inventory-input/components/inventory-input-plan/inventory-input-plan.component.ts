@@ -30,6 +30,7 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
     @Output() back = new EventEmitter<void>();
     locations = signal<Location[]>([]);
     inventoryForm!: FormGroup;
+    isFormInvalid = true;
 
     currentDate = new Date().toLocaleDateString('ja-JP', {
         year: 'numeric',
@@ -43,7 +44,7 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
         private repositoriesService: RepositoriesService,
         private dialog: MatDialog,
         private snackBar: MatSnackBar,
-        private cdr: ChangeDetectorRef
+        // private cdr: ChangeDetectorRef
     ) {
         this.initializeForm();
     }
@@ -52,6 +53,9 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
         if (this.inventoryInputId) {
             this.loadData(this.inventoryInputId);
         }
+        this.inventoryForm.statusChanges.subscribe(() => {
+    this.isFormInvalid = this.inventoryForm.invalid;
+  });
     }
 
     public getLocationByRepositoryId(repositoryId: number): Observable<Location[]> {
@@ -159,7 +163,7 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
 
     private createDetailFormGroup(detail?: InventoryInputPlanDetail): FormGroup {
         let datetimeMng = detail?.datetimeMng ? new Date(detail.datetimeMng) : '';
-        console.log(detail)
+        // console.log(detail)
         return this.fb.group({
             datetimeMng: [{ value: datetimeMng, disabled: detail?.isDatetimeMng === '0' }],
             planDetailId: [detail?.planDetailId || null],
@@ -206,7 +210,7 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
         detailsArray.push(this.createDetailFormGroup());
         // Trigger re-render by re-assigning the control with a fresh array
         this.inventoryForm.setControl('details', this.fb.array([...detailsArray.controls]));
-        this.cdr.detectChanges();
+        // this.cdr.detectChanges();
     }
 
     removeDetail(index: number): void {
@@ -235,7 +239,7 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
 
                 // Trigger re-render by re-assigning the control with a fresh array
                 this.inventoryForm.setControl('details', this.fb.array([...detailsArray.controls]));
-                this.cdr.detectChanges();
+                // this.cdr.detectChanges();
             }
         });
     }
@@ -256,7 +260,7 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
 
         // Trigger re-render by re-assigning the control with a fresh array
         this.inventoryForm.setControl('details', this.fb.array([...detailsArray.controls]));
-        this.cdr.detectChanges();
+        // this.cdr.detectChanges();
     }
 
     onSave(): void {
@@ -266,27 +270,27 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
         const data = this.inventoryForm.getRawValue();
 
         if (id) {
-            // this.inventoryInputService.updateInventoryInputPlan(id, data as InventoryInputPlanResponse).subscribe({
-            //     next: () => {
+            this.inventoryInputService.updateInventoryInputPlan(id, data as InventoryInputPlanResponse).subscribe({
+                next: () => {
             console.log('Update successful');
             console.log(data);
-            // this.snackBar.open('保存しました。', '', {
-            //     duration: 3000,
-            //     panelClass: ['success-snackbar'],
-            //     horizontalPosition: 'center',
-            //     verticalPosition: 'bottom'
-            //     });
-            // },
-            // error: (err) => {
-            //     console.error('Error updating plan:', err);
-            //     this.snackBar.open('登録に失敗しました。', '', {
-            //         duration: 3000,
-            //         panelClass: ['error-snackbar'],
-            //         horizontalPosition: 'center',
-            //         verticalPosition: 'bottom'
-            //     });
-            // }
-            // });
+            this.snackBar.open('保存しました。', '', {
+                duration: 3000,
+                panelClass: ['success-snackbar'],
+                horizontalPosition: 'center',
+                verticalPosition: 'bottom'
+                });
+            },
+            error: (err) => {
+                console.error('Error updating plan:', err);
+                this.snackBar.open('登録に失敗しました。', '', {
+                    duration: 3000,
+                    panelClass: ['error-snackbar'],
+                    horizontalPosition: 'center',
+                    verticalPosition: 'bottom'
+                });
+            }
+            });
         } else {
             console.log('Save (Create) not implemented yet in this task, but here is the data:', data);
         }
