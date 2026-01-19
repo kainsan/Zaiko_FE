@@ -12,7 +12,7 @@
       <p class="section-title">{{ section.title }}</p>
       <div class="section-items">
         <ng-container *ngFor="let item of section.items">
-          <a [routerLink]="item.path" routerLinkActive="active" class="item-link">
+          <a [routerLink]="item.path" [queryParams]="item.queryParams" routerLinkActive="active" class="item-link">
             <mat-card class="item-card">
               <span class="item-label">{{ item.label }}</span>
             </mat-card>

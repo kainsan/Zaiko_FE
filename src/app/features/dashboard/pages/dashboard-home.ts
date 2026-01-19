@@ -27,7 +27,7 @@ export class DashboardHome {
       title: "入庫",
       items: [
         { label: "入庫一覧", path: "/dashboard/inventory-input-list" },
-        { label: "入庫予定入力", path: "/incoming/schedule" },
+        { label: "入庫予定入力", path: "/dashboard/inventory-input-list", queryParams: { mode: 'create' } },
         { label: "入庫実績登録", path: "/incoming/actual" }
       ]
     },

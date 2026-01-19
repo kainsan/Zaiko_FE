@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, OnChanges, Output, signal, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormArray, ReactiveFormsModule } from '@angular/forms';
+import { AbstractControl, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
@@ -382,5 +382,14 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
 
   onCopyItem(index: number): void {
     this.copyItem.emit(index);
+  }
+
+  trackByDetail(index: number, control: AbstractControl) {
+    const id = control.get('planDetailId')?.value;
+    return id != null ? id : index;
+  }
+
+  isCopyDisabled(control: AbstractControl): boolean {
+    return control.invalid;
   }
 }

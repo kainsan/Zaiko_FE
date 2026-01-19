@@ -86,6 +86,10 @@ export class InventoryInputService {
         return this.http.get<Repository[]>(`${this.apiUrl}/repositories`);
     }
 
+    createInventoryInputPlan(data: InventoryInputPlanResponse): Observable<any> {
+        return this.http.post(`${this.apiUrl}/inventory-input/inventory-input-plan`, data);
+    }
+
     updateInventoryInputPlan(id: number, data: InventoryInputPlanResponse): Observable<any> {
         return this.http.put(`${this.apiUrl}/inventory-input/inventory-input-plan/${id}`, data);
     }

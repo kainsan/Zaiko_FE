@@ -25,7 +25,8 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngFor="let control of detailsFormArray.controls; let i = index" [formGroup]="$any(control)">
+        <ng-container *ngFor="let control of detailsFormArray.controls; let i = index; trackBy: trackByDetail"
+          [formGroup]="$any(control)">
           <ng-container *ngIf="control.get('delFlg')?.value !== '1'">
             <tr class="row-top">
               <td rowspan="2" class="cell-no">{{ i + 1 }}</td>
@@ -88,7 +89,7 @@
                         fill="white" />
                     </svg>
                   </button>
-                  <button type="button" class="btn-copy" (click)="onCopyItem(i)" [disabled]="control.invalid">
+                  <button type="button" class="btn-copy" (click)="onCopyItem(i)" [disabled]="isCopyDisabled(control)">
                     <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M7.5 10.5V11.4375C7.5 11.7656 7.24219 12 6.9375 12H0.5625C0.234375 12 0 11.7656 0 11.4375V2.8125C0 2.50781 0.234375 2.25 0.5625 2.25H2.25V9.1875C2.25 9.91406 2.83594 10.5 3.5625 10.5H7.5ZM7.5 2.4375C7.5 2.76562 7.73438 3 8.0625 3H10.5V9.1875C10.5 9.51562 10.2422 9.75 9.9375 9.75H3.5625C3.23438 9.75 3 9.51562 3 9.1875V0.5625C3 0.257812 3.23438 0 3.5625 0H7.5V2.4375ZM10.3125 1.71094C10.4297 1.82812 10.5 1.96875 10.5 2.10938V2.25H8.25V0H8.39062C8.53125 0 8.67188 0.0703125 8.78906 0.1875L10.3125 1.71094Z"
@@ -119,7 +120,6 @@
               </td>
               <td class="cell-mng-no">
                 <input type="text" formControlName="numberMng"
-
                   [class.disabled-input]="control.get('isNumberMng')?.value === '0'">
               </td>
               <td class="cell-qty">

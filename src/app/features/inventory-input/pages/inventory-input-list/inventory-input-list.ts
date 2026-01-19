@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute, Params } from '@angular/router';
 
 import { SearchInventoryInputComponent } from '../../components/search-inventory-input/search-inventory-input.component';
 import { ListInventoryInputComponent } from '../../components/list-inventory-input/list-inventory-input.component';
@@ -33,11 +33,22 @@ export class InventoryInputList implements OnInit {
     viewMode = signal<'list' | 'plan'>('list');
     selectedId = signal<number | null>(null);
 
-    constructor(private inventoryInputService: InventoryInputService, private router: Router) { }
+    constructor(
+        private inventoryInputService: InventoryInputService,
+        private router: Router,
+        private route: ActivatedRoute
+    ) { }
 
     ngOnInit(): void {
         this.loadInventoryInputs();
         this.refreshInventInput();
+
+        this.route.queryParams.subscribe((params: Params) => {
+            if (params['mode'] === 'create') {
+                this.viewMode.set('plan');
+                this.selectedId.set(null);
+            }
+        });
     }
 
     handleOpenPlan(item: InventoryInputDTO): void {
@@ -48,6 +59,7 @@ export class InventoryInputList implements OnInit {
     handleBackToList(): void {
         this.viewMode.set('list');
         this.selectedId.set(null);
+        this.refreshInventInput();
     }
 
     loadInventoryInputs(): void {
