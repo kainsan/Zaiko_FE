@@ -3,15 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InventoryInputPlanHeaderComponent } from '../inventory-input-plan-header/inventory-input-plan-header.component';
 import { InventoryInputPlanListComponent } from '../inventory-input-plan-list/inventory-input-plan-list.component';
-import { InventoryInputService } from '../../services/inventory-input.service';
-import { InventoryInputPlanDetail, InventoryInputPlanResponse } from '../../models/inventory-input.model';
-import { RepositoriesService } from '../../../master-product/services/repostories.service';
-import { Repository } from '../../../master-product/model/product.model';
-import { Location } from '../../../master-product/model/product.model';
+import { InventoryInputService } from '../../../services/inventory-input.service';
+import { InventoryInputPlanDetail, InventoryInputPlanResponse } from '../../../models/inventory-input.model';
+import { RepositoriesService } from '../../../../master-product/services/repostories.service';
+import { Repository } from '../../../../master-product/model/product.model';
+import { Location } from '../../../../master-product/model/product.model';
 import { Observable } from 'rxjs/internal/Observable';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'app-inventory-input-plan',

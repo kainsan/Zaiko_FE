@@ -4,13 +4,13 @@ import { AbstractControl, FormArray, ReactiveFormsModule } from '@angular/forms'
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
-import { InventorySearchDialogComponent } from '../inventory-search-dialog/inventory-search-dialog.component';
-import { Product } from '../../../master-product/model/product.model';
+import { InventorySearchDialogComponent } from '../../inventory-search-dialog/inventory-search-dialog.component';
+import { Product } from '../../../../master-product/model/product.model';
 import { MatDialog } from '@angular/material/dialog';
-import { ProductService } from '../../../master-product/services/product.service';
-import { RepositoriesService } from '../../../master-product/services/repostories.service';
-import { Location, Repository } from '../../../master-product/model/product.model';
-import { InventoryInputService } from '../../services/inventory-input.service';
+import { ProductService } from '../../../../master-product/services/product.service';
+import { RepositoriesService } from '../../../../master-product/services/repostories.service';
+import { Location, Repository } from '../../../../master-product/model/product.model';
+import { InventoryInputService } from '../../../services/inventory-input.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -23,10 +23,10 @@ import { Subscription } from 'rxjs';
     MatNativeDateModule,
     MatInputModule,
   ],
-  templateUrl: './inventory-input-plan-list.component.html',
-  styleUrls: ['./inventory-input-plan-list.component.scss'],
+  templateUrl: './inventory-input-actual-list.component.html',
+  styleUrls: ['./inventory-input-actual-list.component.scss'],
 })
-export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDestroy {
+export class InventoryInputActualListComponent implements OnInit, OnChanges, OnDestroy {
   @Input() detailsFormArray!: FormArray;
   @Output() addItem = new EventEmitter<void>();
   @Output() removeItem = new EventEmitter<number>();

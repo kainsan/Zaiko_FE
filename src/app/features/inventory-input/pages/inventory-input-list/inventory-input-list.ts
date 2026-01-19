@@ -4,7 +4,7 @@ import { RouterModule, Router, ActivatedRoute, Params } from '@angular/router';
 
 import { SearchInventoryInputComponent } from '../../components/search-inventory-input/search-inventory-input.component';
 import { ListInventoryInputComponent } from '../../components/list-inventory-input/list-inventory-input.component';
-import { InventoryInputPlanComponent } from '../../components/inventory-input-plan/inventory-input-plan.component';
+import { InventoryInputPlanComponent } from '../../components/input-plan/inventory-input-plan/inventory-input-plan.component';
 import { InventoryInputService } from '../../services/inventory-input.service';
 import { InventoryInputDTO, InventoryInputSearchParams } from '../../models/inventory-input.model';
 import { PageResponse } from '../../../master-product/response/PageResponse';

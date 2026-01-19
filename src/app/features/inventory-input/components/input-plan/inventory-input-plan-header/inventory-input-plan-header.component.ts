@@ -5,12 +5,12 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { InventoryInputPlanHeader } from '../../models/inventory-input.model';
-import { Product, Repository } from '../../../master-product/model/product.model';
-import { InventoryInputService } from '../../services/inventory-input.service';
+import { InventoryInputPlanHeader } from '../../../models/inventory-input.model';
+import { Product, Repository } from '../../../../master-product/model/product.model';
+import { InventoryInputService } from '../../../services/inventory-input.service';
 import { MatDialog } from '@angular/material/dialog';
-import { InventorySearchDialogComponent } from '../inventory-search-dialog/inventory-search-dialog.component';
-import { ProductService } from '../../../master-product/services/product.service';
+import { InventorySearchDialogComponent } from '../../inventory-search-dialog/inventory-search-dialog.component';
+import { ProductService } from '../../../../master-product/services/product.service';
 
 @Component({
     selector: 'app-inventory-input-plan-header',
