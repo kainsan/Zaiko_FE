@@ -239,6 +239,23 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
     }
   }
 
+  onLocationChange(index: number, event: any): void {
+    const locationId = Number(event.target.value);
+    const formGroup = this.detailsFormArray.at(index);
+    const locations = this.locationsMap[index] || [];
+    const selectedLocation = locations.find(loc => loc.locationId === locationId);
+
+    if (selectedLocation) {
+      formGroup.patchValue({
+        locationCode: selectedLocation.locationCode
+      });
+    } else {
+      formGroup.patchValue({
+        locationCode: ''
+      });
+    }
+  }
+
   onAddItem(): void {
     this.addItem.emit();
   }

@@ -5,13 +5,14 @@ import { RouterModule, Router, ActivatedRoute, Params } from '@angular/router';
 import { SearchInventoryInputComponent } from '../../components/search-inventory-input/search-inventory-input.component';
 import { ListInventoryInputComponent } from '../../components/list-inventory-input/list-inventory-input.component';
 import { InventoryInputPlanComponent } from '../../components/input-plan/inventory-input-plan/inventory-input-plan.component';
+import { InventoryInputActualComponent } from '../../components/input-actual/inventory-input-actual/inventory-input-actual.component';
 import { InventoryInputService } from '../../services/inventory-input.service';
 import { InventoryInputDTO, InventoryInputSearchParams } from '../../models/inventory-input.model';
 import { PageResponse } from '../../../master-product/response/PageResponse';
 
 @Component({
     selector: 'app-inventory-input-list',
-    imports: [RouterModule, CommonModule, SearchInventoryInputComponent, ListInventoryInputComponent, InventoryInputPlanComponent],
+    imports: [RouterModule, CommonModule, SearchInventoryInputComponent, ListInventoryInputComponent, InventoryInputPlanComponent, InventoryInputActualComponent],
     standalone: true,
     templateUrl: './inventory-input-list.html',
     styleUrls: ['./inventory-input-list.scss'],
@@ -30,7 +31,7 @@ export class InventoryInputList implements OnInit {
     pageSize = 50;
     currentSearchParams = signal<InventoryInputSearchParams>({});
 
-    viewMode = signal<'list' | 'plan'>('list');
+    viewMode = signal<'list' | 'plan' | 'actual'>('list');
     selectedId = signal<number | null>(null);
 
     constructor(
@@ -54,6 +55,11 @@ export class InventoryInputList implements OnInit {
     handleOpenPlan(item: InventoryInputDTO): void {
         this.selectedId.set(item.inventoryInputEntity.inventoryInputId);
         this.viewMode.set('plan');
+    }
+
+    handleOpenActual(item: InventoryInputDTO): void {
+        this.selectedId.set(item.inventoryInputEntity.inventoryInputId);
+        this.viewMode.set('actual');
     }
 
     handleBackToList(): void {

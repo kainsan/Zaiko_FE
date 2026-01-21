@@ -1,6 +1,6 @@
 <div class="list-container" *ngIf="detailsFormArray">
   <div class="list-header">
-    <h3>入庫予定明細一覧 </h3>
+    <h3>入庫実績明細一覧 </h3>
     <button type="button" class="btn-add" (click)="onAddItem()">+ 追加</button>
   </div>
 
@@ -12,16 +12,21 @@
           <th class="col-product">商品</th>
           <th class="col-warehouse">倉庫</th>
           <th class="col-location">ロケーション</th>
+          <th class="col-inventory-product-type">在庫状態</th>
           <th class="col-remarks">明細備考</th>
-          <th class="col-unentered">未入庫</th>
           <th rowspan="2" class="col-actions"></th>
         </tr>
         <tr>
           <th class="col-spec">規格</th>
           <th class="col-date">管理日付</th>
           <th class="col-mng-no">管理番号</th>
-          <th class="col-qty">入庫数量 <span class="spacer"></span> 合計</th>
-          <th class="col-entered">入庫済</th>
+          <th class="col-inventory-product-type"></th>
+          <th class="col-qty">
+            <div class="qty-header">
+              <span>入庫数量</span>
+              <span>合計</span>
+            </div>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -48,7 +53,7 @@
                       必須項目です。
                     </div>
                   </div>
-                  <input type="text" formControlName="productName" class="name-input">
+                  <input type="text" readonly formControlName="productName" class="name-input">
                 </div>
               </td>
               <td class="cell-warehouse">
@@ -67,19 +72,27 @@
                 </div>
               </td>
               <td class="cell-location">
-                <select formControlName="locationCode">
+                <select formControlName="locationId" (change)="onLocationChange(i, $event)">
                   <option value="">(設定無し)</option>
-                  <option *ngFor="let loc of locationsMap[i]" [value]="loc.locationCode">
+                  <option *ngFor="let loc of locationsMap[i]" [value]="loc.locationId">
                     {{ loc.locationCode }}
                   </option>
                 </select>
               </td>
+              <td class="cell-inventory-product-type">
+                <select formControlName="inventoryProductType">
+                  <option value="">(設定無し)</option>
+                  <option *ngFor="let type of inventoryProductTypeOptions" [value]="type.value">
+                    {{ type.value }} {{ type.label }}
+                  </option>
+                </select>
+              </td>
               <td class="cell-remarks">
-                <input type="text" formControlName="detailNote">
+                <input type="text" readonly formControlName="detailNote">
               </td>
-              <td class="cell-unentered">
-                <input type="text" formControlName="totalPlanQuantity" readonly class="readonly-num">
-              </td>
+              <!-- <td class="cell-unentered">
+                <input type="text" formControlName="totalActualQuantity" readonly class="readonly-num">
+              </td> -->
               <td rowspan="2" class="cell-actions">
                 <div class="action-buttons">
                   <button type="button" class="btn-delete" (click)="onRemoveItem(i)">
@@ -122,20 +135,20 @@
                 <input type="text" formControlName="numberMng"
                   [class.disabled-input]="control.get('isNumberMng')?.value === '0'">
               </td>
+              <td>
+              </td>
               <td class="cell-qty">
                 <div class="qty-group">
-                  <input type="text" class="qty-small" formControlName="csPlanQuantity" (input)="calculateTotal(i)">
+                  <input type="text" class="qty-small" formControlName="csActualQuantity" (input)="calculateTotal(i)">
                   <span>{{ control.get('packCsUnitName')?.value }}</span>
-                  <input type="text" class="qty-small" formControlName="blPlanQuantity" (input)="calculateTotal(i)">
+                  <input type="text" class="qty-small" formControlName="blActualQuantity" (input)="calculateTotal(i)">
                   <span>{{ control.get('packBlUnitName')?.value }}</span>
-                  <input type="text" class="qty-medium" formControlName="psPlanQuantity" (input)="calculateTotal(i)">
+                  <input type="text" class="qty-medium" formControlName="psActualQuantity" (input)="calculateTotal(i)">
                   <span>{{ control.get('pieceUnitName')?.value }}</span>
-                  <input type="text" class="qty-medium" readonly formControlName="totalQuantityInput">
+                  <input type="text" class="qty-medium" readonly formControlName="totalActualQuantity">
                 </div>
               </td>
-              <td class="cell-entered">
-                <input type="text" formControlName="totalActualQuantity" readonly class="readonly-num">
-              </td>
+
             </tr>
           </ng-container>
         </ng-container>

@@ -120,7 +120,8 @@
                         <div class="action-buttons">
                             <button class="btn btn-scheduled" [disabled]="isPlanDisabled(item)"
                                 (click)="onOpenPlan(item)">予定</button>
-                            <button class="btn btn-actual" [disabled]="isActualDisabled(item)">実績</button>
+                            <button class="btn btn-actual" [disabled]="isActualDisabled(item)"
+                                (click)="onOpenActual(item)">実績</button>
                             <button class="btn btn-edit" [disabled]="isCorrectionDisabled(item)">訂正</button>
                         </div>
                     </td>

@@ -67,9 +67,9 @@
                 </div>
               </td>
               <td class="cell-location">
-                <select formControlName="locationCode">
+                <select formControlName="locationId" (change)="onLocationChange(i, $event)">
                   <option value="">(設定無し)</option>
-                  <option *ngFor="let loc of locationsMap[i]" [value]="loc.locationCode">
+                  <option *ngFor="let loc of locationsMap[i]" [value]="loc.locationId">
                     {{ loc.locationCode }}
                   </option>
                 </select>

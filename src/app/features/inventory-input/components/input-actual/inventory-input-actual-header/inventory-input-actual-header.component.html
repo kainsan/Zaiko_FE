@@ -10,7 +10,6 @@
 
         <div class="actions">
             <div class="status-label">
-                入庫状態
                 <span class="status-badge">{{ inputStatusMap[headerFormGroup.get('inputStatus')?.value || '0'] }}</span>
             </div>
             <button class="btn-close" (click)="toggleClose()">{{ headerFormGroup.get('isClosed')?.value === '1' ?
@@ -36,13 +35,21 @@
         <!-- Row 1 -->
         <div class="form-group">
             <label>入庫予定日</label>
-            <div class="input-wrapper date-input"
-                [class.invalid-input]="headerFormGroup.get('inputPlanDate')?.invalid && headerFormGroup.get('inputPlanDate')?.touched">
+            <div class="input-wrapper date-input">
                 <input matInput [matDatepicker]="planDatePicker" formControlName="inputPlanDate" class="date-field">
-                <mat-datepicker-toggle matSuffix [for]="planDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker-toggle matSuffix [for]="planDatePicker" ></mat-datepicker-toggle>
                 <mat-datepicker #planDatePicker></mat-datepicker>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>入庫日</label>
+            <div class="input-wrapper date-input"
+                [class.invalid-input]="headerFormGroup.get('inputActualDate')?.invalid && headerFormGroup.get('inputActualDate')?.touched">
+                <input matInput [matDatepicker]="actualDatePicker" formControlName="inputActualDate" class="date-field">
+                <mat-datepicker-toggle matSuffix [for]="actualDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #actualDatePicker></mat-datepicker>
                 <div class="error-tooltip"
-                    *ngIf="headerFormGroup.get('inputPlanDate')?.invalid && headerFormGroup.get('inputPlanDate')?.touched">
+                    *ngIf="headerFormGroup.get('inputActualDate')?.invalid && headerFormGroup.get('inputActualDate')?.touched">
                     必須項目です。
                 </div>
             </div>
@@ -56,16 +63,18 @@
         </div>
         <div class="form-group">
             <label>伝票番号</label>
-            <input type="text" formControlName="slipNo" class="readonly-input">
+            <input type="text" [attr.disabled]="headerFormGroup.get('createSlipType')?.value === '0' ? true : null"
+                formControlName="slipNo">
         </div>
         <div class="form-group">
             <label>客先伝票番号</label>
-            <input type="text" formControlName="planSupplierSlipNo">
+            <input type="text" [attr.disabled]="headerFormGroup.get('isClosed')?.value === '1' ? true : null"
+                formControlName="actualSupplierSlipNo">
         </div>
 
         <!-- Row 2 -->
         <div class="form-group">
-            <label>納品先コード</label>
+            <label>仕入先コード</label>
             <div class="input-wrapper">
                 <input type="text" formControlName="destinationCode">
                 <button class="search-btn" (click)="openSearchDialog('supplierDelivery')">
@@ -77,28 +86,21 @@
                 </button>
             </div>
         </div>
-        <div class="form-group full-width">
-            <label>納品先名称</label>
-            <input type="text" formControlName="departmentName" class="readonly-input">
+        <div class="form-group" style="grid-column: span 4;">
+            <label>仕入先名称</label>
+            <input type="text" readonly formControlName="departmentName" class="readonly-input">
         </div>
 
         <!-- Row 3 -->
         <div class="form-group">
-            <label>仕入先コード</label>
+            <label>支払先コード</label>
             <div class="input-wrapper">
-                <input type="text" formControlName="planSupplierCode">
-                <!-- <button class="search-btn" (click)="openSearchDialog('supplier')">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                </button> -->
+                <input class="readonly-input" type="text"  readonly formControlName="supplierCode">
             </div>
         </div>
-        <div class="form-group full-width">
-            <label>仕入先名称</label>
-            <input type="text" formControlName="planSupplierName" class="readonly-input">
+        <div class="form-group" style="grid-column: span 4;">
+            <label>支払先名称</label>
+            <input type="text" readonly formControlName="supplierName" class="readonly-input">
         </div>
 
         <!-- Row 4 -->
@@ -121,15 +123,15 @@
         </div>
         <div class="form-group">
             <label>倉庫</label>
-            <select formControlName="planRepositoryId">
+            <select formControlName="actualRepositoryId">
                 <option *ngFor="let repo of repositories()" [value]="repo.repositoryId">
                     {{ repo.repositoryCode }} {{ repo.repositoryName }}
                 </option>
             </select>
         </div>
-        <div class="form-group">
+        <div class="form-group" style="grid-column: span 2;">
             <label>伝票備考</label>
-            <input type="text" formControlName="planSlipNote">
+            <input type="text" formControlName="actualSlipNote">
         </div>
     </div>
 </div>

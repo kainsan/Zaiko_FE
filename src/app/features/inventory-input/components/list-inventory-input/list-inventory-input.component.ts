@@ -16,6 +16,7 @@ export class ListInventoryInputComponent implements OnInit {
 
   @Output() openDetail = new EventEmitter<any>();
   @Output() openPlan = new EventEmitter<any>();
+  @Output() openActual = new EventEmitter<any>();
   @Output() loadMore = new EventEmitter<void>();
 
   displayItems = computed(() => {
@@ -33,6 +34,10 @@ export class ListInventoryInputComponent implements OnInit {
 
   onOpenPlan(item: InventoryInputDTO): void {
     this.openPlan.emit(item);
+  }
+
+  onOpenActual(item: InventoryInputDTO): void {
+    this.openActual.emit(item);
   }
 
   onDownloadCsv(): void {

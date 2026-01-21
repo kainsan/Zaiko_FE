@@ -144,7 +144,80 @@ export interface InventoryInputPlanDetail {
     delFlg: string;
 }
 
+
 export interface InventoryInputPlanResponse {
     inventoryInputPlanHeader: InventoryInputPlanHeader;
     inventoryInputPlanDetails: InventoryInputPlanDetail[];
+}
+
+export interface InventoryInputActualHeader {
+    inventoryInputId: number;
+    companyId: number;
+    inputPlanDate: string;
+    inputActualDate: string;
+    createSlipType: string;
+    slipNo: string;
+    actualSupplierSlipNo: string | null;
+    actualSlipNote: string | null;
+    actualSupplierDeliveryDestinationId: number;
+    actualSupplierId: number;
+    productOwnerId: number;
+    actualRepositoryId: number;
+    inputStatus: string;
+    sumPlanQuantity: number;
+    sumActualQuantity: number;
+    isClosed: string;
+    freeItem1: string | null;
+    freeItem2: string | null;
+    freeItem3: string | null;
+    contactStatus: string;
+    destinationCode: string;
+    departmentName: string | null;
+    supplierCode: string;
+    supplierName: string;
+    customerCode: string;
+    customerName: string;
+    repositoryCode: string;
+    repositoryName: string;
+}
+
+export interface InventoryInputActualDetail {
+    datetimeMng: string | null;
+    actualDetailId: number;
+    inventoryInputId: number;
+    companyId: number;
+    productId: number;
+    repositoryId: number;
+    locationId: number | null;
+    numberMng: string | null;
+    csActualQuantity: number | null;
+    blActualQuantity: number | null;
+    psActualQuantity: number | null;
+    totalActualQuantity: number;
+    inventoryProductType: string;
+    detailNote: string | null;
+    productCode: string;
+    productName: string;
+    detailRepositoryCode: string;
+    detailRepositoryName: string;
+    locationCode: string | null;
+    packCsUnitName: string;
+    packBlUnitName: string;
+    pieceUnitName: string;
+    datetimeMngType: string | null;
+    isDatetimeMng: string;
+    isNumberMng: string;
+    isPackCsInput: string;
+    isPackBlInput: string;
+    isPieceInput: string;
+    totalQuantityInput: number;
+    standardInfo: string | null;
+    packCsAmount?: number;
+    packBlAmount?: number;
+    delFlg: string;
+}
+
+export interface InventoryInputActualResponse {
+    inventoryInputActualHeader: InventoryInputActualHeader;
+    inventoryInputActualDetails: InventoryInputActualDetail[];
 }

@@ -190,10 +190,10 @@ export class SearchInventoryInputComponent implements OnInit {
                 this.customerCodeTo.set(result.customerCode || '');
                 break;
             case 'productFrom':
-                this.productCodeFrom.set(result.productEntity?.productCode || '');
+                this.productCodeFrom.set(result.productCode || '');
                 break;
             case 'productTo':
-                this.productCodeTo.set(result.productEntity?.productCode || '');
+                this.productCodeTo.set(result.productCode || '');
                 break;
         }
     }

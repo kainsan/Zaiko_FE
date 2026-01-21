@@ -79,10 +79,19 @@ export class InventoryInputActualHeaderComponent implements OnInit, OnChanges {
             }
         });
 
-        this.headerFormGroup?.get('planRepositoryId')?.valueChanges.subscribe(id => {
+        this.headerFormGroup?.get('actualRepositoryId')?.valueChanges.subscribe(id => {
             const repo = this.repositories().find(r => r.repositoryId == id);
             if (repo) {
                 this.repositoryChanged.emit(repo);
+            }
+        });
+
+        this.headerFormGroup?.get('isClosed')?.valueChanges.subscribe(value => {
+            const actualSupplierSlipNoControl = this.headerFormGroup?.get('actualSupplierSlipNo');
+            if (value === '1') {
+                actualSupplierSlipNoControl?.disable();
+            } else {
+                actualSupplierSlipNoControl?.enable();
             }
         });
     }
@@ -168,21 +177,21 @@ export class InventoryInputActualHeaderComponent implements OnInit, OnChanges {
             case 'supplierDelivery':
                 this.headerFormGroup.patchValue({
                     // Destination fields
-                    planSupplierDeliveryDestinationId: result.supplierDeliveryDestinationId,
+                    actualSupplierDeliveryDestinationId: result.supplierDeliveryDestinationId,
                     destinationCode: result.supplierDeliveryDestinationCode,
                     departmentName: result.destinationCode, // Name is in destinationCode per user JSON
 
                     // Supplier fields (derived from delivery selection)
-                    planSupplierId: result.supplierId,
-                    planSupplierCode: result.supplierName, // Code is in supplierName per user JSON
-                    planSupplierName: result.supplierDeliveryDepartName // Assuming Supplier Name == Destination Name
+                    actualSupplierId: result.supplierId,
+                    supplierCode: result.supplierName, // Code is in supplierName per user JSON
+                    supplierName: result.supplierDeliveryDepartName // Assuming Supplier Name == Destination Name
                 });
                 break;
             case 'supplier':
                 this.headerFormGroup.patchValue({
-                    planSupplierId: result.supplierId,
-                    planSupplierCode: result.supplierCode,
-                    planSupplierName: result.supplierName
+                    actualSupplierId: result.supplierId,
+                    supplierCode: result.supplierCode,
+                    supplierName: result.supplierName
                 });
                 break;
             case 'customer':

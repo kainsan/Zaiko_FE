@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PageResponse } from '../../master-product/response/PageResponse';
-import { InventoryInputDTO, InventoryInputPlanResponse, InventoryInputSearchParams } from '../models/inventory-input.model';
+import { InventoryInputDTO, InventoryInputPlanResponse, InventoryInputActualResponse, InventoryInputSearchParams } from '../models/inventory-input.model';
 import { Product, Repository } from '../../master-product/model/product.model';
 
 @Injectable({
@@ -24,6 +24,10 @@ export class InventoryInputService {
 
     getInventoryInputById(id: number): Observable<InventoryInputPlanResponse> {
         return this.http.get<InventoryInputPlanResponse>(`${this.apiUrl}/inventory-input/inventory-input-plan/${id}`);
+    }
+
+    getInventoryInputActualById(id: number): Observable<InventoryInputActualResponse> {
+        return this.http.get<InventoryInputActualResponse>(`${this.apiUrl}/inventory-input/inventory-input-actual/${id}`);
     }
 
     searchInventoryInputs(searchParams: InventoryInputSearchParams): Observable<PageResponse<InventoryInputDTO>> {
@@ -96,5 +100,17 @@ export class InventoryInputService {
 
     deleteInventoryInputPlan(id: number): Observable<any> {
         return this.http.delete(`${this.apiUrl}/inventory-input/inventory-input-plan/${id}`);
+    }
+
+    createInventoryInputActual(data: InventoryInputActualResponse): Observable<any> {
+        return this.http.post(`${this.apiUrl}/inventory-input/inventory-input-actual`, data);
+    }
+
+    updateInventoryInputActual(id: number, data: InventoryInputActualResponse): Observable<any> {
+        return this.http.put(`${this.apiUrl}/inventory-input/inventory-input-actual/${id}`, data);
+    }
+
+    deleteInventoryInputActual(id: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/inventory-input/inventory-input-actual/${id}`);
     }
 }

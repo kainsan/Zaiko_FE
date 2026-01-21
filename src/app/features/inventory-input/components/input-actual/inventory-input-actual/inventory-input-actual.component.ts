@@ -4,7 +4,7 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { InventoryInputActualHeaderComponent } from '../inventory-input-actual-header/inventory-input-actual-header.component';
 import { InventoryInputActualListComponent } from '../inventory-input-actual-list/inventory-input-actual-list.component';
 import { InventoryInputService } from '../../../services/inventory-input.service';
-import { InventoryInputPlanDetail, InventoryInputPlanResponse } from '../../../models/inventory-input.model';
+import { InventoryInputActualDetail, InventoryInputActualResponse } from '../../../models/inventory-input.model';
 import { RepositoriesService } from '../../../../master-product/services/repostories.service';
 import { Repository } from '../../../../master-product/model/product.model';
 import { Location } from '../../../../master-product/model/product.model';
@@ -12,15 +12,14 @@ import { Observable } from 'rxjs/internal/Observable';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
-import { InventoryInputPlanHeaderComponent } from '../../input-plan/inventory-input-plan-header/inventory-input-plan-header.component';
 
 @Component({
-    selector: 'app-inventory-input-plan',
+    selector: 'app-inventory-input-actual',
     standalone: true,
     imports: [
         CommonModule,
         ReactiveFormsModule,
-        InventoryInputPlanHeaderComponent,
+        InventoryInputActualHeaderComponent,
         InventoryInputActualListComponent
     ],
     templateUrl: './inventory-input-actual.component.html',
@@ -69,14 +68,14 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
         }
     }
 
-    private initializeForm(inventoryInputData?: InventoryInputPlanResponse): void {
+    private initializeForm(inventoryInputData?: InventoryInputActualResponse): void {
         this.inventoryForm = this.fb.group({
             header: this.fb.group({
-                inventoryInputId: [inventoryInputData?.inventoryInputPlanHeader && inventoryInputData?.inventoryInputPlanHeader.inventoryInputId
-                    ? inventoryInputData?.inventoryInputPlanHeader.inventoryInputId : null],
+                inventoryInputId: [inventoryInputData?.inventoryInputActualHeader && inventoryInputData?.inventoryInputActualHeader.inventoryInputId
+                    ? inventoryInputData?.inventoryInputActualHeader.inventoryInputId : null],
                 companyId: [null],
-                inputPlanDate: ['', Validators.required],
-                inputActualDate: [''],
+                inputPlanDate: [{ value: '', disabled: true }],
+                inputActualDate: ['', Validators.required],
                 createSlipType: ['0'], // Default to Auto
                 slipNo: [{ value: '', disabled: false }], // Default to disabled
                 planSupplierSlipNo: [''],
@@ -102,13 +101,15 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
                 departmentName: [''],
                 planSupplierCode: [''],
                 planSupplierName: [''],
+                supplierCode: [''],
+                supplierName: [''],
                 customerCode: [''],
                 customerName: [''],
                 repositoryCode: [''],
                 repositoryName: ['']
             }),
-            details: inventoryInputData?.inventoryInputPlanDetails && inventoryInputData.inventoryInputPlanDetails.length > 0
-                ? this.fb.array(inventoryInputData?.inventoryInputPlanDetails.map(x => this.createDetailFormGroup(x))) : this.fb.array([])
+            details: inventoryInputData?.inventoryInputActualDetails && inventoryInputData.inventoryInputActualDetails.length > 0
+                ? this.fb.array(inventoryInputData?.inventoryInputActualDetails.map(x => this.createDetailFormGroup(x))) : this.fb.array([])
         });
 
         // Subscribe to createSlipType changes
@@ -120,8 +121,8 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
                 slipNoControl?.disable();
             }
         });
-        if (!inventoryInputData?.inventoryInputPlanHeader.inventoryInputId) {
-            this.inventoryForm.get('header.planRepositoryId')?.valueChanges.subscribe((e: number | null) => {
+        if (!inventoryInputData?.inventoryInputActualHeader.inventoryInputId) {
+            this.inventoryForm.get('header.actualRepositoryId')?.valueChanges.subscribe((e: number | null) => {
                 if (e) {
                     this.getLocationByRepositoryId(e).subscribe(res => {
                         if (res) {
@@ -142,11 +143,14 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
     }
 
     private loadData(id: number): void {
-        this.inventoryInputService.getInventoryInputById(id).subscribe({
-            next: (data: InventoryInputPlanResponse) => {
+        this.inventoryInputService.getInventoryInputActualById(id).subscribe({
+            next: (actualData: InventoryInputActualResponse) => {
                 // Patch header data
-
-                const headerData = { ...data.inventoryInputPlanHeader };
+                console.log(actualData);
+                const headerData = { ...actualData.inventoryInputActualHeader };
+                if (headerData.inputActualDate) {
+                    headerData.inputActualDate = new Date(headerData.inputActualDate) as any;
+                }
                 if (headerData.inputPlanDate) {
                     headerData.inputPlanDate = new Date(headerData.inputPlanDate) as any;
                 }
@@ -154,7 +158,7 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
                 // Clear and populate details FormArray
                 const detailsArray = this.inventoryForm.get('details') as FormArray;
                 detailsArray.clear();
-                data.inventoryInputPlanDetails.forEach(detail => {
+                actualData.inventoryInputActualDetails.forEach(detail => {
                     detailsArray.push(this.createDetailFormGroup(detail));
                 });
             },
@@ -162,27 +166,24 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
         });
     }
 
-    private createDetailFormGroup(detail?: InventoryInputPlanDetail): FormGroup {
+    private createDetailFormGroup(detail?: InventoryInputActualDetail): FormGroup {
         let datetimeMng = detail?.datetimeMng ? new Date(detail.datetimeMng) : '';
         // console.log(detail)
         return this.fb.group({
             datetimeMng: [{ value: datetimeMng, disabled: detail?.isDatetimeMng === '0' }],
-            planDetailId: [detail?.planDetailId || null],
+            actualDetailId: [detail?.actualDetailId || null],
             inventoryInputId: [detail?.inventoryInputId || null],
             companyId: [detail?.companyId || null],
             productId: [detail?.productId || null],
             repositoryId: [detail?.repositoryId || null, Validators.required],
             locationId: [detail?.locationId || null],
             numberMng: [{ value: detail?.numberMng || '', disabled: detail?.isNumberMng === '0' }],
-            csPlanQuantity: [{ value: detail?.csPlanQuantity || null, disabled: !detail?.productId || detail?.isPackCsInput === '0' }],
-            blPlanQuantity: [{ value: detail?.blPlanQuantity || null, disabled: !detail?.productId || detail?.isPackBlInput === '0' }],
-            psPlanQuantity: [{ value: detail?.psPlanQuantity || null, disabled: !detail?.productId || detail?.isPieceInput === '0' }],
-            totalPlanQuantity: [detail?.totalPlanQuantity || 0],
+            csActualQuantity: [{ value: detail?.csActualQuantity || null, disabled: !detail?.productId || detail?.isPackCsInput === '0' }],
+            blActualQuantity: [{ value: detail?.blActualQuantity || null, disabled: !detail?.productId || detail?.isPackBlInput === '0' }],
+            psActualQuantity: [{ value: detail?.psActualQuantity || null, disabled: !detail?.productId || detail?.isPieceInput === '0' }],
+            totalActualQuantity: [detail?.totalActualQuantity || 0],
             inventoryProductType: [detail?.inventoryProductType || ''],
             detailNote: [detail?.detailNote || ''],
-            freeItem1: [detail?.freeItem1 || ''],
-            freeItem2: [detail?.freeItem2 || ''],
-            freeItem3: [detail?.freeItem3 || ''],
             productCode: [detail?.productCode || '', Validators.required],
             productName: [detail?.productName || ''],
             detailRepositoryCode: [detail?.detailRepositoryCode || ''],
@@ -199,7 +200,6 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
             isPieceInput: [detail?.isPieceInput || '0'],
             totalQuantityInput: [detail?.totalQuantityInput || 0],
             standardInfo: [detail?.standardInfo || ''],
-            totalActualQuantity: [detail?.totalActualQuantity || 0],
             packCsAmount: [detail?.packCsAmount || 0],
             packBlAmount: [detail?.packBlAmount || 0],
             delFlg: [detail?.delFlg || '0']
@@ -227,9 +227,9 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
             setTimeout(() => {
                 const detailsArray = this.inventoryForm.get('details') as FormArray;
                 const formGroup = detailsArray.at(index) as FormGroup;
-                const planDetailId = formGroup.get('planDetailId')?.value;
+                const actualDetailId = formGroup.get('actualDetailId')?.value;
 
-                if (planDetailId) {
+                if (actualDetailId) {
                     // Soft delete for existing items
                     formGroup.get('delFlg')?.setValue('1');
                 } else {
@@ -256,7 +256,7 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
         const detailsArray = this.inventoryForm.get('details') as FormArray;
         const sourceGroup = detailsArray.at(index) as FormGroup;
 
-        const copyValues = { ...sourceGroup.getRawValue(), planDetailId: null };
+        const copyValues = { ...sourceGroup.getRawValue(), actualDetailId: null };
         detailsArray.push(this.createDetailFormGroup(copyValues));
     }
 
@@ -268,16 +268,17 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
         const data = this.inventoryForm.getRawValue();
 
         if (id) {
-            this.inventoryInputService.updateInventoryInputPlan(id, data as InventoryInputPlanResponse).subscribe({
+            this.inventoryInputService.updateInventoryInputActual(id, data as any).subscribe({
                 next: () => {
                     console.log('Update successful');
-                    // console.log(data);
+                    console.log(data)
                     this.snackBar.open('保存しました。', '', {
                         duration: 3000,
                         panelClass: ['success-snackbar'],
                         horizontalPosition: 'right',
                         verticalPosition: 'top'
                     });
+                    this.onBack();
                 },
                 error: (err) => {
                     console.error('Error updating plan:', err);
@@ -290,7 +291,7 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
                 }
             });
         } else {
-            this.inventoryInputService.createInventoryInputPlan(data as InventoryInputPlanResponse).subscribe({
+            this.inventoryInputService.createInventoryInputActual(data as any).subscribe({
                 next: () => {
                     this.snackBar.open('登録しました。', '', {
                         duration: 3000,
@@ -328,7 +329,7 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                this.inventoryInputService.deleteInventoryInputPlan(id).subscribe({
+                this.inventoryInputService.deleteInventoryInputActual(id).subscribe({
                     next: () => {
                         this.snackBar.open('削除しました。', '', {
                             duration: 3000,

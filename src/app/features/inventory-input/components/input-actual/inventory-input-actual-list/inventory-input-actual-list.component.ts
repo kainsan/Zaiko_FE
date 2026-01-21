@@ -45,6 +45,19 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
     '2': '賞',
     '4': ' '
   };
+
+  inventoryProductTypeOptions = [
+    { value: '0', label: '良品' },
+    { value: '1', label: '預り予定' },
+    { value: '2', label: 'MTとりおき' },
+    { value: '3', label: '新ロット' },
+    { value: '4', label: '廃棄・処分品' },
+    { value: '5', label: '破損' },
+    { value: '6', label: '不良品' },
+    { value: '7', label: 'サンプル' },
+    { value: '8', label: '予備' }
+  ];
+
   constructor(
     private dialog: MatDialog,
     private productService: ProductService,
@@ -135,11 +148,12 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
           packCsUnitName: '',
           packBlUnitName: '',
           pieceUnitName: '',
+          inventoryProductType: '',
           // Reset Quantities
-          csPlanQuantity: null,
-          blPlanQuantity: null,
-          psPlanQuantity: null,
-          totalPlanQuantity: null,
+          csActualQuantity: null,
+          blActualQuantity: null,
+          psActualQuantity: null,
+          totalActualQuantity: 0,
           totalQuantityInput: null,
           // Reset Flags
           isDatetimeMng: '0',
@@ -149,7 +163,6 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
           datetimeMngType: null,
           datetimeMng: null,
           standardInfo: '',
-          totalActualQuantity: 0,
           packCsAmount: 0,
           packBlAmount: 0
         }, { emitEvent: false });
@@ -157,9 +170,9 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
         // Disable fields
         formGroup.get('datetimeMng')?.disable({ emitEvent: false });
         formGroup.get('numberMng')?.disable({ emitEvent: false });
-        formGroup.get('csPlanQuantity')?.disable({ emitEvent: false });
-        formGroup.get('blPlanQuantity')?.disable({ emitEvent: false });
-        formGroup.get('psPlanQuantity')?.disable({ emitEvent: false });
+        formGroup.get('csActualQuantity')?.disable({ emitEvent: false });
+        formGroup.get('blActualQuantity')?.disable({ emitEvent: false });
+        formGroup.get('psActualQuantity')?.disable({ emitEvent: false });
         formGroup.get('locationCode')?.disable({ emitEvent: false });
       }
     });
@@ -239,6 +252,23 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
     }
   }
 
+  onLocationChange(index: number, event: any): void {
+    const locationId = Number(event.target.value);
+    const formGroup = this.detailsFormArray.at(index);
+    const locations = this.locationsMap[index] || [];
+    const selectedLocation = locations.find(loc => loc.locationId === locationId);
+
+    if (selectedLocation) {
+      formGroup.patchValue({
+        locationCode: selectedLocation.locationCode
+      });
+    } else {
+      formGroup.patchValue({
+        locationCode: ''
+      });
+    }
+  }
+
   onAddItem(): void {
     this.addItem.emit();
   }
@@ -281,11 +311,12 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
             standardInfo: result.standardInfo,
             totalActualQuantity: result.totalActualQuantity || 0,
             // Reset quantities when new product is selected
-            csPlanQuantity: null,
-            blPlanQuantity: null,
-            psPlanQuantity: null,
+            csActualQuantity: null,
+            blActualQuantity: null,
+            psActualQuantity: null,
             totalQuantityInput: null,
-            datetimeMng: null
+            datetimeMng: null,
+            inventoryProductType: '0'
           },
           { emitEvent: false }
         ); // 🚫 không trigger valueChanges
@@ -307,21 +338,21 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
         }
 
         // ✅ 6. Enable / Disable quantity fields
-        const csCtrl = formGroup.get('csPlanQuantity');
+        const csCtrl = formGroup.get('csActualQuantity');
         if (result.isPackCsInput === '0') {
           csCtrl?.disable({ emitEvent: false });
         } else {
           csCtrl?.enable({ emitEvent: false });
         }
 
-        const blCtrl = formGroup.get('blPlanQuantity');
+        const blCtrl = formGroup.get('blActualQuantity');
         if (result.isPackBlInput === '0') {
           blCtrl?.disable({ emitEvent: false });
         } else {
           blCtrl?.enable({ emitEvent: false });
         }
 
-        const psCtrl = formGroup.get('psPlanQuantity');
+        const psCtrl = formGroup.get('psActualQuantity');
         if (result.isPieceInput === '0') {
           psCtrl?.disable({ emitEvent: false });
         } else {
@@ -345,9 +376,9 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
 
   calculateTotal(index: number): void {
     const formGroup = this.detailsFormArray.at(index);
-    const csQty = Number(formGroup.get('csPlanQuantity')?.value) || 0;
-    const blQty = Number(formGroup.get('blPlanQuantity')?.value) || 0;
-    const psQty = Number(formGroup.get('psPlanQuantity')?.value) || 0;
+    const csQty = Number(formGroup.get('csActualQuantity')?.value) || 0;
+    const blQty = Number(formGroup.get('blActualQuantity')?.value) || 0;
+    const psQty = Number(formGroup.get('psActualQuantity')?.value) || 0;
 
     const packCsAmount = Number(formGroup.get('packCsAmount')?.value) || 0;
     const packBlAmount = Number(formGroup.get('packBlAmount')?.value) || 0;
@@ -356,7 +387,10 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
     const isPackBlInput = formGroup.get('isPackBlInput')?.value;
     const isPieceInput = formGroup.get('isPieceInput')?.value;
 
-    let total = formGroup.get('totalPlanInput')?.value || 0;
+    let total = 0;
+
+    // Formula: (packCsAmount * csQty * packBlAmount) + (packBlAmount * blQty) + psQty
+    // Note: If item is disabled (isPackInput === '0'), it is not counted.
 
     if (isPackCsInput !== '0') {
       total += csQty * packCsAmount * packBlAmount;
@@ -368,11 +402,8 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
       total += psQty;
     }
 
-    const totalActualQuantity = Number(formGroup.get('totalActualQuantity')?.value) || 0;
-
     formGroup.patchValue({
-      totalQuantityInput: total,
-      totalPlanQuantity: total - totalActualQuantity
+      totalActualQuantity: total
     }, { emitEvent: false });
   }
 
@@ -385,7 +416,7 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
   }
 
   trackByDetail(index: number, control: AbstractControl) {
-    const id = control.get('planDetailId')?.value;
+    const id = control.get('actualDetailId')?.value;
     return id != null ? id : index;
   }
 

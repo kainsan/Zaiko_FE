@@ -270,7 +270,7 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
             this.inventoryInputService.updateInventoryInputPlan(id, data as InventoryInputPlanResponse).subscribe({
                 next: () => {
                     console.log('Update successful');
-                    // console.log(data);
+                    console.log(data);
                     this.snackBar.open('保存しました。', '', {
                         duration: 3000,
                         panelClass: ['success-snackbar'],
@@ -280,6 +280,7 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
                 },
                 error: (err) => {
                     console.error('Error updating plan:', err);
+                    console.log(data);
                     this.snackBar.open('登録に失敗しました。', '', {
                         duration: 3000,
                         panelClass: ['error-snackbar'],

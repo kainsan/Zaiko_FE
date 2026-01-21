@@ -185,6 +185,20 @@
             }
         }
 
+        .col-qty,
+        .cell-qty {
+            min-width: 320px;
+        }
+
+        .col-qty {
+            .qty-header {
+                display: flex;
+                justify-content: space-between;
+                padding-right: 45px; // Align "Total" roughly with the total input
+                padding-left: 60px; // Align "Input Quantity" roughly with the inputs
+            }
+        }
+
         .cell-qty {
             .qty-group {
                 display: flex;
