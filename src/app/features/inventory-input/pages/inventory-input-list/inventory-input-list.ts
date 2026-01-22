@@ -48,6 +48,9 @@ export class InventoryInputList implements OnInit {
             if (params['mode'] === 'create') {
                 this.viewMode.set('plan');
                 this.selectedId.set(null);
+            } else if (params['mode'] === 'create-actual') {
+                this.viewMode.set('actual');
+                this.selectedId.set(null);
             }
         });
     }

@@ -14,7 +14,7 @@ import { InventoryInputService } from '../../../services/inventory-input.service
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-inventory-input-plan-list',
+  selector: 'app-inventory-input-actual-list',
   standalone: true,
   imports: [
     CommonModule,

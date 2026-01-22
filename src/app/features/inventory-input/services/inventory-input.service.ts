@@ -109,8 +109,4 @@ export class InventoryInputService {
     updateInventoryInputActual(id: number, data: InventoryInputActualResponse): Observable<any> {
         return this.http.put(`${this.apiUrl}/inventory-input/inventory-input-actual/${id}`, data);
     }
-
-    deleteInventoryInputActual(id: number): Observable<any> {
-        return this.http.delete(`${this.apiUrl}/inventory-input/inventory-input-actual/${id}`);
-    }
 }

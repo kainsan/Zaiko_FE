@@ -52,6 +52,8 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
     ngOnInit(): void {
         if (this.inventoryInputId) {
             this.loadData(this.inventoryInputId);
+        } else {
+            this.addDetail();
         }
         this.inventoryForm.statusChanges.subscribe(() => {
             this.isFormInvalid = this.inventoryForm.invalid;
@@ -268,7 +270,7 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
         const data = this.inventoryForm.getRawValue();
 
         if (id) {
-            this.inventoryInputService.updateInventoryInputActual(id, data as any).subscribe({
+            this.inventoryInputService.updateInventoryInputActual(id, data as InventoryInputActualResponse).subscribe({
                 next: () => {
                     console.log('Update successful');
                     console.log(data)
@@ -291,7 +293,7 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
                 }
             });
         } else {
-            this.inventoryInputService.createInventoryInputActual(data as any).subscribe({
+            this.inventoryInputService.createInventoryInputActual(data as InventoryInputActualResponse).subscribe({
                 next: () => {
                     this.snackBar.open('登録しました。', '', {
                         duration: 3000,
@@ -314,7 +316,7 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
         }
     }
 
-    onDelete(): void {
+ onDelete(): void {
         const id = this.inventoryForm.get('header.inventoryInputId')?.value;
         if (!id) return;
 
@@ -329,7 +331,7 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                this.inventoryInputService.deleteInventoryInputActual(id).subscribe({
+                this.inventoryInputService.deleteInventoryInputPlan(id).subscribe({
                     next: () => {
                         this.snackBar.open('削除しました。', '', {
                             duration: 3000,

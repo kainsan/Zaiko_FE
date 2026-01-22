@@ -13,7 +13,7 @@ import { InventorySearchDialogComponent } from '../../inventory-search-dialog/in
 import { ProductService } from '../../../../master-product/services/product.service';
 
 @Component({
-    selector: 'app-inventory-input-plan-header',
+    selector: 'app-inventory-input-actual-header',
     standalone: true,
     imports: [
         CommonModule,
