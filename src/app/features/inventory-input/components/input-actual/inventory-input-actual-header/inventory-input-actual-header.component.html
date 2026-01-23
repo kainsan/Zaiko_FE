@@ -12,7 +12,8 @@
             <div class="status-label">
                 <span class="status-badge">{{ inputStatusMap[headerFormGroup.get('inputStatus')?.value || '0'] }}</span>
             </div>
-            <button class="btn-close" (click)="toggleClose()">{{ headerFormGroup.get('isClosed')?.value === '1' ?
+            <button *ngIf="headerFormGroup.get('inventoryInputId')?.value" class="btn-close" (click)="toggleClose()">{{
+                headerFormGroup.get('isClosed')?.value === '1' ?
                 ' クローズ解除' : 'クローズ' }}</button>
             <button *ngIf="headerFormGroup.get('inventoryInputId')?.value" class="btn-delete" (click)="onDelete()"
                 [disabled]="isFormInvalid">

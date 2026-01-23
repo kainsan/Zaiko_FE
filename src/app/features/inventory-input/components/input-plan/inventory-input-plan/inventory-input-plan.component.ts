@@ -295,8 +295,8 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
                     this.snackBar.open('登録しました。', '', {
                         duration: 3000,
                         panelClass: ['success-snackbar'],
-                        horizontalPosition: 'right',
-                        verticalPosition: 'top'
+                        horizontalPosition: 'start',
+                        verticalPosition: 'bottom'
                     });
                     this.onBack();
                 },
@@ -305,8 +305,8 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
                     this.snackBar.open('登録に失敗しました。', '', {
                         duration: 3000,
                         panelClass: ['error-snackbar'],
-                        horizontalPosition: 'right',
-                        verticalPosition: 'top'
+                        horizontalPosition: 'start',
+                        verticalPosition: 'bottom'
                     });
                 }
             });
@@ -333,7 +333,7 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
                         this.snackBar.open('削除しました。', '', {
                             duration: 3000,
                             panelClass: ['success-snackbar'],
-                            horizontalPosition: 'center',
+                            horizontalPosition: 'start',
                             verticalPosition: 'bottom'
                         });
                         this.onBack();
@@ -343,7 +343,7 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
                         this.snackBar.open('削除に失敗しました。', '', {
                             duration: 3000,
                             panelClass: ['error-snackbar'],
-                            horizontalPosition: 'center',
+                            horizontalPosition: 'start',
                             verticalPosition: 'bottom'
                         });
                     }
@@ -354,6 +354,81 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
 
     onBack(): void {
         this.back.emit();
+    }
+
+    onToggleClose(): void {
+        const isClosedControl = this.inventoryForm.get('header.isClosed');
+        const currentValue = isClosedControl?.value;
+
+        if (currentValue === '1') {
+            // Unclose - no confirmation needed
+            isClosedControl?.setValue('0');
+            this.updateFormState(false);
+        } else {
+            // Close - show confirmation
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                width: '450px',
+                panelClass: 'custom-dialog-container',
+                data: {
+                    title: '確認',
+                    message: 'クローズ済みに変更します。\nよろしいですか？\nクローズ済みに変更するとクローズ解除するまで編集できません。'
+                }
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result) {
+                    isClosedControl?.setValue('1');
+                    this.updateFormState(true);
+                }
+            });
+        }
+    }
+
+    private updateFormState(isClosed: boolean): void {
+        const headerGroup = this.inventoryForm.get('header') as FormGroup;
+        const detailsArray = this.inventoryForm.get('details') as FormArray;
+
+        if (isClosed) {
+            // Disable all header controls except isClosed (which is handled by the button)
+            Object.keys(headerGroup.controls).forEach(key => {
+                if (key !== 'isClosed') {
+                    headerGroup.get(key)?.disable({ emitEvent: false });
+                }
+            });
+
+            // Disable all detail controls
+            detailsArray.controls.forEach(group => {
+                (group as FormGroup).disable({ emitEvent: false });
+            });
+        } else {
+            // Enable header controls (with some exceptions based on existing logic)
+            Object.keys(headerGroup.controls).forEach(key => {
+                if (key === 'inputPlanDate' || key === 'slipNo' || key === 'departmentName' || key === 'planSupplierName' || key === 'customerName' || key === 'repositoryName') {
+                    // Keep these disabled as they are readonly/auto
+                    headerGroup.get(key)?.disable({ emitEvent: false });
+                } else {
+                    headerGroup.get(key)?.enable({ emitEvent: false });
+                }
+            });
+
+            // Enable detail controls (with some exceptions based on product settings)
+            detailsArray.controls.forEach(group => {
+                const fg = group as FormGroup;
+                fg.enable({ emitEvent: false });
+
+                // Re-apply specific disable logic for details
+                if (fg.get('isDatetimeMng')?.value === '0') fg.get('datetimeMng')?.disable({ emitEvent: false });
+                if (fg.get('isNumberMng')?.value === '0') fg.get('numberMng')?.disable({ emitEvent: false });
+                if (fg.get('isPackCsInput')?.value === '0') fg.get('csPlanQuantity')?.disable({ emitEvent: false });
+                if (fg.get('isPackBlInput')?.value === '0') fg.get('blPlanQuantity')?.disable({ emitEvent: false });
+                if (fg.get('isPieceInput')?.value === '0') fg.get('psPlanQuantity')?.disable({ emitEvent: false });
+
+                if (!fg.get('repositoryId')?.value) {
+                    fg.get('locationCode')?.disable({ emitEvent: false });
+                }
+            });
+        }
+        this.cdr.detectChanges();
     }
 
     onRepositoryChanged(repo: Repository): void {

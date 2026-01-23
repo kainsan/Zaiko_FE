@@ -277,8 +277,8 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
                     this.snackBar.open('保存しました。', '', {
                         duration: 3000,
                         panelClass: ['success-snackbar'],
-                        horizontalPosition: 'right',
-                        verticalPosition: 'top'
+                        horizontalPosition: 'start',
+                        verticalPosition: 'bottom'
                     });
                     this.onBack();
                 },
@@ -287,8 +287,8 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
                     this.snackBar.open('登録に失敗しました。', '', {
                         duration: 3000,
                         panelClass: ['error-snackbar'],
-                        horizontalPosition: 'right',
-                        verticalPosition: 'top'
+                        horizontalPosition: 'start',
+                        verticalPosition: 'bottom'
                     });
                 }
             });
@@ -298,8 +298,8 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
                     this.snackBar.open('登録しました。', '', {
                         duration: 3000,
                         panelClass: ['success-snackbar'],
-                        horizontalPosition: 'right',
-                        verticalPosition: 'top'
+                        horizontalPosition: 'start',
+                        verticalPosition: 'bottom'
                     });
                     this.onBack();
                 },
@@ -308,8 +308,8 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
                     this.snackBar.open('登録に失敗しました。', '', {
                         duration: 3000,
                         panelClass: ['error-snackbar'],
-                        horizontalPosition: 'right',
-                        verticalPosition: 'top'
+                        horizontalPosition: 'start',
+                        verticalPosition: 'bottom'
                     });
                 }
             });

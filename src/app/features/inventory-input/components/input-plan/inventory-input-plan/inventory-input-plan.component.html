@@ -24,7 +24,8 @@
         </div>
     </header>
     <app-inventory-input-plan-header [headerFormGroup]="headerFormGroup" [isFormInvalid]="isFormInvalid"
-        (save)="onSave()" (delete)="onDelete()" (back)="onBack()" (repositoryChanged)="onRepositoryChanged($event)">
+        (save)="onSave()" (delete)="onDelete()" (back)="onBack()" (repositoryChanged)="onRepositoryChanged($event)"
+        (toggleCloseEvent)="onToggleClose()">
     </app-inventory-input-plan-header>
 
     <app-inventory-input-plan-list [detailsFormArray]="detailsFormArray" (addItem)="addDetail()"

@@ -38,6 +38,7 @@ export class InventoryInputPlanHeaderComponent implements OnInit, OnChanges {
     @Output() repositoryChanged = new EventEmitter<Repository>();
     @Output() save = new EventEmitter<void>();
     @Output() delete = new EventEmitter<void>();
+    @Output() toggleCloseEvent = new EventEmitter<void>();
 
     headerData: InventoryInputPlanHeader | null = null;
 
@@ -196,10 +197,7 @@ export class InventoryInputPlanHeaderComponent implements OnInit, OnChanges {
     }
 
     toggleClose(): void {
-        if (!this.headerFormGroup) return;
-        const currentValue = this.headerFormGroup.get('isClosed')?.value;
-        const newValue = currentValue === '1' ? '0' : '1';
-        this.headerFormGroup.patchValue({ isClosed: newValue });
+        this.toggleCloseEvent.emit();
     }
 
     onSave(): void {

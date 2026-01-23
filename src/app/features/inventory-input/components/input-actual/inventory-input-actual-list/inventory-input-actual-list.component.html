@@ -114,7 +114,7 @@
             </tr>
             <tr class="row-bottom">
               <td class="cell-spec">
-                <input type="text" value="" formControlName="standardInfo" readonly class="readonly-input">
+                <input type="text"  formControlName="standardInfo" readonly class="readonly-input">
               </td>
               <td class="cell-date">
                 <div class="date-group">
@@ -139,13 +139,13 @@
               </td>
               <td class="cell-qty">
                 <div class="qty-group">
-                  <input type="text" class="qty-small" formControlName="csActualQuantity" (input)="calculateTotal(i)">
+                  <input type="number" class="qty-small" formControlName="csActualQuantity" (input)="calculateTotal(i)">
                   <span>{{ control.get('packCsUnitName')?.value }}</span>
-                  <input type="text" class="qty-small" formControlName="blActualQuantity" (input)="calculateTotal(i)">
+                  <input type="number" class="qty-small" formControlName="blActualQuantity" (input)="calculateTotal(i)">
                   <span>{{ control.get('packBlUnitName')?.value }}</span>
-                  <input type="text" class="qty-medium" formControlName="psActualQuantity" (input)="calculateTotal(i)">
+                  <input type="number" class="qty-medium" formControlName="psActualQuantity" (input)="calculateTotal(i)">
                   <span>{{ control.get('pieceUnitName')?.value }}</span>
-                  <input type="text" class="qty-medium" readonly formControlName="totalActualQuantity">
+                  <input type="number" class="qty-medium" formControlName="totalActualQuantity">
                 </div>
               </td>
 

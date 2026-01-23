@@ -13,17 +13,19 @@
                 入庫状態
                 <span class="status-badge">{{ inputStatusMap[headerFormGroup.get('inputStatus')?.value || '0'] }}</span>
             </div>
-            <button class="btn-close" (click)="toggleClose()">{{ headerFormGroup.get('isClosed')?.value === '1' ?
+            <button class="btn-close" (click)="toggleClose()" [disabled]="isFormInvalid">{{
+                headerFormGroup.get('isClosed')?.value === '1' ?
                 ' クローズ解除' : 'クローズ' }}</button>
             <button *ngIf="headerFormGroup.get('inventoryInputId')?.value" class="btn-delete" (click)="onDelete()"
-                [disabled]="isFormInvalid">
+                [disabled]="isFormInvalid || headerFormGroup.get('isClosed')?.value === '1'">
                 <svg width="13" height="14" viewBox="0 0 13 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M11.8125 0.875C12.0312 0.875 12.25 1.09375 12.25 1.3125V2.1875C12.25 2.43359 12.0312 2.625 11.8125 2.625H0.4375C0.191406 2.625 0 2.43359 0 2.1875V1.3125C0 1.09375 0.191406 0.875 0.4375 0.875H3.71875L3.96484 0.382812C4.07422 0.164062 4.29297 0 4.53906 0H7.68359C7.92969 0 8.14844 0.164062 8.25781 0.382812L8.53125 0.875H11.8125ZM1.44922 12.7695L0.875 3.5H11.375L10.7734 12.7695C10.7461 13.4805 10.1719 14 9.46094 14H2.76172C2.05078 14 1.47656 13.4805 1.44922 12.7695Z"
                         fill="white" />
                 </svg>
                 削除</button>
-            <button class="btn-save" (click)="onSave()" [disabled]="isFormInvalid">
+            <button class="btn-save" (click)="onSave()"
+                [disabled]="isFormInvalid || headerFormGroup.get('isClosed')?.value === '1'">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M10.9941 2.48828C11.2227 2.7168 11.375 3.02148 11.375 3.35156V10.1562C11.375 10.8418 10.8164 11.375 10.1562 11.375H1.21875C0.533203 11.375 0 10.8418 0 10.1562V1.21875C0 0.558594 0.533203 0 1.21875 0H8.02344C8.35352 0 8.6582 0.152344 8.88672 0.380859L10.9941 2.48828ZM5.6875 9.75C6.57617 9.75 7.3125 9.03906 7.3125 8.125C7.3125 7.23633 6.57617 6.5 5.6875 6.5C4.77344 6.5 4.0625 7.23633 4.0625 8.125C4.0625 9.03906 4.77344 9.75 5.6875 9.75ZM8.125 2.03125C8.125 1.95508 8.07422 1.87891 8.02344 1.80273L7.94727 1.72656C7.87109 1.67578 7.79492 1.625 7.71875 1.625H1.92969C1.75195 1.625 1.625 1.77734 1.625 1.92969V4.57031C1.625 4.74805 1.75195 4.875 1.92969 4.875H7.82031C7.97266 4.875 8.125 4.74805 8.125 4.57031V2.03125Z"
