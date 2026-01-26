@@ -14,7 +14,7 @@ import { InventoryInputService } from '../../../services/inventory-input.service
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-inventory-input-plan-list',
+  selector: 'app-inventory-input-correction-list',
   standalone: true,
   imports: [
     CommonModule,
@@ -23,20 +23,20 @@ import { Subscription } from 'rxjs';
     MatNativeDateModule,
     MatInputModule,
   ],
-  templateUrl: './inventory-input-plan-list.component.html',
-  styleUrls: ['./inventory-input-plan-list.component.scss'],
+  templateUrl: './inventory-input-correction-list.component.html',
+  styleUrls: ['./inventory-input-correction-list.component.scss'],
 })
-export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDestroy {
+export class InventoryInputCorrectionListComponent implements OnInit, OnChanges, OnDestroy {
   @Input() detailsFormArray!: FormArray;
+  @Input() repositories: Repository[] = [];
   @Output() addItem = new EventEmitter<void>();
   @Output() removeItem = new EventEmitter<number>();
   @Output() copyItem = new EventEmitter<number>();
 
   products = signal<Product[]>([]);
-  repositories = signal<Repository[]>([]);
   locationsMap: { [index: number]: Location[] } = {};
+  locationsCacheByRepoId: { [repoId: number]: Location[] } = {};
   private subscriptions: Subscription = new Subscription();
-  // Biến này dùng để lưu lại repositoryId của lần trước, giúp so sánh xem có thay đổi không
   private previousRepositoryIds: (number | undefined)[] = [];
   test = '1';
   public statusDateTimeMngType: Record<string, string> = {
@@ -45,6 +45,19 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
     '2': '賞',
     '4': ' '
   };
+
+  inventoryProductTypeOptions = [
+    { value: '0', label: '良品' },
+    { value: '1', label: '預り予定' },
+    { value: '2', label: 'MTとりおき' },
+    { value: '3', label: '新ロット' },
+    { value: '4', label: '廃棄・処分品' },
+    { value: '5', label: '破損' },
+    { value: '6', label: '不良品' },
+    { value: '7', label: 'サンプル' },
+    { value: '8', label: '予備' }
+  ];
+
   constructor(
     private dialog: MatDialog,
     private productService: ProductService,
@@ -54,9 +67,8 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
   ) { }
   ngOnInit(): void {
     this.loadProducts();
-    this.loadRepositories();
+    console.log(this.detailsFormArray);
     this.setupFormLogic();
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -136,11 +148,12 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
           packCsUnitName: '',
           packBlUnitName: '',
           pieceUnitName: '',
+          inventoryProductType: '',
           // Reset Quantities
-          csPlanQuantity: null,
-          blPlanQuantity: null,
-          psPlanQuantity: null,
-          totalPlanQuantity: null,
+          csActualQuantity: null,
+          blActualQuantity: null,
+          psActualQuantity: null,
+          totalActualQuantity: 0,
           totalQuantityInput: null,
           // Reset Flags
           isDatetimeMng: '0',
@@ -150,7 +163,6 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
           datetimeMngType: null,
           datetimeMng: null,
           standardInfo: '',
-          totalActualQuantity: 0,
           packCsAmount: 0,
           packBlAmount: 0
         }, { emitEvent: false });
@@ -158,20 +170,23 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
         // Disable fields
         formGroup.get('datetimeMng')?.disable({ emitEvent: false });
         formGroup.get('numberMng')?.disable({ emitEvent: false });
-        formGroup.get('csPlanQuantity')?.disable({ emitEvent: false });
-        formGroup.get('blPlanQuantity')?.disable({ emitEvent: false });
-        formGroup.get('psPlanQuantity')?.disable({ emitEvent: false });
+        formGroup.get('csActualQuantity')?.disable({ emitEvent: false });
+        formGroup.get('blActualQuantity')?.disable({ emitEvent: false });
+        formGroup.get('psActualQuantity')?.disable({ emitEvent: false });
         formGroup.get('locationCode')?.disable({ emitEvent: false });
       }
     });
   }
 
   private loadLocations(index: number, repositoryId: number): void {
-    // Gọi service để lấy danh sách vị trí (Location) dựa trên repositoryId
+    if (this.locationsCacheByRepoId[repositoryId]) {
+      this.locationsMap[index] = this.locationsCacheByRepoId[repositoryId];
+      return;
+    }
+
     this.repositoriesService.getLocationsByRepository(repositoryId).subscribe({
       next: (locations) => {
-        // Lưu danh sách vị trí vào map, key là index của dòng hiện tại
-        // Để template có thể truy cập qua locationsMap[i]
+        this.locationsCacheByRepoId[repositoryId] = locations;
         this.locationsMap[index] = locations;
       },
       error: (err) => console.error(`Error loading locations for row ${index}:`, err),
@@ -198,18 +213,9 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
     });
   }
 
-  private loadRepositories(): void {
-    this.inventoryInputService.getRepositories().subscribe({
-      next: (data) => {
-        this.repositories.set(data);
-      },
-      error: (err) => console.error('Error loading repositories:', err),
-    });
-  }
-
   onDetailRepositoryChange(index: number, event: any): void {
     const repoId = Number(event.target.value);
-    const repo = this.repositories().find((r) => r.repositoryId === repoId);
+    const repo = this.repositories.find((r) => r.repositoryId === repoId);
     const formGroup = this.detailsFormArray.at(index);
 
     if (repo) {
@@ -298,12 +304,13 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
             totalPlanQuantity: result.totalPlanQuantity,
             standardInfo: result.standardInfo,
             totalActualQuantity: result.totalActualQuantity || 0,
-            // Reset quantities when new product is selected
-            csPlanQuantity: null,
-            blPlanQuantity: null,
-            psPlanQuantity: null,
+
+            csActualQuantity: null,
+            blActualQuantity: null,
+            psActualQuantity: null,
             totalQuantityInput: null,
-            datetimeMng: null
+            datetimeMng: null,
+            inventoryProductType: '0'
           },
           { emitEvent: false }
         ); // 🚫 không trigger valueChanges
@@ -325,21 +332,21 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
         }
 
         // ✅ 6. Enable / Disable quantity fields
-        const csCtrl = formGroup.get('csPlanQuantity');
+        const csCtrl = formGroup.get('csActualQuantity');
         if (result.isPackCsInput === '0') {
           csCtrl?.disable({ emitEvent: false });
         } else {
           csCtrl?.enable({ emitEvent: false });
         }
 
-        const blCtrl = formGroup.get('blPlanQuantity');
+        const blCtrl = formGroup.get('blActualQuantity');
         if (result.isPackBlInput === '0') {
           blCtrl?.disable({ emitEvent: false });
         } else {
           blCtrl?.enable({ emitEvent: false });
         }
 
-        const psCtrl = formGroup.get('psPlanQuantity');
+        const psCtrl = formGroup.get('psActualQuantity');
         if (result.isPieceInput === '0') {
           psCtrl?.disable({ emitEvent: false });
         } else {
@@ -363,9 +370,9 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
 
   calculateTotal(index: number): void {
     const formGroup = this.detailsFormArray.at(index);
-    const csQty = Number(formGroup.get('csPlanQuantity')?.value) || 0;
-    const blQty = Number(formGroup.get('blPlanQuantity')?.value) || 0;
-    const psQty = Number(formGroup.get('psPlanQuantity')?.value) || 0;
+    const csQty = Number(formGroup.get('csActualQuantity')?.value) || 0;
+    const blQty = Number(formGroup.get('blActualQuantity')?.value) || 0;
+    const psQty = Number(formGroup.get('psActualQuantity')?.value) || 0;
 
     const packCsAmount = Number(formGroup.get('packCsAmount')?.value) || 0;
     const packBlAmount = Number(formGroup.get('packBlAmount')?.value) || 0;
@@ -374,7 +381,10 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
     const isPackBlInput = formGroup.get('isPackBlInput')?.value;
     const isPieceInput = formGroup.get('isPieceInput')?.value;
 
-    let total = formGroup.get('totalPlanInput')?.value || 0;
+    let total = 0;
+
+    // Formula: (packCsAmount * csQty * packBlAmount) + (packBlAmount * blQty) + psQty
+    // Note: If item is disabled (isPackInput === '0'), it is not counted.
 
     if (isPackCsInput !== '0') {
       total += csQty * packCsAmount * packBlAmount;
@@ -386,11 +396,8 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
       total += psQty;
     }
 
-    const totalActualQuantity = Number(formGroup.get('totalActualQuantity')?.value) || 0;
-
     formGroup.patchValue({
-      totalQuantityInput: total,
-      totalPlanQuantity: total - totalActualQuantity
+      totalActualQuantity: total
     }, { emitEvent: false });
   }
 
@@ -403,7 +410,7 @@ export class InventoryInputPlanListComponent implements OnInit, OnChanges, OnDes
   }
 
   trackByDetail(index: number, control: AbstractControl) {
-    const id = control.get('planDetailId')?.value;
+    const id = control.get('actualDetailId')?.value;
     return id != null ? id : index;
   }
 

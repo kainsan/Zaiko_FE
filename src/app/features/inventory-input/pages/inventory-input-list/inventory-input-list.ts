@@ -6,13 +6,14 @@ import { SearchInventoryInputComponent } from '../../components/search-inventory
 import { ListInventoryInputComponent } from '../../components/list-inventory-input/list-inventory-input.component';
 import { InventoryInputPlanComponent } from '../../components/input-plan/inventory-input-plan/inventory-input-plan.component';
 import { InventoryInputActualComponent } from '../../components/input-actual/inventory-input-actual/inventory-input-actual.component';
+import { InventoryInputCorrectionComponent } from '../../components/input-correction/inventory-input-correction/inventory-input-correction.component';
 import { InventoryInputService } from '../../services/inventory-input.service';
 import { InventoryInputDTO, InventoryInputSearchParams } from '../../models/inventory-input.model';
 import { PageResponse } from '../../../master-product/response/PageResponse';
 
 @Component({
     selector: 'app-inventory-input-list',
-    imports: [RouterModule, CommonModule, SearchInventoryInputComponent, ListInventoryInputComponent, InventoryInputPlanComponent, InventoryInputActualComponent],
+    imports: [RouterModule, CommonModule, SearchInventoryInputComponent, ListInventoryInputComponent, InventoryInputPlanComponent, InventoryInputActualComponent, InventoryInputCorrectionComponent],
     standalone: true,
     templateUrl: './inventory-input-list.html',
     styleUrls: ['./inventory-input-list.scss'],
@@ -31,7 +32,7 @@ export class InventoryInputList implements OnInit {
     pageSize = 50;
     currentSearchParams = signal<InventoryInputSearchParams>({});
 
-    viewMode = signal<'list' | 'plan' | 'actual'>('list');
+    viewMode = signal<'list' | 'plan' | 'actual' | 'correction'>('list');
     selectedId = signal<number | null>(null);
 
     constructor(
@@ -41,7 +42,7 @@ export class InventoryInputList implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.loadInventoryInputs();
+        // this.loadInventoryInputs();
         this.refreshInventInput();
 
         this.route.queryParams.subscribe((params: Params) => {
@@ -63,6 +64,11 @@ export class InventoryInputList implements OnInit {
     handleOpenActual(item: InventoryInputDTO): void {
         this.selectedId.set(item.inventoryInputEntity.inventoryInputId);
         this.viewMode.set('actual');
+    }
+
+    handleOpenCorrection(item: InventoryInputDTO): void {
+        this.selectedId.set(item.inventoryInputEntity.inventoryInputId);
+        this.viewMode.set('correction');
     }
 
     handleBackToList(): void {

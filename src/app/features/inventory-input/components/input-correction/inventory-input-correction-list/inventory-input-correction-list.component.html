@@ -1,0 +1,202 @@
+<div class="list-container" *ngIf="detailsFormArray">
+  <div class="list-header">
+    <h3>入庫訂正明細一覧 </h3>
+    <button type="button" class="btn-add" (click)="onAddItem()">+ 追加</button>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th rowspan="3" class="col-no">No.</th>
+          <th class="col-product">商品</th>
+          <th class="col-warehouse">倉庫</th>
+          <th class="col-location">ロケーション</th>
+          <th class="col-quality">在庫状態</th>
+          <th class="col-quantity">現入庫数量</th>
+          <th class="col-total">合計</th>
+          <th rowspan="3" class="col-actions"></th>
+        </tr>
+        <tr>
+          <th class="col-spec">規格</th>
+          <th class="col-date-mng">管理日付</th>
+          <th class="col-number-mng">管理番号</th>
+          <th class="col-valid-date">入庫日</th>
+          <th class="col-quantity">新入庫数量</th>
+          <th class="col-total">合計</th>
+        </tr>
+        <tr>
+          <th colspan="6" class="col-reason">訂正理由</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <ng-container *ngFor="let control of detailsFormArray.controls; let i = index; trackBy: trackByDetail"
+          [formGroup]="$any(control)">
+          <ng-container *ngIf="control.get('delFlg')?.value !== '1'">
+            <!-- Row 1 -->
+            <tr class="row-top">
+              <td rowspan="3" class="col-no">{{ i + 1 }}</td>
+
+              <!-- Product Code -->
+              <td class="col-product">
+                <div class="product-group">
+                  <div class="code-search">
+                    <input type="text" formControlName="productCode" class="form-control" readonly tabindex="-1">
+                    <button type="button" class="btn-search" (click)="openSearchDialog(i)" disabled>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                      </svg>
+                    </button>
+                  </div>
+                  <input type="text" formControlName="productName" class="form-control product-name" readonly
+                    tabindex="-1">
+                </div>
+              </td>
+
+              <!-- Warehouse -->
+              <td class="col-warehouse">
+                <select formControlName="repositoryId" class="form-select"
+                  (change)="onDetailRepositoryChange(i, $event)">
+                  <option [ngValue]="null"></option>
+                  <option *ngFor="let repo of repositories" [ngValue]="repo.repositoryId">
+                    {{ repo.repositoryCode }} {{ repo.repositoryName }}
+                  </option>
+                </select>
+              </td>
+
+              <!-- Location -->
+              <td class="col-location">
+                <select formControlName="locationId" class="form-select" (change)="onLocationChange(i, $event)">
+                  <option [ngValue]=""></option>
+                  <option *ngFor="let loc of locationsMap[i]" [ngValue]="loc.locationId">
+                    {{ loc.locationCode }} {{ loc.locationName }}
+                  </option>
+                </select>
+              </td>
+
+              <!-- Quality (Inventory Status) -->
+              <td class="col-quality">
+                <select formControlName="inventoryProductType" class="form-select">
+                  <option *ngFor="let opt of inventoryProductTypeOptions" [value]="opt.value">{{ opt.label }}</option>
+                </select>
+              </td>
+
+              <!-- Current Quantity (Readonly) -->
+              <td class="col-quantity">
+                <div class="qty-group">
+                  <input type="number" formControlName="originalQuantityCase" class="qty-input readonly-input" readonly
+                    tabindex="-1">
+                  <span class="separator">-</span>
+                  <input type="number" formControlName="originalQuantityBall" class="qty-input readonly-input" readonly
+                    tabindex="-1">
+                  <span class="separator">-</span>
+                  <input type="number" formControlName="originalQuantityUnit" class="qty-input readonly-input" readonly
+                    tabindex="-1">
+                  <span class="unit-label">束</span>
+                </div>
+              </td>
+
+              <!-- Current Total (Readonly) -->
+              <td class="col-total">
+                <input type="number" formControlName="originalTotalQuantity" class="qty-total readonly-input" readonly
+                  tabindex="-1">
+              </td>
+
+              <!-- Actions -->
+              <td rowspan="3" class="col-actions">
+                <div class="action-buttons">
+                  <button type="button" class="btn-delete" (click)="onRemoveItem(i)" title="削除">
+                    <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M10.125 0.75C10.3125 0.75 10.5 0.9375 10.5 1.125V1.875C10.5 2.08594 10.3125 2.25 10.125 2.25H0.375C0.164062 2.25 0 2.08594 0 1.875V1.125C0 0.9375 0.164062 0.75 0.375 0.75H3.1875L3.39844 0.328125C3.49219 0.140625 3.67969 0 3.89062 0H6.58594C6.79688 0 6.98438 0.140625 7.07812 0.328125L7.3125 0.75H10.125ZM1.24219 10.9453L0.75 3H9.75L9.23438 10.9453C9.21094 11.5547 8.71875 12 8.10938 12H2.36719C1.75781 12 1.26562 11.5547 1.24219 10.9453Z"
+                        fill="white" />
+                    </svg>
+
+                  </button>
+                  <button type="button" class="btn-copy" (click)="onCopyItem(i)" [disabled]="isCopyDisabled(control)"
+                    title="コピー">
+                    <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M7.5 10.5V11.4375C7.5 11.7656 7.24219 12 6.9375 12H0.5625C0.234375 12 0 11.7656 0 11.4375V2.8125C0 2.50781 0.234375 2.25 0.5625 2.25H2.25V9.1875C2.25 9.91406 2.83594 10.5 3.5625 10.5H7.5ZM7.5 2.4375C7.5 2.76562 7.73438 3 8.0625 3H10.5V9.1875C10.5 9.51562 10.2422 9.75 9.9375 9.75H3.5625C3.23438 9.75 3 9.51562 3 9.1875V0.5625C3 0.257812 3.23438 0 3.5625 0H7.5V2.4375ZM10.3125 1.71094C10.4297 1.82812 10.5 1.96875 10.5 2.10938V2.25H8.25V0H8.39062C8.53125 0 8.67188 0.0703125 8.78906 0.1875L10.3125 1.71094Z"
+                        fill="white" />
+                    </svg>
+
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr class="row-mid">
+              <!-- Spec -->
+              <td class="col-spec">
+                <input type="text" formControlName="standardInfo" readonly class="readonly-input spec-input">
+              </td>
+
+              <!-- Management Date -->
+              <td class="col-date-mng">
+                <div class="date-group">
+                  <span class="status-label">{{ statusDateTimeMngType[control.get('datetimeMngType')?.value || '0']
+                    }}</span>
+                  <div class="date-input-wrapper">
+                    <input [matDatepicker]="picker" class="date-field" formControlName="datetimeMng">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Management Number -->
+              <td class="col-number-mng">
+                <input type="text" formControlName="numberMng" class="form-control">
+              </td>
+
+              <!-- Arrival Date -->
+              <td class="col-valid-date">
+                <div class="date-input-wrapper">
+                  <input [matDatepicker]="validDatePicker" class="date-field" formControlName="inputActualDate">
+                  <mat-datepicker-toggle matSuffix [for]="validDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #validDatePicker></mat-datepicker>
+                </div>
+              </td>
+
+              <!-- New Quantity (Editable) -->
+              <td class="col-quantity">
+                <div class="qty-group">
+                  <input type="number" formControlName="csActualQuantity" class="qty-input" (input)="calculateTotal(i)">
+                  <span class="separator">-</span>
+                  <input type="number" formControlName="blActualQuantity" class="qty-input" (input)="calculateTotal(i)">
+                  <span class="separator">-</span>
+                  <input type="number" formControlName="psActualQuantity" class="qty-input" (input)="calculateTotal(i)">
+                  <span class="unit-label">束</span>
+                </div>
+              </td>
+
+              <!-- New Total (Readonly) -->
+              <td class="col-total">
+                <input type="number" formControlName="totalActualQuantity" class="qty-total readonly-input" readonly
+                  tabindex="-1">
+              </td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr class="row-bottom">
+              <!-- Correction Reason -->
+              <td colspan="6" class="col-reason">
+                <select formControlName="detailNote" class="form-select reason-select">
+                  <option value="入庫訂正">入庫訂正</option>
+                  <option value="返品">返品</option>
+                  <option value="誤入力">誤入力</option>
+                </select>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+
+      </tbody>
+    </table>
+  </div>
+</div>

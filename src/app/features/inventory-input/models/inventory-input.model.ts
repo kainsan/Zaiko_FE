@@ -214,10 +214,19 @@ export interface InventoryInputActualDetail {
     standardInfo: string | null;
     packCsAmount?: number;
     packBlAmount?: number;
+    inputActualDate: string | null;
     delFlg: string;
 }
 
 export interface InventoryInputActualResponse {
     inventoryInputActualHeader: InventoryInputActualHeader;
     inventoryInputActualDetails: InventoryInputActualDetail[];
+}
+
+export interface InventoryInputCorrectionHeader extends InventoryInputActualHeader { }
+export interface InventoryInputCorrectionDetail extends InventoryInputActualDetail { }
+
+export interface InventoryInputCorrectionResponse {
+    inventoryInputCorrectionHeader: InventoryInputCorrectionHeader;
+    inventoryInputCorrectionDetails: InventoryInputCorrectionDetail[];
 }

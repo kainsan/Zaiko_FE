@@ -45,7 +45,8 @@
             <div class="list-section">
                 <list-inventory-input [inventoryInputs]="inventoryInputs()" [totalPages]="totalPages()"
                     [currentPage]="currentPage()" (loadMore)="handleLoadMore()" (openPlan)="handleOpenPlan($event)"
-                    (openActual)="handleOpenActual($event)"></list-inventory-input>
+                    (openActual)="handleOpenActual($event)"
+                    (openCorrection)="handleOpenCorrection($event)"></list-inventory-input>
             </div>
         </div>
     </ng-container>
@@ -58,5 +59,9 @@
     <ng-container *ngIf="viewMode() === 'actual'">
         <app-inventory-input-actual [inventoryInputId]="selectedId()"
             (back)="handleBackToList()"></app-inventory-input-actual>
+    </ng-container>
+    <ng-container *ngIf="viewMode() === 'correction'">
+        <app-inventory-input-correction [inventoryInputId]="selectedId()"
+            (back)="handleBackToList()"></app-inventory-input-correction>
     </ng-container>
 </div>
