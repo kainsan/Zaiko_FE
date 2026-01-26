@@ -55,9 +55,9 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
         } else {
             this.addDetail();
         }
-        this.inventoryForm.statusChanges.subscribe(() => {
-            this.isFormInvalid = this.inventoryForm.invalid;
-        });
+        // this.inventoryForm.statusChanges.subscribe(() => {
+        //     this.isFormInvalid = this.inventoryForm.invalid;
+        // });
     }
 
     public getLocationByRepositoryId(repositoryId: number): Observable<Location[]> {
@@ -316,7 +316,7 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
         }
     }
 
- onDelete(): void {
+    onDelete(): void {
         const id = this.inventoryForm.get('header.inventoryInputId')?.value;
         if (!id) return;
 
@@ -357,6 +357,101 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
 
     onBack(): void {
         this.back.emit();
+    }
+
+    onToggleClose(): void {
+        const isClosedControl = this.inventoryForm.get('header.isClosed');
+        const currentValue = isClosedControl?.value;
+        const id = this.inventoryForm.get('header.inventoryInputId')?.value;
+
+        if (currentValue === '1') {
+            // Unclose - no confirmation needed
+            if (id) {
+                this.inventoryInputService.updateInventoryInputStatus(id, '0').subscribe({
+                    next: () => {
+                        isClosedControl?.setValue('0');
+                        this.updateDetailsState(false);
+                        this.snackBar.open('クローズ解除しました。', '', {
+                            duration: 3000,
+                            panelClass: ['success-snackbar'],
+                            horizontalPosition: 'start',
+                            verticalPosition: 'bottom'
+                        });
+                        this.cdr.detectChanges();
+                    },
+                    error: (err) => {
+                        console.error('Error updating status:', err);
+                        this.snackBar.open('クローズ解除に失敗しました。', '', {
+                            duration: 3000,
+                            panelClass: ['error-snackbar'],
+                            horizontalPosition: 'start',
+                            verticalPosition: 'bottom'
+                        });
+                    }
+                });
+            }
+        } else {
+            // Close - show confirmation
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                width: '450px',
+                panelClass: 'custom-dialog-container',
+                data: {
+                    title: '確認',
+                    message: 'クローズ済みに変更します。\nよろしいですか？\nクローズ済みに変更するとクローズ解除するまで編集できません。'
+                }
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result) {
+                    if (id) {
+                        this.inventoryInputService.updateInventoryInputStatus(id, '1').subscribe({
+                            next: () => {
+                                isClosedControl?.setValue('1');
+                                this.updateDetailsState(true);
+                                this.snackBar.open('クローズしました。', '', {
+                                    duration: 3000,
+                                    panelClass: ['success-snackbar'],
+                                    horizontalPosition: 'start',
+                                    verticalPosition: 'bottom'
+                                });
+                                this.cdr.detectChanges();
+                            },
+                            error: (err) => {
+                                console.error('Error updating status:', err);
+                                this.snackBar.open('クローズに失敗しました。', '', {
+                                    duration: 3000,
+                                    panelClass: ['error-snackbar'],
+                                    horizontalPosition: 'start',
+                                    verticalPosition: 'bottom'
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        }
+    }
+
+    private updateDetailsState(isClosed: boolean): void {
+        const detailsArray = this.inventoryForm.get('details') as FormArray;
+        if (isClosed) {
+            detailsArray.controls.forEach(group => {
+                (group as FormGroup).disable({ emitEvent: false });
+            });
+        } else {
+            detailsArray.controls.forEach(group => {
+                const fg = group as FormGroup;
+                fg.enable({ emitEvent: false });
+                // Re-apply specific disable logic
+                const isExisting = !!fg.get('actualDetailId')?.value;
+                if (fg.get('isDatetimeMng')?.value === '0') fg.get('datetimeMng')?.disable({ emitEvent: false });
+                if (fg.get('isNumberMng')?.value === '0') fg.get('numberMng')?.disable({ emitEvent: false });
+
+                if (fg.get('isPackCsInput')?.value === '0') fg.get('csActualQuantity')?.disable({ emitEvent: false });
+                if (fg.get('isPackBlInput')?.value === '0') fg.get('blActualQuantity')?.disable({ emitEvent: false });
+                if (fg.get('isPieceInput')?.value === '0') fg.get('psActualQuantity')?.disable({ emitEvent: false });
+            });
+        }
     }
 
     onRepositoryChanged(repo: Repository): void {

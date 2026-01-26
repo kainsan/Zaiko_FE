@@ -133,7 +133,7 @@
         }
 
         .col-quantity {
-            width: 220px;
+            width: 300px;
         }
 
         .col-total {
@@ -240,14 +240,18 @@
 
             ::ng-deep .mat-datepicker-toggle {
                 position: absolute;
-                right: 0;
-                top: 50%;
+                right: 8px;
+                top: 24%;
                 transform: translateY(-50%);
-                color: #4392BB;
+                color: #999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
 
                 button {
                     width: 24px;
                     height: 24px;
+                    line-height: 24px;
                 }
             }
         }
@@ -255,10 +259,11 @@
         .qty-group {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 4px;
 
             .qty-input {
-                width: 45px;
+                width: 100px;
                 text-align: right;
             }
 

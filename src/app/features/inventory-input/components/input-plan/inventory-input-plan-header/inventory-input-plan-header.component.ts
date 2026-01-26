@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -9,6 +9,8 @@ import { InventoryInputPlanHeader } from '../../../models/inventory-input.model'
 import { Product, Repository } from '../../../../master-product/model/product.model';
 import { InventoryInputService } from '../../../services/inventory-input.service';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { InventorySearchDialogComponent } from '../../inventory-search-dialog/inventory-search-dialog.component';
 import { ProductService } from '../../../../master-product/services/product.service';
 
@@ -59,8 +61,10 @@ export class InventoryInputPlanHeaderComponent implements OnInit, OnChanges {
 
     constructor(
         private dialog: MatDialog,
+        private snackBar: MatSnackBar,
         private inventoryInputService: InventoryInputService,
-        private productService: ProductService) { }
+        private productService: ProductService,
+        private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.loadRepositories();
@@ -197,7 +201,61 @@ export class InventoryInputPlanHeaderComponent implements OnInit, OnChanges {
     }
 
     toggleClose(): void {
-        this.toggleCloseEvent.emit();
+        if (!this.headerFormGroup) return;
+        const currentValue = this.headerFormGroup.get('isClosed')?.value;
+        const id = this.inventoryInputId || this.headerFormGroup.get('inventoryInputId')?.value;
+
+        if (currentValue === '1') {
+            // Unclose - no confirmation needed
+            this.updateStatus(id, '0');
+        } else {
+            // Close - show confirmation
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                width: '450px',
+
+                panelClass: 'custom-dialog-container',
+                data: {
+                    title: '確認',
+                    message: 'クローズ済みに変更します。\nよろしいですか？\nクローズ済みに変更するとクローズ解除するまで編集できません。'
+                }
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result) {
+                    this.updateStatus(id, '1');
+                }
+            });
+        }
+    }
+
+    private updateStatus(id: number, status: string): void {
+        if (id) {
+            this.inventoryInputService.updateInventoryInputStatus(id, status).subscribe({
+                next: () => {
+                    this.headerFormGroup?.patchValue({ isClosed: status });
+                    const message = status === '1' ? 'クローズしました。' : 'クローズ解除しました。';
+                    this.snackBar.open(message, '', {
+                        duration: 3000,
+                        panelClass: ['success-snackbar'],
+                        horizontalPosition: 'right',
+                        verticalPosition: 'top'
+                    });
+                    this.cdr.detectChanges();
+                },
+                error: (err) => {
+                    console.error('Error updating status:', err);
+                    const message = status === '1' ? 'クローズに失敗しました。' : 'クローズ解除に失敗しました。';
+                    this.snackBar.open(message, '', {
+                        duration: 3000,
+                        panelClass: ['error-snackbar'],
+                        horizontalPosition: 'right',
+                        verticalPosition: 'top'
+                    });
+                }
+            });
+        } else {
+            this.headerFormGroup?.patchValue({ isClosed: status });
+        }
     }
 
     onSave(): void {

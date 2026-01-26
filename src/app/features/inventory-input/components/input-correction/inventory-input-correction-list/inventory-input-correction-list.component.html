@@ -42,8 +42,9 @@
               <td class="col-product">
                 <div class="product-group">
                   <div class="code-search">
-                    <input type="text" formControlName="productCode" class="form-control" readonly tabindex="-1">
-                    <button type="button" class="btn-search" (click)="openSearchDialog(i)" disabled>
+                    <input type="text" formControlName="productCode" class="form-control">
+                    <button type="button" class="btn-search" (click)="openSearchDialog(i)"
+                      [disabled]="control.get('productCode')?.disabled">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
                         stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"></circle>
@@ -58,8 +59,7 @@
 
               <!-- Warehouse -->
               <td class="col-warehouse">
-                <select formControlName="repositoryId" class="form-select"
-                  (change)="onDetailRepositoryChange(i, $event)">
+                <select formControlName="repositoryId" class="form-select">
                   <option [ngValue]="null"></option>
                   <option *ngFor="let repo of repositories" [ngValue]="repo.repositoryId">
                     {{ repo.repositoryCode }} {{ repo.repositoryName }}
@@ -69,10 +69,10 @@
 
               <!-- Location -->
               <td class="col-location">
-                <select formControlName="locationId" class="form-select" (change)="onLocationChange(i, $event)">
-                  <option [ngValue]=""></option>
+                <select formControlName="locationId" class="form-select">
+                  <option [ngValue]="">(設定無し)</option>
                   <option *ngFor="let loc of locationsMap[i]" [ngValue]="loc.locationId">
-                    {{ loc.locationCode }} {{ loc.locationName }}
+                    {{ loc.locationCode }}
                   </option>
                 </select>
               </td>
@@ -116,14 +116,12 @@
                     </svg>
 
                   </button>
-                  <button type="button" class="btn-copy" (click)="onCopyItem(i)" [disabled]="isCopyDisabled(control)"
-                    title="コピー">
+                  <button type="button" class="btn-copy" (click)="onCopyItem(i)" title="コピー">
                     <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M7.5 10.5V11.4375C7.5 11.7656 7.24219 12 6.9375 12H0.5625C0.234375 12 0 11.7656 0 11.4375V2.8125C0 2.50781 0.234375 2.25 0.5625 2.25H2.25V9.1875C2.25 9.91406 2.83594 10.5 3.5625 10.5H7.5ZM7.5 2.4375C7.5 2.76562 7.73438 3 8.0625 3H10.5V9.1875C10.5 9.51562 10.2422 9.75 9.9375 9.75H3.5625C3.23438 9.75 3 9.51562 3 9.1875V0.5625C3 0.257812 3.23438 0 3.5625 0H7.5V2.4375ZM10.3125 1.71094C10.4297 1.82812 10.5 1.96875 10.5 2.10938V2.25H8.25V0H8.39062C8.53125 0 8.67188 0.0703125 8.78906 0.1875L10.3125 1.71094Z"
                         fill="white" />
                     </svg>
-
                   </button>
                 </div>
               </td>
@@ -186,10 +184,8 @@
             <tr class="row-bottom">
               <!-- Correction Reason -->
               <td colspan="6" class="col-reason">
-                <select formControlName="detailNote" class="form-select reason-select">
+                <select formControlName="correctionReason" class="form-select reason-select">
                   <option value="入庫訂正">入庫訂正</option>
-                  <option value="返品">返品</option>
-                  <option value="誤入力">誤入力</option>
                 </select>
               </td>
             </tr>

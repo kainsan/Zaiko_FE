@@ -178,24 +178,27 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
     }
 
     private createDetailFormGroup(detail?: InventoryInputCorrectionDetail): FormGroup {
+        const isExisting = !!detail?.actualDetailId;
         let datetimeMng = detail?.datetimeMng ? new Date(detail.datetimeMng) : '';
-        // console.log(detail)
+        let inputActualDate = detail?.inputActualDate ? new Date(detail.inputActualDate) : (isExisting ? '' : new Date(this.currentDate));
+
         return this.fb.group({
-            datetimeMng: [{ value: datetimeMng, disabled: detail?.isDatetimeMng === '0' }],
+            datetimeMng: [{ value: datetimeMng, disabled: isExisting || detail?.isDatetimeMng === '0' }],
             actualDetailId: [detail?.actualDetailId || null],
             inventoryInputId: [detail?.inventoryInputId || null],
             companyId: [detail?.companyId || null],
             productId: [detail?.productId || null],
-            repositoryId: [detail?.repositoryId || null, Validators.required],
+            repositoryId: [{ value: detail?.repositoryId || null, disabled: isExisting }, Validators.required],
             locationId: [detail?.locationId || null],
-            numberMng: [{ value: detail?.numberMng || '', disabled: detail?.isNumberMng === '0' }],
+            numberMng: [{ value: detail?.numberMng || '', disabled: isExisting || detail?.isNumberMng === '0' }],
             csActualQuantity: [{ value: detail?.csActualQuantity || null, disabled: !detail?.productId || detail?.isPackCsInput === '0' }],
             blActualQuantity: [{ value: detail?.blActualQuantity || null, disabled: !detail?.productId || detail?.isPackBlInput === '0' }],
             psActualQuantity: [{ value: detail?.psActualQuantity || null, disabled: !detail?.productId || detail?.isPieceInput === '0' }],
             totalActualQuantity: [detail?.totalActualQuantity || 0],
             inventoryProductType: [detail?.inventoryProductType || ''],
             detailNote: [detail?.detailNote || ''],
-            productCode: [detail?.productCode || '', Validators.required],
+            correctionReason: [detail?.correctionReason || '入庫訂正'], // Default to '入庫訂正'
+            productCode: [{ value: detail?.productCode || '', disabled: isExisting }, Validators.required],
             productName: [detail?.productName || ''],
             detailRepositoryCode: [detail?.detailRepositoryCode || ''],
             detailRepositoryName: [detail?.detailRepositoryName || ''],
@@ -215,11 +218,11 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
             packBlAmount: [detail?.packBlAmount || 0],
             delFlg: [detail?.delFlg || '0'],
             // Added for UI compatibility
-            // originalQuantityCase: [detail?.csActualQuantity || 0],
-            // originalQuantityBall: [detail?.blActualQuantity || 0],
-            // originalQuantityUnit: [detail?.psActualQuantity || 0],
-            // originalTotalQuantity: [detail?.totalActualQuantity || 0],
-            inputActualDate: [detail?.inputActualDate ? new Date(detail.inputActualDate) : '']
+            originalQuantityCase: [detail?.csActualQuantity || 0],
+            originalQuantityBall: [detail?.blActualQuantity || 0],
+            originalQuantityUnit: [detail?.psActualQuantity || 0],
+            originalTotalQuantity: [detail?.totalActualQuantity || 0],
+            inputActualDate: [inputActualDate, Validators.required]
         });
     }
 
@@ -384,6 +387,89 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
                 locationId: null
             });
         });
+    }
+
+    onToggleClose(): void {
+        const isClosedControl = this.inventoryForm.get('header.isClosed');
+        const currentValue = isClosedControl?.value;
+
+        if (currentValue === '1') {
+            // Unclose - no confirmation needed
+            isClosedControl?.setValue('0');
+            this.updateFormState(false);
+        } else {
+            // Close - show confirmation
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                width: '450px',
+                panelClass: 'custom-dialog-container',
+                data: {
+                    title: '確認',
+                    message: 'クローズ済みに変更します。\nよろしいですか？\nクローズ済みに変更するとクローズ解除するまで編集できません。'
+                }
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result) {
+                    isClosedControl?.setValue('1');
+                    this.updateFormState(true);
+                }
+            });
+        }
+    }
+
+    private updateFormState(isClosed: boolean): void {
+        const headerGroup = this.inventoryForm.get('header') as FormGroup;
+        const detailsArray = this.inventoryForm.get('details') as FormArray;
+
+        if (isClosed) {
+            // Disable all header controls except isClosed (which is handled by the button)
+            Object.keys(headerGroup.controls).forEach(key => {
+                if (key !== 'isClosed') {
+                    headerGroup.get(key)?.disable({ emitEvent: false });
+                }
+            });
+
+            // Disable all detail controls
+            detailsArray.controls.forEach(group => {
+                (group as FormGroup).disable({ emitEvent: false });
+            });
+        } else {
+            // Enable header controls (with some exceptions based on existing logic)
+            Object.keys(headerGroup.controls).forEach(key => {
+                // Keep these disabled as they are readonly/auto or not editable in correction
+                if (['inputPlanDate', 'createSlipType', 'slipNo', 'actualSupplierSlipNo', 'actualRepositoryId', 'destinationCode', 'departmentName', 'supplierCode', 'supplierName', 'customerCode', 'customerName'].includes(key)) {
+                    headerGroup.get(key)?.disable({ emitEvent: false });
+                } else {
+                    headerGroup.get(key)?.enable({ emitEvent: false });
+                }
+            });
+
+            // Enable detail controls (with some exceptions based on product settings)
+            detailsArray.controls.forEach(group => {
+                const fg = group as FormGroup;
+                fg.enable({ emitEvent: false });
+
+                // Re-apply specific disable logic for details
+                const isExisting = !!fg.get('actualDetailId')?.value;
+                if (isExisting) {
+                    fg.get('repositoryId')?.disable({ emitEvent: false });
+                    fg.get('numberMng')?.disable({ emitEvent: false });
+                    fg.get('datetimeMng')?.disable({ emitEvent: false });
+                } else {
+                    if (fg.get('isDatetimeMng')?.value === '0') fg.get('datetimeMng')?.disable({ emitEvent: false });
+                    if (fg.get('isNumberMng')?.value === '0') fg.get('numberMng')?.disable({ emitEvent: false });
+                }
+
+                if (fg.get('isPackCsInput')?.value === '0') fg.get('csActualQuantity')?.disable({ emitEvent: false });
+                if (fg.get('isPackBlInput')?.value === '0') fg.get('blActualQuantity')?.disable({ emitEvent: false });
+                if (fg.get('isPieceInput')?.value === '0') fg.get('psActualQuantity')?.disable({ emitEvent: false });
+
+                if (!fg.get('repositoryId')?.value) {
+                    fg.get('locationCode')?.disable({ emitEvent: false });
+                }
+            });
+        }
+        this.cdr.detectChanges();
     }
 
     get headerFormGroup(): FormGroup {

@@ -38,6 +38,7 @@ export class InventoryInputCorrectionListComponent implements OnInit, OnChanges,
   locationsCacheByRepoId: { [repoId: number]: Location[] } = {};
   private subscriptions: Subscription = new Subscription();
   private previousRepositoryIds: (number | undefined)[] = [];
+  private previousLocationIds: (number | undefined)[] = [];
   test = '1';
   public statusDateTimeMngType: Record<string, string> = {
     '0': '入',
@@ -84,13 +85,17 @@ export class InventoryInputCorrectionListComponent implements OnInit, OnChanges,
 
     // 2. Reset internal state
     this.previousRepositoryIds = [];
+    this.previousLocationIds = [];
     this.locationsMap = {};
 
     if (!this.detailsFormArray) return;
 
     // 3. Initial processing - force load locations because locationsMap was reset
+    // Use getRawValue() to include disabled controls (for existing records)
     setTimeout(() => {
-      this.handleRepositoryChanges(this.detailsFormArray.value, true);
+      const rawValues = this.detailsFormArray.getRawValue();
+      this.handleRepositoryChanges(rawValues, true);
+      this.handleLocationChanges(rawValues);
       for (let i = 0; i < this.detailsFormArray.length; i++) {
         this.calculateTotal(i);
       }
@@ -99,8 +104,15 @@ export class InventoryInputCorrectionListComponent implements OnInit, OnChanges,
     // 4. Subscribe to changes
     this.subscriptions.add(
       this.detailsFormArray.valueChanges.subscribe((values: any[]) => {
-        this.handleRepositoryChanges(values);
-        this.handleProductCodeChanges(values);
+        // valueChanges excludes disabled controls, but for user interactions (which only happen on enabled controls), this is fine.
+        // However, to be safe and consistent, we can check getRawValue() if needed, 
+        // but values is sufficient for detecting changes on enabled fields.
+        // Actually, let's use getRawValue() to be absolutely sure we have all data context if needed.
+        const rawValues = this.detailsFormArray.getRawValue();
+        
+        this.handleRepositoryChanges(rawValues);
+        this.handleLocationChanges(rawValues);
+        this.handleProductCodeChanges(rawValues);
         for (let i = 0; i < this.detailsFormArray.length; i++) {
           this.calculateTotal(i);
         }
@@ -112,22 +124,68 @@ export class InventoryInputCorrectionListComponent implements OnInit, OnChanges,
     this.subscriptions.unsubscribe();
   }
 
-  // Hàm này kiểm tra xem repositoryId có thay đổi không
   private handleRepositoryChanges(rows: any[], force: boolean = false): void {
     rows.forEach((row, index) => {
-      // Lấy repositoryId hiện tại của dòng này
       const currentRepoId = row.repositoryId;
-
-      // Lấy repositoryId cũ đã lưu lần trước
       const previousRepoId = this.previousRepositoryIds[index];
 
-      // Nếu có ID và (ID này KHÁC với ID cũ HOẶC đang force load) => Có sự thay đổi
       if (currentRepoId && (force || currentRepoId !== previousRepoId)) {
-        // Gọi API load location mới
+        // Load locations
         this.loadLocations(index, currentRepoId);
 
-        // Cập nhật lại ID cũ bằng ID mới để dùng cho lần so sánh sau
+        // If NOT force (meaning user change), update related fields
+        if (!force && currentRepoId !== previousRepoId) {
+          const formGroup = this.detailsFormArray.at(index);
+          const repo = this.repositories.find((r) => r.repositoryId === currentRepoId);
+          if (repo) {
+            formGroup.patchValue({
+              detailRepositoryCode: repo.repositoryCode,
+              detailRepositoryName: repo.repositoryName,
+              locationCode: '',
+              locationId: null,
+            }, { emitEvent: false }); // Avoid infinite loops
+          }
+        }
+
         this.previousRepositoryIds[index] = currentRepoId;
+      } else if (!currentRepoId && previousRepoId) {
+          // Repository cleared
+          const formGroup = this.detailsFormArray.at(index);
+          formGroup.patchValue({
+              detailRepositoryCode: '',
+              detailRepositoryName: '',
+              locationCode: '',
+              locationId: null,
+          }, { emitEvent: false });
+          this.locationsMap[index] = [];
+          this.previousRepositoryIds[index] = undefined;
+      }
+    });
+  }
+
+  private handleLocationChanges(rows: any[]): void {
+    rows.forEach((row, index) => {
+      const currentLocId = row.locationId;
+      const previousLocId = this.previousLocationIds[index];
+
+      if (currentLocId !== previousLocId) {
+        const formGroup = this.detailsFormArray.at(index);
+        
+        if (currentLocId) {
+          const locations = this.locationsMap[index] || [];
+          const selectedLocation = locations.find(loc => loc.locationId === currentLocId);
+          if (selectedLocation) {
+            formGroup.patchValue({
+              locationCode: selectedLocation.locationCode
+            }, { emitEvent: false });
+          }
+        } else {
+          formGroup.patchValue({
+            locationCode: ''
+          }, { emitEvent: false });
+        }
+        
+        this.previousLocationIds[index] = currentLocId;
       }
     });
   }
@@ -211,56 +269,6 @@ export class InventoryInputCorrectionListComponent implements OnInit, OnChanges,
       },
       error: (err) => console.error('Error loading products:', err),
     });
-  }
-
-  onDetailRepositoryChange(index: number, event: any): void {
-    const repoId = Number(event.target.value);
-    const repo = this.repositories.find((r) => r.repositoryId === repoId);
-    const formGroup = this.detailsFormArray.at(index);
-
-    if (repo) {
-      formGroup.patchValue({
-        detailRepositoryCode: repo.repositoryCode,
-        detailRepositoryName: repo.repositoryName,
-        locationCode: '',
-        repositoryId: repo.repositoryId,
-        locationId: null,
-      });
-
-      const productCode = formGroup.get('productCode')?.value;
-      if (productCode) {
-        this.loadLocations(index, repoId);
-        formGroup.get('locationCode')?.enable({ emitEvent: false });
-      } else {
-        formGroup.get('locationCode')?.disable({ emitEvent: false });
-      }
-    } else {
-      formGroup.patchValue({
-        detailRepositoryCode: '',
-        detailRepositoryName: '',
-        locationCode: '',
-        repositoryId: null,
-        locationId: null,
-      });
-      this.locationsMap[index] = [];
-    }
-  }
-
-  onLocationChange(index: number, event: any): void {
-    const locationId = Number(event.target.value);
-    const formGroup = this.detailsFormArray.at(index);
-    const locations = this.locationsMap[index] || [];
-    const selectedLocation = locations.find(loc => loc.locationId === locationId);
-
-    if (selectedLocation) {
-      formGroup.patchValue({
-        locationCode: selectedLocation.locationCode
-      });
-    } else {
-      formGroup.patchValue({
-        locationCode: ''
-      });
-    }
   }
 
   onAddItem(): void {

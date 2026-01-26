@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -9,6 +9,8 @@ import { InventoryInputPlanHeader } from '../../../models/inventory-input.model'
 import { Product, Repository } from '../../../../master-product/model/product.model';
 import { InventoryInputService } from '../../../services/inventory-input.service';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 import { InventorySearchDialogComponent } from '../../inventory-search-dialog/inventory-search-dialog.component';
 import { ProductService } from '../../../../master-product/services/product.service';
 
@@ -29,7 +31,7 @@ import { ProductService } from '../../../../master-product/services/product.serv
 export class InventoryInputCorrectionHeaderComponent implements OnInit, OnChanges {
     // Reactive Forms pattern (from pages)
     @Input() headerFormGroup?: FormGroup;
-    @Input() isFormInvalid: boolean = false;
+    @Input() isFormInvalid!: boolean;
 
     // ID-based pattern (from components)
     @Input() inventoryInputId?: number | null;
@@ -39,6 +41,7 @@ export class InventoryInputCorrectionHeaderComponent implements OnInit, OnChange
     @Output() repositoryChanged = new EventEmitter<Repository>();
     @Output() save = new EventEmitter<void>();
     @Output() delete = new EventEmitter<void>();
+    @Output() toggleCloseEvent = new EventEmitter<void>();
 
     headerData: InventoryInputPlanHeader | null = null;
 
@@ -57,8 +60,10 @@ export class InventoryInputCorrectionHeaderComponent implements OnInit, OnChange
 
     constructor(
         private dialog: MatDialog,
+        private snackBar: MatSnackBar,
         private inventoryInputService: InventoryInputService,
-        private productService: ProductService) { }
+        private productService: ProductService,
+        private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         if (this.inventoryInputId && !this.headerFormGroup) {
@@ -198,8 +203,58 @@ export class InventoryInputCorrectionHeaderComponent implements OnInit, OnChange
     toggleClose(): void {
         if (!this.headerFormGroup) return;
         const currentValue = this.headerFormGroup.get('isClosed')?.value;
-        const newValue = currentValue === '1' ? '0' : '1';
-        this.headerFormGroup.patchValue({ isClosed: newValue });
+        const id = this.inventoryInputId || this.headerFormGroup.get('inventoryInputId')?.value;
+
+        if (currentValue === '1') {
+            // Unclose - no confirmation needed
+            this.updateStatus(id, '0');
+        } else {
+            // Close - show confirmation
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+                width: '450px',
+                panelClass: 'custom-dialog-container',
+                data: {
+                    title: '確認',
+                    message: 'クローズ済みに変更します。\nよろしいですか？\nクローズ済みに変更するとクローズ解除するまで編集できません。'
+                }
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result) {
+                    this.updateStatus(id, '1');
+                }
+            });
+        }
+    }
+
+    private updateStatus(id: number, status: string): void {
+        if (id) {
+            this.inventoryInputService.updateInventoryInputStatus(id, status).subscribe({
+                next: () => {
+                    this.headerFormGroup?.patchValue({ isClosed: status });
+                    const message = status === '1' ? 'クローズしました。' : 'クローズ解除しました。';
+                    this.snackBar.open(message, '', {
+                        duration: 3000,
+                        panelClass: ['success-snackbar'],
+                        horizontalPosition: 'start',
+                        verticalPosition: 'bottom'
+                    });
+                    this.cdr.detectChanges();
+                },
+                error: (err) => {
+                    console.error('Error updating status:', err);
+                    const message = status === '1' ? 'クローズに失敗しました。' : 'クローズ解除に失敗しました。';
+                    this.snackBar.open(message, '', {
+                        duration: 3000,
+                        panelClass: ['error-snackbar'],
+                        horizontalPosition: 'start',
+                        verticalPosition: 'bottom'
+                    });
+                }
+            });
+        } else {
+            this.headerFormGroup?.patchValue({ isClosed: status });
+        }
     }
 
     onSave(): void {

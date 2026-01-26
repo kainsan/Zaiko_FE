@@ -204,13 +204,6 @@ export class InventoryInputActualHeaderComponent implements OnInit, OnChanges {
         }
     }
 
-    toggleClose(): void {
-        if (!this.headerFormGroup) return;
-        const currentValue = this.headerFormGroup.get('isClosed')?.value;
-        const newValue = currentValue === '1' ? '0' : '1';
-        this.headerFormGroup.patchValue({ isClosed: newValue });
-    }
-
     onSave(): void {
         this.save.emit();
     }

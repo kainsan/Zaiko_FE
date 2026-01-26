@@ -121,4 +121,8 @@ export class InventoryInputService {
     updateInventoryInputCorrection(id: number, data: InventoryInputCorrectionResponse): Observable<any> {
         return this.http.put(`${this.apiUrl}/inventory-input/inventory-input-correction/${id}`, data);
     }
+
+    updateInventoryInputStatus(id: number, isClosed: string): Observable<any> {
+        return this.http.put(`${this.apiUrl}/inventory-input/inventory-input/status/${id}`, { isClosed });
+    }
 }
