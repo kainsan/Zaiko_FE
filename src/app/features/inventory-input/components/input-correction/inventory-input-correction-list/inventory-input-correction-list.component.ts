@@ -29,6 +29,7 @@ import { Subscription } from 'rxjs';
 export class InventoryInputCorrectionListComponent implements OnInit, OnChanges, OnDestroy {
   @Input() detailsFormArray!: FormArray;
   @Input() repositories: Repository[] = [];
+  @Input() isClosed: boolean = false;
   @Output() addItem = new EventEmitter<void>();
   @Output() removeItem = new EventEmitter<number>();
   @Output() copyItem = new EventEmitter<number>();
@@ -109,7 +110,7 @@ export class InventoryInputCorrectionListComponent implements OnInit, OnChanges,
         // but values is sufficient for detecting changes on enabled fields.
         // Actually, let's use getRawValue() to be absolutely sure we have all data context if needed.
         const rawValues = this.detailsFormArray.getRawValue();
-        
+
         this.handleRepositoryChanges(rawValues);
         this.handleLocationChanges(rawValues);
         this.handleProductCodeChanges(rawValues);
@@ -149,16 +150,16 @@ export class InventoryInputCorrectionListComponent implements OnInit, OnChanges,
 
         this.previousRepositoryIds[index] = currentRepoId;
       } else if (!currentRepoId && previousRepoId) {
-          // Repository cleared
-          const formGroup = this.detailsFormArray.at(index);
-          formGroup.patchValue({
-              detailRepositoryCode: '',
-              detailRepositoryName: '',
-              locationCode: '',
-              locationId: null,
-          }, { emitEvent: false });
-          this.locationsMap[index] = [];
-          this.previousRepositoryIds[index] = undefined;
+        // Repository cleared
+        const formGroup = this.detailsFormArray.at(index);
+        formGroup.patchValue({
+          detailRepositoryCode: '',
+          detailRepositoryName: '',
+          locationCode: '',
+          locationId: null,
+        }, { emitEvent: false });
+        this.locationsMap[index] = [];
+        this.previousRepositoryIds[index] = undefined;
       }
     });
   }
@@ -170,7 +171,7 @@ export class InventoryInputCorrectionListComponent implements OnInit, OnChanges,
 
       if (currentLocId !== previousLocId) {
         const formGroup = this.detailsFormArray.at(index);
-        
+
         if (currentLocId) {
           const locations = this.locationsMap[index] || [];
           const selectedLocation = locations.find(loc => loc.locationId === currentLocId);
@@ -184,7 +185,7 @@ export class InventoryInputCorrectionListComponent implements OnInit, OnChanges,
             locationCode: ''
           }, { emitEvent: false });
         }
-        
+
         this.previousLocationIds[index] = currentLocId;
       }
     });

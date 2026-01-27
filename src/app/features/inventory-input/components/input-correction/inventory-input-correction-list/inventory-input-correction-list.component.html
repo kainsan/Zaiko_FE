@@ -1,7 +1,7 @@
 <div class="list-container" *ngIf="detailsFormArray">
   <div class="list-header">
     <h3>入庫訂正明細一覧 </h3>
-    <button type="button" class="btn-add" (click)="onAddItem()">+ 追加</button>
+    <button type="button" class="btn-add" (click)="onAddItem()" [disabled]="isClosed">+ 追加</button>
   </div>
 
   <div class="table-wrapper">
@@ -108,7 +108,7 @@
               <!-- Actions -->
               <td rowspan="3" class="col-actions">
                 <div class="action-buttons">
-                  <button type="button" class="btn-delete" (click)="onRemoveItem(i)" title="削除">
+                  <button type="button" class="btn-delete" (click)="onRemoveItem(i)" title="削除" [disabled]="isClosed">
                     <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M10.125 0.75C10.3125 0.75 10.5 0.9375 10.5 1.125V1.875C10.5 2.08594 10.3125 2.25 10.125 2.25H0.375C0.164062 2.25 0 2.08594 0 1.875V1.125C0 0.9375 0.164062 0.75 0.375 0.75H3.1875L3.39844 0.328125C3.49219 0.140625 3.67969 0 3.89062 0H6.58594C6.79688 0 6.98438 0.140625 7.07812 0.328125L7.3125 0.75H10.125ZM1.24219 10.9453L0.75 3H9.75L9.23438 10.9453C9.21094 11.5547 8.71875 12 8.10938 12H2.36719C1.75781 12 1.26562 11.5547 1.24219 10.9453Z"
@@ -116,7 +116,7 @@
                     </svg>
 
                   </button>
-                  <button type="button" class="btn-copy" (click)="onCopyItem(i)" title="コピー">
+                  <button type="button" class="btn-copy" (click)="onCopyItem(i)" title="コピー" [disabled]="isClosed">
                     <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path
                         d="M7.5 10.5V11.4375C7.5 11.7656 7.24219 12 6.9375 12H0.5625C0.234375 12 0 11.7656 0 11.4375V2.8125C0 2.50781 0.234375 2.25 0.5625 2.25H2.25V9.1875C2.25 9.91406 2.83594 10.5 3.5625 10.5H7.5ZM7.5 2.4375C7.5 2.76562 7.73438 3 8.0625 3H10.5V9.1875C10.5 9.51562 10.2422 9.75 9.9375 9.75H3.5625C3.23438 9.75 3 9.51562 3 9.1875V0.5625C3 0.257812 3.23438 0 3.5625 0H7.5V2.4375ZM10.3125 1.71094C10.4297 1.82812 10.5 1.96875 10.5 2.10938V2.25H8.25V0H8.39062C8.53125 0 8.67188 0.0703125 8.78906 0.1875L10.3125 1.71094Z"

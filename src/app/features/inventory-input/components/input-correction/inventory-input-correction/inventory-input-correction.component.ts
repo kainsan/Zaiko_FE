@@ -172,6 +172,9 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
                 correctionData.inventoryInputCorrectionDetails.forEach(detail => {
                     detailsArray.push(this.createDetailFormGroup(detail));
                 });
+
+                // Update state based on isClosed
+                this.updateFormState(headerData.isClosed === '1');
             },
             error: (err) => console.error('Error loading data:', err)
         });
@@ -392,11 +395,13 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
     onToggleClose(): void {
         const isClosedControl = this.inventoryForm.get('header.isClosed');
         const currentValue = isClosedControl?.value;
+        const id = this.inventoryForm.get('header.inventoryInputId')?.value;
+
+        if (!id) return;
 
         if (currentValue === '1') {
             // Unclose - no confirmation needed
-            isClosedControl?.setValue('0');
-            this.updateFormState(false);
+            this.updateStatus(id, '0');
         } else {
             // Close - show confirmation
             const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -410,11 +415,36 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
 
             dialogRef.afterClosed().subscribe(result => {
                 if (result) {
-                    isClosedControl?.setValue('1');
-                    this.updateFormState(true);
+                    this.updateStatus(id, '1');
                 }
             });
         }
+    }
+
+    private updateStatus(id: number, status: string): void {
+        this.inventoryInputService.updateInventoryInputStatus(id, status).subscribe({
+            next: () => {
+                this.inventoryForm.get('header.isClosed')?.setValue(status);
+                this.updateFormState(status === '1');
+                const message = status === '1' ? 'クローズしました。' : 'クローズ解除しました。';
+                this.snackBar.open(message, '', {
+                    duration: 3000,
+                    panelClass: ['success-snackbar'],
+                    horizontalPosition: 'start',
+                    verticalPosition: 'bottom'
+                });
+            },
+            error: (err) => {
+                console.error('Error updating status:', err);
+                const message = status === '1' ? 'クローズに失敗しました。' : 'クローズ解除に失敗しました。';
+                this.snackBar.open(message, '', {
+                    duration: 3000,
+                    panelClass: ['error-snackbar'],
+                    horizontalPosition: 'start',
+                    verticalPosition: 'bottom'
+                });
+            }
+        });
     }
 
     private updateFormState(isClosed: boolean): void {

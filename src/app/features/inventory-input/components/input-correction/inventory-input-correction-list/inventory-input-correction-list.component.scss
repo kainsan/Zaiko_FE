@@ -172,7 +172,7 @@
                     width: 24px;
                     /* Smaller width */
                     height: 30px;
-                    background-color: #999;
+                    background-color: #4392BB;
                     /* Lighter grey */
                     color: white;
                     border: 1px solid #999;
@@ -188,7 +188,7 @@
                     transition: background-color 0.2s;
 
                     &:hover {
-                        background-color: #777;
+                        background-color: #4392BB;
                     }
 
                     svg {
@@ -243,7 +243,7 @@
                 right: 8px;
                 top: 24%;
                 transform: translateY(-50%);
-                color: #999;
+                color: #4392BB !important;
                 display: flex;
                 align-items: center;
                 justify-content: center;

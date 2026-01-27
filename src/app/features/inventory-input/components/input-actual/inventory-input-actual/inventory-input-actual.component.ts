@@ -55,9 +55,9 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
         } else {
             this.addDetail();
         }
-        // this.inventoryForm.statusChanges.subscribe(() => {
-        //     this.isFormInvalid = this.inventoryForm.invalid;
-        // });
+        this.inventoryForm.statusChanges.subscribe(() => {
+            this.isFormInvalid = this.inventoryForm.invalid;
+        });
     }
 
     public getLocationByRepositoryId(repositoryId: number): Observable<Location[]> {

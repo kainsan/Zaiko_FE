@@ -201,60 +201,7 @@ export class InventoryInputCorrectionHeaderComponent implements OnInit, OnChange
     }
 
     toggleClose(): void {
-        if (!this.headerFormGroup) return;
-        const currentValue = this.headerFormGroup.get('isClosed')?.value;
-        const id = this.inventoryInputId || this.headerFormGroup.get('inventoryInputId')?.value;
-
-        if (currentValue === '1') {
-            // Unclose - no confirmation needed
-            this.updateStatus(id, '0');
-        } else {
-            // Close - show confirmation
-            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-                width: '450px',
-                panelClass: 'custom-dialog-container',
-                data: {
-                    title: '確認',
-                    message: 'クローズ済みに変更します。\nよろしいですか？\nクローズ済みに変更するとクローズ解除するまで編集できません。'
-                }
-            });
-
-            dialogRef.afterClosed().subscribe(result => {
-                if (result) {
-                    this.updateStatus(id, '1');
-                }
-            });
-        }
-    }
-
-    private updateStatus(id: number, status: string): void {
-        if (id) {
-            this.inventoryInputService.updateInventoryInputStatus(id, status).subscribe({
-                next: () => {
-                    this.headerFormGroup?.patchValue({ isClosed: status });
-                    const message = status === '1' ? 'クローズしました。' : 'クローズ解除しました。';
-                    this.snackBar.open(message, '', {
-                        duration: 3000,
-                        panelClass: ['success-snackbar'],
-                        horizontalPosition: 'start',
-                        verticalPosition: 'bottom'
-                    });
-                    this.cdr.detectChanges();
-                },
-                error: (err) => {
-                    console.error('Error updating status:', err);
-                    const message = status === '1' ? 'クローズに失敗しました。' : 'クローズ解除に失敗しました。';
-                    this.snackBar.open(message, '', {
-                        duration: 3000,
-                        panelClass: ['error-snackbar'],
-                        horizontalPosition: 'start',
-                        verticalPosition: 'bottom'
-                    });
-                }
-            });
-        } else {
-            this.headerFormGroup?.patchValue({ isClosed: status });
-        }
+        this.toggleCloseEvent.emit();
     }
 
     onSave(): void {
