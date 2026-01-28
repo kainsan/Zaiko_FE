@@ -368,10 +368,12 @@ export class InventoryInputCorrectionListComponent implements OnInit, OnChanges,
         const repoId = formGroup.get('repositoryId')?.value;
         if (repoId) {
           this.loadLocations(index, repoId);
-          formGroup.get('locationCode')?.enable({ emitEvent: false });
+          formGroup.get('locationCode')?.enable();  // Emit to trigger validation
         } else {
-          formGroup.get('locationCode')?.disable({ emitEvent: false });
+          formGroup.get('locationCode')?.disable(); // Emit to trigger validation
         }
+
+
 
       });
     });

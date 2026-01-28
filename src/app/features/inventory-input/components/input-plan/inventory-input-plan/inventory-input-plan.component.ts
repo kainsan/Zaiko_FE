@@ -298,8 +298,8 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
                     this.snackBar.open('登録しました。', '', {
                         duration: 3000,
                         panelClass: ['success-snackbar'],
-                        horizontalPosition: 'start',
-                        verticalPosition: 'bottom'
+                        horizontalPosition: 'right',
+                        verticalPosition: 'top'
                     });
                     this.onBack();
                 },
@@ -308,8 +308,8 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
                     this.snackBar.open('登録に失敗しました。', '', {
                         duration: 3000,
                         panelClass: ['error-snackbar'],
-                        horizontalPosition: 'start',
-                        verticalPosition: 'bottom'
+                        horizontalPosition: 'right',
+                        verticalPosition: 'top'
                     });
                 }
             });

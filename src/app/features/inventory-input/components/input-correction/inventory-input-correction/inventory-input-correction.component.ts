@@ -31,7 +31,7 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
     locations = signal<Location[]>([]);
     repositories = signal<Repository[]>([]);
     inventoryForm!: FormGroup;
-    isFormInvalid = true;
+
 
     currentDate = new Date().toLocaleDateString('ja-JP', {
         year: 'numeric',
@@ -57,9 +57,10 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
         } else {
             this.addDetail();
         }
-        this.inventoryForm.statusChanges.subscribe(() => {
-            this.isFormInvalid = this.inventoryForm.invalid;
-        });
+    }
+
+    get isFormInvalid(): boolean {
+        return this.inventoryForm ? this.inventoryForm.invalid : true;
     }
 
     public getLocationByRepositoryId(repositoryId: number): Observable<Location[]> {
@@ -79,7 +80,7 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
                     ? inventoryInputData?.inventoryInputCorrectionHeader.inventoryInputId : null],
                 companyId: [null],
                 inputPlanDate: [{ value: '', disabled: true }],
-                inputActualDate: ['', Validators.required],
+                inputActualDate: [''],
                 createSlipType: [{ value: '0', disabled: true }], // Default to Auto
                 slipNo: [{ value: '', disabled: true }], // Default to disabled
                 planSupplierSlipNo: [''],
@@ -89,10 +90,10 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
                 planSupplierDeliveryDestinationId: [null],
                 actualSupplierDeliveryDestinationId: [null],
                 planSupplierId: [null],
-                actualSupplierId: [null],
-                productOwnerId: [null],
+                actualSupplierId: [null, Validators.required],
+                productOwnerId: [null, Validators.required],
                 planRepositoryId: [null],
-                actualRepositoryId: [{ value: null, disabled: true }],
+                actualRepositoryId: [{ value: null, disabled: true }, Validators.required],
                 inputStatus: [''],
                 sumPlanQuantity: [null],
                 sumActualQuantity: [null],
@@ -186,19 +187,19 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
         let inputActualDate = detail?.inputActualDate ? new Date(detail.inputActualDate) : (isExisting ? '' : new Date(this.currentDate));
 
         return this.fb.group({
-            datetimeMng: [{ value: datetimeMng, disabled: isExisting || detail?.isDatetimeMng === '0' }],
+            datetimeMng: [{ value: datetimeMng, disabled: isExisting || detail?.isDatetimeMng === '0' }, Validators.required],
             actualDetailId: [detail?.actualDetailId || null],
             inventoryInputId: [detail?.inventoryInputId || null],
             companyId: [detail?.companyId || null],
-            productId: [detail?.productId || null],
+            productId: [detail?.productId || null, Validators.required],
             repositoryId: [{ value: detail?.repositoryId || null, disabled: isExisting }, Validators.required],
-            locationId: [detail?.locationId || null],
-            numberMng: [{ value: detail?.numberMng || '', disabled: isExisting || detail?.isNumberMng === '0' }],
+            locationId: [detail?.locationId || null, Validators.required],
+            numberMng: [{ value: detail?.numberMng || '', disabled: isExisting || detail?.isNumberMng === '0' }, Validators.required],
             csActualQuantity: [{ value: detail?.csActualQuantity || null, disabled: !detail?.productId || detail?.isPackCsInput === '0' }],
             blActualQuantity: [{ value: detail?.blActualQuantity || null, disabled: !detail?.productId || detail?.isPackBlInput === '0' }],
             psActualQuantity: [{ value: detail?.psActualQuantity || null, disabled: !detail?.productId || detail?.isPieceInput === '0' }],
             totalActualQuantity: [detail?.totalActualQuantity || 0],
-            inventoryProductType: [detail?.inventoryProductType || ''],
+            inventoryProductType: [detail?.inventoryProductType || '', Validators.required],
             detailNote: [detail?.detailNote || ''],
             correctionReason: [detail?.correctionReason || '入庫訂正'], // Default to '入庫訂正'
             productCode: [{ value: detail?.productCode || '', disabled: isExisting }, Validators.required],
@@ -225,13 +226,14 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
             originalQuantityBall: [detail?.blActualQuantity || 0],
             originalQuantityUnit: [detail?.psActualQuantity || 0],
             originalTotalQuantity: [detail?.totalActualQuantity || 0],
-            inputActualDate: [inputActualDate, Validators.required]
+            inputActualDate: [inputActualDate || '']
         });
     }
 
     addDetail(): void {
         const detailsArray = this.inventoryForm.get('details') as FormArray;
         detailsArray.push(this.createDetailFormGroup());
+        this.updateFormState(this.headerFormGroup.get('isClosed')?.value === '1');
     }
 
     removeDetail(index: number): void {
@@ -269,6 +271,7 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
 
                 if (visibleControls.length === 0) {
                     detailsArray.push(this.createDetailFormGroup());
+                    this.updateFormState(this.headerFormGroup.get('isClosed')?.value === '1');
                 }
             }, 0);
         });
@@ -281,56 +284,69 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
 
         const copyValues = { ...sourceGroup.getRawValue(), actualDetailId: null };
         detailsArray.push(this.createDetailFormGroup(copyValues));
+        this.updateFormState(this.headerFormGroup.get('isClosed')?.value === '1');
     }
 
 
     onSave(): void {
-        if (this.inventoryForm.invalid) return;
+        if (this.inventoryForm.invalid) {
+            const invalidControls: string[] = [];
+            const headerGroup = this.inventoryForm.get('header') as FormGroup;
+            Object.keys(headerGroup.controls).forEach(key => {
+                if (headerGroup.get(key)?.invalid) {
+                    invalidControls.push(`Header: ${key}`);
+                }
+            });
+
+            const detailsArray = this.inventoryForm.get('details') as FormArray;
+            detailsArray.controls.forEach((control, index) => {
+                const group = control as FormGroup;
+                Object.keys(group.controls).forEach(key => {
+                    if (group.get(key)?.invalid) {
+                        invalidControls.push(`Detail [${index}]: ${key}`);
+                    }
+                });
+            });
+
+            console.log('Invalid Fields:', invalidControls);
+
+            this.snackBar.open('入力内容に誤りがあります。', '', {
+                duration: 3000,
+                panelClass: ['error-snackbar'],
+                horizontalPosition: 'right',
+                verticalPosition: 'top'
+            });
+            return;
+        }
 
         const id = this.inventoryForm.get('header.inventoryInputId')?.value;
         const data = this.inventoryForm.getRawValue();
 
+        // Map form data to DTO structure
+        const request: InventoryInputCorrectionResponse = {
+            inventoryInputCorrectionHeader: data.header,
+            inventoryInputCorrectionDetails: data.details
+        };
+
         if (id) {
-            this.inventoryInputService.updateInventoryInputCorrection(id, data as InventoryInputCorrectionResponse).subscribe({
+            this.inventoryInputService.updateInventoryInputCorrection(id, request).subscribe({
                 next: () => {
                     console.log('Update successful');
-                    console.log(data)
                     this.snackBar.open('保存しました。', '', {
                         duration: 3000,
                         panelClass: ['success-snackbar'],
-                        horizontalPosition: 'start',
-                        verticalPosition: 'bottom'
+                        horizontalPosition: 'right',
+                        verticalPosition: 'top'
                     });
-                    this.onBack();
+                    this.loadData(id);
                 },
                 error: (err) => {
-                    console.error('Error updating plan:', err);
+                    console.error('Error updating correction:', err);
                     this.snackBar.open('登録に失敗しました。', '', {
                         duration: 3000,
                         panelClass: ['error-snackbar'],
-                        horizontalPosition: 'start',
-                        verticalPosition: 'bottom'
-                    });
-                }
-            });
-        } else {
-            this.inventoryInputService.createInventoryInputActual(data as InventoryInputActualResponse).subscribe({
-                next: () => {
-                    this.snackBar.open('登録しました。', '', {
-                        duration: 3000,
-                        panelClass: ['success-snackbar'],
-                        horizontalPosition: 'start',
-                        verticalPosition: 'bottom'
-                    });
-                    this.onBack();
-                },
-                error: (err) => {
-                    console.error('Error creating plan:', err);
-                    this.snackBar.open('登録に失敗しました。', '', {
-                        duration: 3000,
-                        panelClass: ['error-snackbar'],
-                        horizontalPosition: 'start',
-                        verticalPosition: 'bottom'
+                        horizontalPosition: 'right',
+                        verticalPosition: 'top'
                     });
                 }
             });
@@ -485,6 +501,7 @@ export class InventoryInputCorrectionComponent implements OnInit, OnChanges {
                     fg.get('repositoryId')?.disable({ emitEvent: false });
                     fg.get('numberMng')?.disable({ emitEvent: false });
                     fg.get('datetimeMng')?.disable({ emitEvent: false });
+                    fg.get('productCode')?.disable({ emitEvent: false });
                 } else {
                     if (fg.get('isDatetimeMng')?.value === '0') fg.get('datetimeMng')?.disable({ emitEvent: false });
                     if (fg.get('isNumberMng')?.value === '0') fg.get('numberMng')?.disable({ emitEvent: false });

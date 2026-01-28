@@ -29,6 +29,7 @@
     </app-inventory-input-correction-header>
 
     <app-inventory-input-correction-list [detailsFormArray]="detailsFormArray" [repositories]="repositories()"
-        (addItem)="addDetail()" (removeItem)="removeDetail($event)" (copyItem)="copyDetail($event)">
+        [isClosed]="headerFormGroup.get('isClosed')?.value === '1'" (addItem)="addDetail()"
+        (removeItem)="removeDetail($event)" (copyItem)="copyDetail($event)">
     </app-inventory-input-correction-list>
 </div>
