@@ -1,0 +1,182 @@
+<div class="list-inventory-container">
+    <div class="list-header">
+        <div class="header-left">
+            <span class="results-title">検索結果一覧</span>
+            <button class="btn-csv" (click)="onDownloadCsv()">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M11.6667 9.33333V11.6667H2.33333V9.33333H1.16667V11.6667C1.16667 12.3083 1.69167 12.8333 2.33333 12.8333H11.6667C12.3083 12.8333 12.8333 12.3083 12.8333 11.6667V9.33333H11.6667ZM7.58333 7.42583L9.6425 5.36667L10.465 6.18333L7 9.64833L3.535 6.18333L4.3575 5.36667L6.41667 7.42583V1.16667H7.58333V7.42583Z"
+                        fill="#4392BB" />
+                </svg>
+                CSV
+            </button>
+        </div>
+        <span class="results-count">
+            総計 <span class="count-value">{{currentPage()}}</span> / {{ totalPages() }} 件
+        </span>
+    </div>
+
+    <div class="table-wrapper">
+        <table class="inventory-table">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="status-col"></th>
+                    <th rowspan="2">No.</th>
+                    <th rowspan="2">伝票番号</th>
+                    <th rowspan="2">出庫タイプ</th>
+                    <th rowspan="2">受注日</th>
+                    <th rowspan="2">バッチ</th>
+                    <th class="date-col">出庫予定日</th>
+                    <th>作業予定日</th>
+                    <th>納品予定日</th>
+                    <th>予定納品先</th>
+                    <th>予定納品先名称</th>
+                    <th>予定出荷先</th>
+                    <th>予定出荷先名称</th>
+                    <th>予定倉庫</th>
+                    <th>予定客先伝票番号</th>
+                    <th>予定数量合計</th>
+                    <th rowspan="2" class="actions-col"></th>
+                </tr>
+                <tr>
+                    <th class="date-col">出庫実績日</th>
+                    <th>作業実績日</th>
+                    <th>納品実績日</th>
+                    <th>実績納品先</th>
+                    <th>実績納品先名称</th>
+                    <th>実績出荷先</th>
+                    <th>実績出荷先名称</th>
+                    <th>実績倉庫</th>
+                    <th>実績客先伝票番号</th>
+                    <th>実績数量合計</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of displayItems(); let i = index">
+                    <td class="status-cell">
+                        <div class="status-content">
+                            <span class="lock-icon">
+                                <!-- Unlock icon for Unclose (0) -->
+                                <svg *ngIf="item.isClosed === '0'" width="11" height="12" viewBox="0 0 11 12"
+                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M7.875 0C6.42755 0 5.25 1.17755 5.25 2.625V5.25H0.75C0.335812 5.25 0 5.58581 0 6V11.25C0 11.6642 0.335812 12 0.75 12H7.5C7.91419 12 8.25 11.6642 8.25 11.25V6C8.25 5.58581 7.91419 5.25 7.5 5.25H6.75V2.625C6.75 2.00463 7.25463 1.5 7.875 1.5C8.49537 1.5 9 2.00463 9 2.625V4.5C9 4.91419 9.33581 5.25 9.75 5.25C10.1642 5.25 10.5 4.91419 10.5 4.5V2.625C10.5 1.17755 9.32245 0 7.875 0ZM4.5 9.30616V10.125C4.5 10.3321 4.33209 10.5 4.125 10.5C3.91791 10.5 3.75 10.3321 3.75 10.125V9.30614C3.31402 9.15115 3 8.73907 3 8.24998C3 7.6286 3.50362 7.12498 4.125 7.12498C4.74638 7.12498 5.25 7.6286 5.25 8.24998C5.25 8.73907 4.93598 9.15115 4.5 9.30616Z"
+                                        fill="#9F9F9F" />
+                                </svg>
+                                <!-- Lock icon for Closed (1) -->
+                                <svg *ngIf="item.isClosed === '1'" width="11" height="12" viewBox="0 0 640 640"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M256 160L256 224L384 224L384 160C384 124.7 355.3 96 320 96C284.7 96 256 124.7 256 160zM192 224L192 160C192 89.3 249.3 32 320 32C390.7 32 448 89.3 448 160L448 224C483.3 224 512 252.7 512 288L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 288C128 252.7 156.7 224 192 224z"
+                                        fill="#9F9F9F" />
+                                </svg>
+                            </span>
+                            <span class="status-text">{{getStatusLabel(item.outputStatus)}}</span>
+                        </div>
+                    </td>
+                    <td class="no-cell">{{i + 1}}</td>
+                    <td class="slip-cell">{{item.slipNo}}</td>
+                    <td class="type-cell">
+                        <span class="type-badge" [class.plan]="item.planOutputDate"
+                            [class.actual]="!item.planOutputDate">
+                            {{item.planOutputDate ? '予定あり' : '実績のみ'}}
+                        </span>
+                    </td>
+                    <td class="order-date-cell">
+                        <div class="">{{item.orderDate}}</div>
+                    </td>
+                    <td class="batch-cell">
+                        <div class="">{{item.batchStatus}}</div>
+                    </td>
+                    <td class="date-cell">
+                        <div class="multi-line">
+                            <div class="top-line">{{item.planOutputDate ? item.planOutputDate : '~'}}</div>
+                            <div class="bottom-line">{{item.actualOutputDate ? item.actualOutputDate : '~'}}</div>
+                        </div>
+                    </td>
+                    <td class="date-cell">
+                        <div class="multi-line">
+                            <div class="top-line">{{item.planWorkingDate ? item.planWorkingDate : '~'}}</div>
+                            <div class="bottom-line">{{item.actualOutputDate ? item.actualOutputDate : '~'}}</div>
+                        </div>
+                    </td>
+                    <td class="date-cell">
+                        <div class="multi-line">
+                            <div class="top-line">{{item.planDeliverDate ? item.planDeliverDate : '~'}}</div>
+                            <div class="bottom-line">{{item.actualDeliverDate ? item.actualDeliverDate : '~'}}</div>
+                        </div>
+                    </td>
+                    <td class="code-cell">
+                        <div class="multi-line">
+                            <div class="top-line">{{item.planDestinationCode ? item.planDestinationCode : '~'}}</div>
+                            <div class="bottom-line">{{item.actualDestinationCode ? item.actualDestinationCode : '~'}}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="name-cell">
+                        <div class="multi-line">
+                            <div class="top-line">{{item.planDestinationName ? item.planDestinationName : '~'}}</div>
+                            <div class="bottom-line">{{item.actualDestinationName ? item.actualDestinationName : '~'}}
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="code-cell">
+                        <div class="multi-line">
+                            <div class="top-line">{{item.planCustomerCode ? item.planCustomerCode : '~'}}</div>
+                            <div class="bottom-line">{{item.actualCustomerCode ? item.actualCustomerCode : '~'}}</div>
+                        </div>
+                    </td>
+
+                    <td class="name-cell">
+                        <div class="multi-line">
+                            <div class="top-line">{{item.planCustomerName ? item.planCustomerName : '~'}}</div>
+                            <div class="bottom-line">{{item.actualCustomerName ? item.actualCustomerName : '~'}}</div>
+                        </div>
+                    </td>
+
+                    <td class="code-cell">
+                        <div class="multi-line">
+                            <div class="top-line">{{item.planRepositoryCode ? item.planRepositoryCode : '~'}}</div>
+                            <div class="bottom-line">{{item.actualRepositoryCode ? item.actualRepositoryCode : '~'}}
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="name-cell">
+                        <div class="multi-line">
+                            <div class="top-line">{{item.planSupplierSlipNo ? item.planSupplierSlipNo : '~'}}</div>
+                            <div class="bottom-line">{{item.actualSupplierSlipNo ? item.actualSupplierSlipNo : '~'}}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="name-cell">
+                        <div class="multi-line">
+                            <div class="top-line">{{item.sumPlanQuantity ? item.sumPlanQuantity : '~'}}</div>
+                            <div class="bottom-line">{{item.sumActualQuantity ? item.sumActualQuantity : '~'}}</div>
+                        </div>
+                    </td>
+
+                    <td class="actions-cell">
+                        <div class="action-buttons">
+                            <button class="btn btn-scheduled" [disabled]="" (click)="onOpenPlan(item)">予定</button>
+                            <button class="btn btn-actual" [disabled]="" (click)="onOpenActual(item)">実績</button>
+                            <button class="btn btn-edit" [disabled]="" (click)="onOpenCorrection(item)">訂正</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="load-more-wrapper">
+        <button class="load-more-btn" (click)="loadMore.emit()">
+            <svg width="9" height="12" viewBox="0 0 9 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M3.99219 5.52344L0.273438 1.80469C0 1.53125 0 1.12109 0.273438 0.875L0.875 0.246094C1.14844 0 1.55859 0 1.80469 0.246094L4.42969 2.89844L7.08203 0.246094C7.32812 0 7.73828 0 8.01172 0.246094L8.64062 0.875C8.88672 1.12109 8.88672 1.53125 8.64062 1.80469L4.92188 5.52344C4.64844 5.76953 4.23828 5.76953 3.99219 5.52344ZM4.92188 10.7734C4.64844 11.0195 4.23828 11.0195 3.99219 10.7734L0.273438 7.05469C0 6.78125 0 6.37109 0.273438 6.125L0.875 5.49609C1.14844 5.25 1.55859 5.25 1.80469 5.49609L4.45703 8.14844L7.08203 5.49609C7.32812 5.25 7.76562 5.25 8.01172 5.49609L8.64062 6.125C8.88672 6.37109 8.88672 6.78125 8.64062 7.05469L4.92188 10.7734Z"
+                    fill="#4392BB" />
+            </svg>
+            更に表示
+        </button>
+    </div>
+</div>

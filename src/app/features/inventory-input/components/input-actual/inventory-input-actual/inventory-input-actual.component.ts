@@ -28,6 +28,7 @@ import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.comp
 export class InventoryInputActualComponent implements OnInit, OnChanges {
     @Input() inventoryInputId: number | null = null;
     @Output() back = new EventEmitter<void>();
+    @Output() navigateToCorrection = new EventEmitter<number>();
     locations = signal<Location[]>([]);
     inventoryForm!: FormGroup;
     isFormInvalid = true;
@@ -266,24 +267,69 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
     onSave(): void {
         if (this.inventoryForm.invalid) return;
 
+        // STEP 1: Calculate and update sum quantities from details (NO API call yet)
+        this.calculateAndUpdateSumQuantities();
+
+        // STEP 2: Get calculated values
+        const sumActualQty = this.inventoryForm.get('header.sumActualQuantity')?.value || 0;
+        const sumPlanQty = this.inventoryForm.get('header.sumPlanQuantity')?.value || 0;
+
+        console.log('Compare quantities:', { sumActualQty, sumPlanQty });
+
+        // STEP 3: Compare quantities
+        if (sumActualQty === sumPlanQty) {
+            // Quantities match - do nothing, no API call, no navigation
+            console.log('Quantities match - no action needed');
+            return;
+        }
+
+        // STEP 4: Quantities differ - show confirmation dialog
+        this.showQuantityMismatchDialog(sumPlanQty, sumActualQty);
+    }
+
+    // Show dialog when quantities don't match
+    private showQuantityMismatchDialog(planQty: number, actualQty: number): void {
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '450px',
+            data: {
+                title: '数量確認',
+                message: `予定数量と実績数量が一致しません。\n\n` +
+                    `予定数量: ${planQty}\n` +
+                    `実績数量: ${actualQty}\n\n` +
+                    `保存してよろしいですか？`
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result === true) {
+                // User confirmed - call API
+                this.performSave();
+            }
+            // User cancelled - do nothing
+        });
+    }
+
+    // Perform actual save operation (called after confirmation)
+    private performSave(): void {
         const id = this.inventoryForm.get('header.inventoryInputId')?.value;
         const data = this.inventoryForm.getRawValue();
 
         if (id) {
+            // UPDATE case
             this.inventoryInputService.updateInventoryInputActual(id, data as InventoryInputActualResponse).subscribe({
                 next: () => {
                     console.log('Update successful');
-                    console.log(data)
                     this.snackBar.open('保存しました。', '', {
                         duration: 3000,
                         panelClass: ['success-snackbar'],
                         horizontalPosition: 'right',
                         verticalPosition: 'top'
                     });
-                    this.onBack();
+                    // Navigate to correction screen
+                    this.navigateToCorrection.emit(id);
                 },
                 error: (err) => {
-                    console.error('Error updating plan:', err);
+                    console.error('Error updating actual:', err);
                     this.snackBar.open('登録に失敗しました。', '', {
                         duration: 3000,
                         panelClass: ['error-snackbar'],
@@ -293,18 +339,26 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
                 }
             });
         } else {
+            // CREATE case
             this.inventoryInputService.createInventoryInputActual(data as InventoryInputActualResponse).subscribe({
-                next: () => {
+                next: (response: any) => {
                     this.snackBar.open('登録しました。', '', {
                         duration: 3000,
                         panelClass: ['success-snackbar'],
                         horizontalPosition: 'right',
                         verticalPosition: 'top'
                     });
-                    this.onBack();
+                    // Navigate to correction screen with new ID from response
+                    const newId = response?.inventoryInputId;
+                    if (newId) {
+                        this.navigateToCorrection.emit(newId);
+                    } else {
+                        console.error('No inventoryInputId in response');
+                        this.onBack();
+                    }
                 },
                 error: (err) => {
-                    console.error('Error creating plan:', err);
+                    console.error('Error creating actual:', err);
                     this.snackBar.open('登録に失敗しました。', '', {
                         duration: 3000,
                         panelClass: ['error-snackbar'],
@@ -313,6 +367,66 @@ export class InventoryInputActualComponent implements OnInit, OnChanges {
                     });
                 }
             });
+        }
+    }
+
+    // Calculate sum of all detail quantities and update header
+    private calculateAndUpdateSumQuantities(): void {
+        const detailsArray = this.inventoryForm.get('details') as FormArray;
+        let sumActualQuantity = 0;
+
+        detailsArray.controls.forEach(control => {
+            const delFlg = control.get('delFlg')?.value;
+            // Only count non-deleted items
+            if (delFlg !== '1') {
+                const totalActualQty = control.get('totalActualQuantity')?.value || 0;
+                sumActualQuantity += Number(totalActualQty);
+            }
+        });
+
+        // Update header with calculated sum
+        this.inventoryForm.get('header.sumActualQuantity')?.patchValue(sumActualQuantity, { emitEvent: false });
+        console.log('Calculated sumActualQuantity:', sumActualQuantity);
+    }
+
+    // Check if total actual quantity exceeds total plan quantity
+    private shouldShowQuantityConfirm(): boolean {
+        const sumActualQty = this.inventoryForm.get('header.sumActualQuantity')?.value || 0;
+        const sumPlanQty = this.inventoryForm.get('header.sumPlanQuantity')?.value || 0;
+        return sumActualQty > sumPlanQty;
+    }
+
+    // Show confirmation dialog when actual quantity exceeds plan
+    private showQuantityConfirmDialog(): Promise<boolean> {
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            width: '400px',
+            data: {
+                title: '確認',
+                message: '入庫実績が入庫予定を超えています。伝票を締めますか？'
+            }
+        });
+
+        return new Promise((resolve) => {
+            dialogRef.afterClosed().subscribe(result => {
+                resolve(result === true);
+            });
+        });
+    }
+
+    // Navigate to correction screen with optional confirmation
+    private navigateToCorrectionScreen(inventoryInputId: number): void {
+        if (this.shouldShowQuantityConfirm()) {
+            // Show confirm dialog if quantity exceeds
+            this.showQuantityConfirmDialog().then(() => {
+                // Navigate regardless of confirmation result
+                this.navigateToCorrection.emit(inventoryInputId);
+            }).catch(() => {
+                // Even if dialog errors, still navigate
+                this.navigateToCorrection.emit(inventoryInputId);
+            });
+        } else {
+            // Direct navigation if quantity is normal
+            this.navigateToCorrection.emit(inventoryInputId);
         }
     }
 

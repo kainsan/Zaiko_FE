@@ -266,6 +266,9 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
     onSave(): void {
         if (this.inventoryForm.invalid) return;
 
+        // Calculate and update sum plan quantity from details before saving
+        this.calculateAndUpdateSumPlanQuantity();
+
         const id = this.inventoryForm.get('header.inventoryInputId')?.value;
         const data = this.inventoryForm.getRawValue();
 
@@ -315,6 +318,26 @@ export class InventoryInputPlanComponent implements OnInit, OnChanges {
             });
         }
     }
+
+    // Calculate sum of all plan quantities and update header
+    private calculateAndUpdateSumPlanQuantity(): void {
+        const detailsArray = this.inventoryForm.get('details') as FormArray;
+        let sumPlanQuantity = 0;
+
+        detailsArray.controls.forEach(control => {
+            const delFlg = control.get('delFlg')?.value;
+            // Only count non-deleted items
+            if (delFlg !== '1') {
+                const totalPlanQty = control.get('totalPlanQuantityInput')?.value || 0;
+                sumPlanQuantity += Number(totalPlanQty);
+            }
+        });
+
+        // Update header with calculated sum
+        this.inventoryForm.get('header.sumPlanQuantity')?.patchValue(sumPlanQuantity, { emitEvent: false });
+        console.log('Calculated sumPlanQuantity:', sumPlanQuantity);
+    }
+
 
     onDelete(): void {
         const id = this.inventoryForm.get('header.inventoryInputId')?.value;

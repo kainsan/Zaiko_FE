@@ -16,4 +16,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/inventory-input/pages/inventory-input-list/inventory-input-list').then(m => m.InventoryInputList),
   },
+  {
+    path: 'dashboard/inventory-output-list',
+    loadComponent: () =>
+      import('./features/inventory-output/pages/inventory-output-list/inventory-output-list').then(m => m.InventoryOutputList),
+  },
 ];

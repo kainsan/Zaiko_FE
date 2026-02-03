@@ -137,7 +137,6 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
       // If productCode is empty but productId exists (meaning it was previously set)
       if (!row.productCode && row.productId) {
         const formGroup = this.detailsFormArray.at(index);
-
         // Reset all product-related fields
         formGroup.patchValue({
           productId: null,
@@ -285,9 +284,13 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (!result) return;
-      // console.log(result)
       setTimeout(() => {
+        console.log("1")
+      })
+      if (!result) return;
+      console.log("2")
+      // console.log(result)
+      // setTimeout(() => {
         const formGroup = this.detailsFormArray.at(index);
 
         // ✅ 1. Chỉ update thông tin PRODUCT (KHÔNG đụng form khác)
@@ -370,7 +373,7 @@ export class InventoryInputActualListComponent implements OnInit, OnChanges, OnD
           formGroup.get('locationCode')?.disable({ emitEvent: false });
         }
 
-      });
+      // });
     });
   }
 

@@ -1,15 +1,15 @@
-<div class="inventory-input-list-container">
+<div class="inventory-output-list-container">
     <ng-container *ngIf="viewMode() === 'list'">
         <header class="header">
             <div class="breadcrumb">
                 <a routerLink="/admin" class="breadcrumb-link">
-                    入庫
+                    出庫
                 </a>
                 <svg xmlns="http://www.w3.org/2000/svg" height="16" width="7" viewBox="0 0 256 512">
                     <path fill="#9f9f9f"
                         d="M247.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L179.2 256 41.9 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z" />
                 </svg>
-                <span class="current-page">入庫一覧</span>
+                <span class="current-page">出庫一覧</span>
             </div>
 
             <div class="header-actions">
@@ -37,31 +37,17 @@
         </header>
 
         <section *ngIf="isSearchVisible()">
-            <search-inventory-input (searchInventoryInputs)="handleSearchResults($event)"
-                (onSearchParams)="handleSearchParams($event)" (clear)="handleClear()"></search-inventory-input>
+            <search-inventory-output (searchInventoryOutputs)="handleSearchResults($event)"
+                (onSearchParams)="handleSearchParams($event)" (clear)="handleClear()"></search-inventory-output>
         </section>
 
         <div class="container">
             <div class="list-section">
-                <list-inventory-input [inventoryInputs]="inventoryInputs()" [totalPages]="totalPages()"
+                <list-inventory-output [inventoryOutputs]="inventoryOutputs()" [totalPages]="totalPages()"
                     [currentPage]="currentPage()" (loadMore)="handleLoadMore()" (openPlan)="handleOpenPlan($event)"
                     (openActual)="handleOpenActual($event)"
-                    (openCorrection)="handleOpenCorrection($event)"></list-inventory-input>
+                    (openCorrection)="handleOpenCorrection($event)"></list-inventory-output>
             </div>
         </div>
-    </ng-container>
-
-    <ng-container *ngIf="viewMode() === 'plan'">
-        <app-inventory-input-plan [inventoryInputId]="selectedId()"
-            (back)="handleBackToList()"></app-inventory-input-plan>
-    </ng-container>
-
-    <ng-container *ngIf="viewMode() === 'actual'">
-        <app-inventory-input-actual [inventoryInputId]="selectedId()" (back)="handleBackToList()"
-            (navigateToCorrection)="handleNavigateToCorrection($event)"></app-inventory-input-actual>
-    </ng-container>
-    <ng-container *ngIf="viewMode() === 'correction'">
-        <app-inventory-input-correction [inventoryInputId]="selectedId()"
-            (back)="handleBackToList()"></app-inventory-input-correction>
     </ng-container>
 </div>

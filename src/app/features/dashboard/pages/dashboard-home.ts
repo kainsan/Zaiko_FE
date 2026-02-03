@@ -34,9 +34,9 @@ export class DashboardHome {
     {
       title: "出庫",
       items: [
-        { label: "出庫一覧", path: "/outgoing/list" },
-        { label: "出庫予定入力", path: "/outgoing/schedule" },
-        { label: "出庫実績登録", path: "/outgoing/actual" }
+        { label: "出庫一覧", path: "/dashboard/inventory-output-list" },
+        { label: "出庫予定入力", path: "/dashboard/inventory-output-list", queryParams: { mode: 'create' } },
+        { label: "出庫実績登録", path: "/dashboard/inventory-output-list", queryParams: { mode: 'create-actual' } }
       ]
     },
     {

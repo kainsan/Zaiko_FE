@@ -109,6 +109,32 @@ export class SearchInventoryInputComponent implements OnInit {
     }
 
     onClear(): void {
+        this.inputPlanDateFrom.set('');
+        this.inputPlanDateTo.set('');
+        this.inputActualDateFrom.set('');
+        this.inputActualDateTo.set('');
+        this.slipNoFrom.set('');
+        this.slipNoTo.set('');
+        this.customerSlipNumberFrom.set('');
+        this.customerSlipNumberTo.set('');
+        this.deliveryCodeFrom.set('');
+        this.deliveryCodeTo.set('');
+        this.deliveryName.set('');
+        this.supplierCodeFrom.set('');
+        this.supplierCodeTo.set('');
+        this.supplierName.set('');
+        this.customerCodeFrom.set('');
+        this.customerCodeTo.set('');
+        this.customerName.set('');
+        this.productCodeFrom.set('');
+        this.productCodeTo.set('');
+        this.productName.set('');
+        this.planRepositoryId.set('');
+        this.actualRepositoryId.set('');
+        this.receiptType.set('ALL');
+        this.receiptStatus.set('ALL');
+        this.isClosed.set('ALL');
+
         this.clear.emit();
     }
 

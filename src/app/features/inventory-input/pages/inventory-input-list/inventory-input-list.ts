@@ -77,6 +77,17 @@ export class InventoryInputList implements OnInit {
         this.refreshInventInput();
     }
 
+    handleNavigateToCorrection(id: number): void {
+        // Reset ID first to force ngOnChanges trigger in Correction component
+        this.selectedId.set(null);
+        this.viewMode.set('correction');
+
+        // Set ID after a tick to ensure Correction component reloads fresh data
+
+        this.selectedId.set(id);
+
+    }
+
     loadInventoryInputs(): void {
         this.inventoryInputService.getInventoryInputs(this.currentPage(), this.pageSize).subscribe(response => {
             this.inventoryInputs.set(response.content || []);
@@ -124,6 +135,5 @@ export class InventoryInputList implements OnInit {
     handleClear(): void {
         this.currentSearchParams.set({});
         this.currentPage.set(0);
-        this.loadInventoryInputs();
     }
 }

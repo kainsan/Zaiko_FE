@@ -1,0 +1,205 @@
+.dialog-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: white;
+    border-radius: 4px;
+    overflow: hidden;
+    font-family: 'Noto Sans JP', sans-serif; // Assuming font
+}
+
+.dialog-header {
+    background-color: #4392BB;
+    color: white;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title {
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+}
+
+.dialog-content {
+    padding: 1rem;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.search-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    background-color: white;
+
+    label {
+        font-size: 14px;
+        font-weight: 700;
+        color: #374151;
+    }
+
+    .search-input-row {
+        display: flex;
+        gap: 0.75rem;
+
+        input {
+            flex: 1;
+            height: 36px;
+            padding: 0 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+
+            &:focus {
+                outline: none;
+                border-color: #4392BB;
+            }
+
+            &::placeholder {
+                color: #9ca3af;
+            }
+        }
+
+        .search-btn {
+            background-color: #4392BB;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0 1.5rem;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            height: 36px;
+
+            &:hover {
+                background-color: #367a9e;
+            }
+        }
+    }
+}
+
+.results-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 0.25rem;
+
+        .results-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #4392BB;
+        }
+
+        .results-count {
+            font-size: 12px;
+            color: #6b7280;
+
+            .highlight {
+                font-weight: bold;
+                color: #4392BB;
+            }
+        }
+    }
+
+    .table-container {
+        border: 1px solid #e5e7eb;
+        border-radius: 0; // Image shows no radius on table container itself or very slight
+        overflow: hidden;
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+
+            thead {
+                tr {
+                    border-bottom: 1px solid #e5e7eb;
+
+                    th {
+                        text-align: left;
+                        padding: 0.75rem 1rem;
+                        font-weight: 700;
+                        color: #374151;
+                        background-color: white;
+
+                        &:first-child {
+                            width: 150px; // Approx width for code
+                        }
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+                    border-bottom: 1px solid #e5e7eb;
+
+                    td {
+                        padding: 0.75rem 1rem;
+                        color: #374151;
+                    }
+
+                    &.odd {
+                        background-color: #F0F5FF; // Light blueish gray for zebra striping
+                    }
+
+                    &.even {
+                        background-color: white;
+                    }
+
+                    &:last-child {
+                        border-bottom: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.dialog-footer {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid #e5e7eb;
+
+    .ok-btn {
+        background-color: #4392BB;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 0.5rem 3rem;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #367a9e;
+        }
+    }
+}

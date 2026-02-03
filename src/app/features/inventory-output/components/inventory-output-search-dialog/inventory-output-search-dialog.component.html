@@ -1,0 +1,68 @@
+<div class="dialog-container">
+    <div class="dialog-header">
+        <span class="title">{{ title }}</span>
+        <button class="close-btn" (click)="close()">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.5 1.5L1.5 10.5" stroke="white" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <path d="M1.5 1.5L10.5 10.5" stroke="white" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+        </button>
+    </div>
+
+    <div class="dialog-content">
+        <div class="search-section">
+            <label>フリーワード検索</label>
+            <div class="search-input-row">
+                <input type="text" [placeholder]="placeholder" [(ngModel)]="searchQuery" (keyup.enter)="search()" />
+                <button class="search-btn" (click)="search()">検索</button>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <div class="results-header">
+                <span class="results-title">検索結果一覧</span>
+                <span class="results-count">総計 {{filteredItems.length}}/<span class="highlight">{{items.length}}</span>
+                    件</span>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th *ngIf="searchType === 'product'">商品コード</th>
+                            <th *ngIf="searchType === 'supplier'">仕入先コード</th>
+                            <th *ngIf="searchType === 'delivery'">納品先コード</th>
+                            <th *ngIf="searchType === 'customer'">得意先コード</th>
+                            <th *ngIf="searchType === 'owner'">所有者コード</th>
+
+                            <th>名称</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of filteredItems; let i = index" [class.even]="i % 2 === 0"
+                            [class.odd]="i % 2 !== 0" (click)="selectItem(item)" style="cursor: pointer;">
+                            <td *ngIf="searchType === 'product'">{{ item.productCode }}</td>
+                            <td *ngIf="searchType === 'supplier'">{{ item.supplierCode }}</td>
+                            <td *ngIf="searchType === 'delivery'">{{ item.destinationCode }}</td>
+                            <td *ngIf="searchType === 'customer'">{{ item.supplierCode }}</td>
+                            <td *ngIf="searchType === 'owner'">{{ item.customerCode }}</td>
+
+                            <td *ngIf="searchType === 'product'">{{ item.name1 }}</td>
+                            <td *ngIf="searchType === 'supplier'">{{ item.supplierName }}</td>
+                            <td *ngIf="searchType === 'delivery'">{{ item.departmentName }}</td>
+                            <td *ngIf="searchType === 'customer'">{{ item.supplierName }}</td>
+                            <td *ngIf="searchType === 'owner'">{{ item.customerName }}</td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="dialog-footer">
+        <button class="ok-btn" (click)="close()">OK</button>
+    </div>
+</div>
