@@ -58,37 +58,36 @@ export class ListInventoryOutputComponent implements OnInit {
         }
     }
 
-    // isPlanDisabled(item: InventoryOutputDTO): boolean {
-    //     if (!item.inventoryOutputEntity.outputPlanDate) {
-    //         return true;
-    //     } else
-    //         return false;
-    // }
+    isPlanDisabled(item: InventoryOutputListItem): boolean {
+        if (!item.planOutputDate) {
+            return true;
+        } else
+            return false;
+    }
 
-    // isActualDisabled(item: InventoryOutputDTO): boolean {
-    //     if (!item.inventoryOutputEntity.outputActualDate && item.inventoryOutputEntity.outputPlanDate && item.inventoryOutputEntity.isClosed == "0") {
-    //         ;
-    //         return false;
-    //     }
-    //     else if (!item.inventoryOutputEntity.outputActualDate && item.inventoryOutputEntity.outputPlanDate && item.inventoryOutputEntity.isClosed == "1") {
-    //         return true;
-    //     }
-    //     else if (item.inventoryOutputEntity.outputActualDate && item.inventoryOutputEntity.outputPlanDate && item.inventoryOutputEntity.isClosed == "0") {
-    //         return false;
-    //     }
-    //     else if (item.inventoryOutputEntity.outputActualDate && item.inventoryOutputEntity.outputPlanDate && item.inventoryOutputEntity.isClosed == "1") {
-    //         return true;
-    //     }
-    //     else if (item.inventoryOutputEntity.outputActualDate && !item.inventoryOutputEntity.outputPlanDate && item.inventoryOutputEntity.isClosed == "0") {
-    //         return true;
-    //     }
-    //     else if (item.inventoryOutputEntity.outputActualDate && !item.inventoryOutputEntity.outputPlanDate && item.inventoryOutputEntity.isClosed == "1") {
-    //         return true;
-    //     }
-    //     return false;
-    // }
+    isActualDisabled(item: InventoryOutputListItem): boolean {
+        if (!item.actualOutputDate && item.planOutputDate && item.isClosed == "0") {
+            return false;
+        }
+        else if (!item.actualOutputDate && item.planOutputDate && item.isClosed == "1") {
+            return true;
+        }
+        else if (item.actualOutputDate && item.planOutputDate && item.isClosed == "0") {
+            return false;
+        }
+        else if (item.actualOutputDate && item.planOutputDate && item.isClosed == "1") {
+            return true;
+        }
+        else if (item.actualOutputDate && !item.planOutputDate && item.isClosed == "0") {
+            return true;
+        }
+        else if (item.actualOutputDate && !item.planOutputDate && item.isClosed == "1") {
+            return true;
+        }
+        return false;
+    }
 
-    // isCorrectionDisabled(item: InventoryOutputDTO): boolean {
-    //     return !item.inventoryOutputEntity.outputActualDate;
-    // }
+    isCorrectionDisabled(item: InventoryOutputListItem): boolean {
+        return !item.actualOutputDate;
+    }
 }

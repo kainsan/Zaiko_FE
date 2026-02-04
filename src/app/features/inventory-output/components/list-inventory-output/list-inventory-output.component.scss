@@ -1,3 +1,10 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
 .list-inventory-container {
     background: white;
     margin: 4px 0px;
@@ -6,6 +13,7 @@
     flex-direction: column;
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    flex: 1;
 
     .list-header {
         padding: 8px 16px;
@@ -62,8 +70,9 @@
     }
 
     .table-wrapper {
-        overflow-x: auto;
+        overflow: auto;
         flex: 1;
+        min-height: 0;
     }
 
     .inventory-table {
@@ -96,7 +105,7 @@
 
             &.status-cell {
                 padding: 0;
-                width: 40px;
+                min-width: 40px !important;
                 border-left: 4px solid #7986CB; // Purple left border
                 background: #F9F9F9;
 

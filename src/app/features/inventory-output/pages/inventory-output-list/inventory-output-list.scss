@@ -5,6 +5,7 @@
     gap: 4px;
     margin: auto;
     background-color: #C7D2F2;
+    overflow: hidden;
 }
 
 .header {
@@ -93,5 +94,7 @@
 
 .list-section {
     flex: 1;
-    overflow: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
