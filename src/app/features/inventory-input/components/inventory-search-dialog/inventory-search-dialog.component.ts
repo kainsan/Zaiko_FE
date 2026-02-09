@@ -17,7 +17,7 @@ export class InventorySearchDialogComponent implements OnInit {
     items: any[] = [];
     filteredItems: any[] = [];
     searchQuery: string = '';
-    searchType: 'product' | 'supplier' | 'delivery' | 'customer' | 'supplierDelivery' | 'planProduct' = 'product';
+    searchType: 'product' | 'supplier' | 'delivery' | 'customer' | 'supplierDelivery' | 'planProduct' | 'planCustomerDeliveryDestination' = 'product';
     title: string = '';
     placeholder: string = '';
 
@@ -53,6 +53,10 @@ export class InventorySearchDialogComponent implements OnInit {
                     break;
                 case 'supplierDelivery':
                     this.title = '仕入先名称';
+                    this.placeholder = 'コード、名称で検索';
+                    break;
+                case 'planCustomerDeliveryDestination':
+                    this.title = '得意先納品先検索';
                     this.placeholder = 'コード、名称で検索';
                     break;
             }
@@ -128,6 +132,14 @@ export class InventorySearchDialogComponent implements OnInit {
                 this.filteredItems = this.items.filter((item: any) =>
                     item.supplierDeliveryDestinationId?.toLowerCase().includes(query) ||
                     item.destinationCode?.toLowerCase().includes(query)
+                );
+                break;
+            case 'planCustomerDeliveryDestination':
+                this.filteredItems = this.items.filter((item: any) =>
+                    item.customerCode?.toLowerCase().includes(query) ||
+                    item.customerName?.toLowerCase().includes(query) ||
+                    item.destinationCode?.toLowerCase().includes(query) ||
+                    item.destinationName?.toLowerCase().includes(query)
                 );
                 break;
         }

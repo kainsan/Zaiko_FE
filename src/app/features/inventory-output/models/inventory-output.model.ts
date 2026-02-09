@@ -94,37 +94,52 @@ export interface InventoryOutputSearchParams {
 export interface InventoryOutputPlanHeader {
     inventoryOutputId: number;
     companyId: number;
-    outputPlanDate: string;
-    outputActualDate: string;
+    orderDate: string;
+    planOutputDate: string;
+    planWorkingDate: string;
+    planDeliverDate: string;
+    actualOutputDate: string | null;
+    actualDeliverDate: string | null;
     createSlipType: string;
     slipNo: string;
     planSupplierSlipNo: string | null;
     actualSupplierSlipNo: string | null;
-    planSlipNote: string | null;
-    actualSlipNote: string | null;
-    planSupplierDeliveryDestinationId: number;
-    actualSupplierDeliveryDestinationId: number;
-    planSupplierId: number;
-    actualSupplierId: number;
-    productOwnerId: number;
+    slipNote: string | null;
+    planCustomerDeliveryDestinationId: number;
+    actualCustomerDeliveryDestinationId: number;
+    planCustomerId: number;
+    actualCustomerId: number;
     planRepositoryId: number;
     actualRepositoryId: number;
-    outputStatus: string;
+    batchStatus: string;
     sumPlanQuantity: number;
     sumActualQuantity: number;
+    outputStatus: string;
     isClosed: string;
-    freeItem1: string | null;
-    freeItem2: string | null;
-    freeItem3: string | null;
-    contactStatus: string;
-    destinationCode: string;
-    departmentName: string | null;
-    supplierCode: string;
-    supplierName: string;
-    customerCode: string;
-    customerName: string;
-    repositoryCode: string;
-    repositoryName: string;
+    routeCode: string;
+    courseCode: string;
+    deliverDestinationName: string | null;
+    phoneNumber: string | null;
+    faxNumber: string | null;
+    postCode: string | null;
+    address1: string | null;
+    address2: string | null;
+    address3: string | null;
+    address4: string | null;
+    newDestinationName: string | null;
+    checked: string;
+    planDestinationCode: string;
+    planDestinationName: string | null;
+    actualDestinationCode: string;
+    actualDestinationName: string | null;
+    planCustomerCode: string;
+    planCustomerName: string;
+    actualCustomerCode: string;
+    actualCustomerName: string;
+    planRepositoryCode: string;
+    planRepositoryName: string;
+    actualRepositoryCode: string;
+    actualRepositoryName: string;
 }
 
 export interface InventoryOutputPlanDetail {
@@ -161,10 +176,32 @@ export interface InventoryOutputPlanDetail {
     isPieceInput: string;
     totalQuantityInput: number;
     standardInfo: string | null;
+    datetimeMngFrom: string | null;
+    datetimeMngTo: string | null;
+    numberMngFrom: string | null;
+    numberMngTo: string | null;
+    productOwnerId: number;
+    supplierId: number;
+    planCsPrice: number;
+    planBlPrice: number;
+    planPiecePrice: number;
+    tax: number;
+    amountTotal: number;
+    batchStatus: string;
+    batchNo: string;
+    billingPackType: string;
+    isBatchInprogress: number;
+    ownerCode: string;
+    ownerName: string;
+    supplierCode: string;
+    supplierName: string;
     totalActualQuantity: number | null;
     packCsAmount?: number;
     packBlAmount?: number;
     delFlg: string;
+    saleCsPrice?: number;
+    saleBlPrice?: number;
+    salePiecePrice?: number;
 }
 
 
@@ -176,7 +213,7 @@ export interface InventoryOutputPlanResponse {
 export interface InventoryOutputActualHeader {
     inventoryOutputId: number;
     companyId: number;
-    outputPlanDate: string;
+    planOutputDate: string;
     outputActualDate: string;
     createSlipType: string;
     slipNo: string;
@@ -249,7 +286,7 @@ export interface InventoryOutputActualResponse {
 export interface InventoryOutputCorrectionHeader {
     inventoryOutputId: number;
     companyId: number;
-    outputPlanDate: string;
+    planOutputDate: string;
     outputActualDate: string;
     createSlipType: string;
     slipNo: string;

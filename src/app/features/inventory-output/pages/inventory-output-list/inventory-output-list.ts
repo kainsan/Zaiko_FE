@@ -4,13 +4,16 @@ import { RouterModule, Router, ActivatedRoute, Params } from '@angular/router';
 
 import { SearchInventoryOutputComponent } from '../../components/search-inventory-output/search-inventory-output.component';
 import { ListInventoryOutputComponent } from '../../components/list-inventory-output/list-inventory-output.component';
+import { InventoryOutputPlanComponent } from '../inventory-output-plan/inventory-output-plan.component';
+import { InventoryOutputActualComponent } from '../inventory-output-actual/inventory-output-actual.component';
+import { InventoryOutputCorrectionComponent } from '../inventory-output-correction/inventory-output-correction.component';
 import { InventoryOutputService } from '../../services/inventory-output.service';
 import { InventoryOutputListItem, InventoryOutputSearchParams } from '../../models/inventory-output.model';
 import { PageResponse } from '../../../master-product/response/PageResponse';
 
 @Component({
     selector: 'app-inventory-output-list',
-    imports: [RouterModule, CommonModule, SearchInventoryOutputComponent, ListInventoryOutputComponent],
+    imports: [RouterModule, CommonModule, SearchInventoryOutputComponent, ListInventoryOutputComponent, InventoryOutputPlanComponent, InventoryOutputActualComponent, InventoryOutputCorrectionComponent],
     standalone: true,
     templateUrl: './inventory-output-list.html',
     styleUrls: ['./inventory-output-list.scss'],

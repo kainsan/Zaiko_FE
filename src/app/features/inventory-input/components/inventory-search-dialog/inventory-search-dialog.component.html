@@ -36,6 +36,7 @@
                             <th *ngIf="searchType === 'delivery'">納品先コード</th>
                             <th *ngIf="searchType === 'customer'">得意先コード</th>
                             <th *ngIf="searchType === 'supplierDelivery'">仕入先コード</th>
+                            <th *ngIf="searchType === 'planCustomerDeliveryDestination'">出荷先コード</th>
                             <th>名称</th>
                         </tr>
                     </thead>
@@ -48,11 +49,13 @@
                             <td *ngIf="searchType === 'customer'">{{ item.customerCode }}</td>
                             <td *ngIf="searchType === 'supplierDelivery'">{{ item.supplierDeliveryDestinationCode }}
                             </td>
+                            <td *ngIf="searchType === 'planCustomerDeliveryDestination'">{{ item.destinationCode }}</td>
                             <td *ngIf="searchType === 'product'">{{ item.name1 }}</td>
                             <td *ngIf="searchType === 'supplier'">{{ item.supplierName }}</td>
                             <td *ngIf="searchType === 'delivery'">{{ item.departmentName }}</td>
                             <td *ngIf="searchType === 'customer'">{{ item.customerName }}</td>
                             <td *ngIf="searchType === 'supplierDelivery'">{{ item.destinationCode }}</td>
+                            <td *ngIf="searchType === 'planCustomerDeliveryDestination'">{{ item.departmentName }}</td>
                         </tr>
                     </tbody>
                 </table>

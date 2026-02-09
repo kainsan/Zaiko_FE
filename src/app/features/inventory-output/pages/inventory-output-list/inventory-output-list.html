@@ -50,4 +50,19 @@
             </div>
         </div>
     </ng-container>
+
+    <ng-container *ngIf="viewMode() === 'plan'">
+        <app-inventory-output-plan [inventoryInputId]="selectedId()"
+            (back)="handleBackToList()"></app-inventory-output-plan>
+    </ng-container>
+
+    <ng-container *ngIf="viewMode() === 'actual'">
+        <app-inventory-output-actual [inventoryInputId]="selectedId()" (back)="handleBackToList()"
+            ></app-inventory-output-actual>
+    </ng-container>
+
+    <ng-container *ngIf="viewMode() === 'correction'">
+        <app-inventory-output-correction [inventoryInputId]="selectedId()"
+            (back)="handleBackToList()"></app-inventory-output-correction>
+    </ng-container>
 </div>

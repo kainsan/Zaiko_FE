@@ -1,0 +1,254 @@
+<div class="list-container" *ngIf="detailsFormArray">
+    <div class="list-header">
+        <h3>出庫明細一覧 </h3>
+        <button type="button" class="btn-add" (click)="onAddItem()"
+            [disabled]="detailsFormArray.parent?.get('header.isClosed')?.value === '1'">+ 追加</button>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th class="col-no">No.</th>
+                    <th class="col-product">商品</th>
+                    <th class="col-date">管理日付</th>
+                    <th class="col-warehouse">倉庫</th>
+                    <th class="col-units">請求荷姿</th>
+                    <th class="col-unentered">未出庫</th>
+                    <th rowspan="3" class="col-actions"></th>
+                </tr>
+                <tr>
+                    <th class="col-batch-status">バッチ状態</th>
+                    <th class="col-standard">規格</th>
+                    <th class="col-mng-no">管理番号</th>
+                    <th class="col-location">ロケーション</th>
+                    <th class="col-qty-label">出庫数量</th>
+                    <th class="col-entered">出庫済</th>
+                </tr>
+                <tr>
+                    <th class="col-batch">バッチ番号</th>
+                    <th class="col-supplier">支払先</th>
+                    <th class="col-owner">所有者</th>
+                    <th class="col-inv-status">在庫状態</th>
+                    <th class="col-total"><span>金額</span><span>合計</span></th>
+                    <th class="col-empty"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let control of detailsFormArray.controls; let i = index; trackBy: trackByDetail"
+                    [formGroup]="$any(control)">
+                    <ng-container *ngIf="control.get('delFlg')?.value !== '1'">
+                        <tr class="row-top">
+                            <td class="cell-no">
+                                <span>{{ i + 1 }}</span>
+                                <i class="info-icon">i</i>
+                            </td>
+                            <td class="cell-product">
+                                <div class="input-group">
+                                    <div class="code-input-wrapper"
+                                        [class.invalid-input]="control.get('productCode')?.invalid && control.get('productCode')?.touched">
+                                        <input type="text" formControlName="productCode">
+                                        <button type="button" class="search-btn"
+                                            (click)="openSearchDialog($any(control), 'product')"
+                                            [disabled]="detailsFormArray.parent?.get('header.isClosed')?.value === '1'">
+                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <rect width="14" height="14" rx="1" fill="#4392BB" />
+                                                <path
+                                                    d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
+                                                    fill="white" />
+                                            </svg>
+                                        </button>
+                                        <div class="error-tooltip"
+                                            *ngIf="control.get('productCode')?.invalid && control.get('productCode')?.touched">
+                                            必須項目です。
+                                        </div>
+                                    </div>
+                                    <input type="text" formControlName="productName" class="name-input">
+                                </div>
+                            </td>
+                            <td class="cell-date">
+                                <div class="date-range-group">
+                                    <div>
+                                        <span class="badge-input">
+                                            {{ control.get('datetimeMngType')?.value ?
+                                            statusDateTimeMngType[control.get('datetimeMngType')?.value] : '' }}
+                                        </span>
+                                    </div>
+                                    <div class="date-input-wrapper">
+                                        <input [matDatepicker]="datetimeMngFrom" class="date-field"
+                                            formControlName="datetimeMngFrom">
+                                        <mat-datepicker-toggle matSuffix [for]="datetimeMngFrom">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #datetimeMngFrom></mat-datepicker>
+                                    </div>
+                                    <span class="range-sep">~</span>
+                                    <div class="date-input-wrapper">
+                                        <input [matDatepicker]="datetimeMngTo" class="date-field"
+                                            formControlName="datetimeMngTo">
+                                        <mat-datepicker-toggle matSuffix [for]="datetimeMngTo">
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker #datetimeMngTo></mat-datepicker>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="cell-warehouse">
+                                <div class="select-wrapper"
+                                    [class.invalid-input]="control.get('repositoryId')?.invalid && control.get('repositoryId')?.touched">
+                                    <select formControlName="repositoryId" [disabled]="isDisabledRepository(i)"
+                                        (change)="onDetailRepositoryChange(i, $event)">
+
+                                        <option [value]="">(設定無し)</option>
+                                        <option *ngFor="let repo of repositories()" [value]="repo.repositoryId">
+                                            {{ repo.repositoryCode }} : {{ repo.repositoryName }}
+                                        </option>
+                                    </select>
+                                    <div class="error-tooltip"
+                                        *ngIf="control.get('repositoryId')?.invalid && control.get('repositoryId')?.touched">
+                                        必須項目です。
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="cell-units">
+                                <div class="unit-radios">
+                                    <label class="radio-label">
+                                        <input type="radio" [name]="'unit-' + i" value="cs"
+                                            [disabled]="control.get('isPackCsInput')?.value === '0'">
+                                        <span>{{ control.get('packCsUnitName')?.value }}</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" [name]="'unit-' + i" value="bl"
+                                            [disabled]="control.get('isPackBlInput')?.value === '0'">
+                                        <span>{{ control.get('packBlUnitName')?.value }}</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" [name]="'unit-' + i" value="ps" checked
+                                            [disabled]="control.get('isPieceInput')?.value === '0'">
+                                        <span>{{ control.get('pieceUnitName')?.value }}</span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="cell-unentered">
+                                <input type="text" [value]="notDeliveryYet(control)" readonly class="readonly-num">
+                            </td>
+                            <td rowspan="3" class="cell-actions">
+                                <div class="action-buttons">
+                                    <button type="button" class="btn-delete" (click)="onRemoveItem(i)"
+                                        [disabled]="detailsFormArray.parent?.get('header.isClosed')?.value === '1'">
+                                        <svg width="13" height="14" viewBox="0 0 13 14" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M11.8125 0.875C12.0312 0.875 12.25 1.09375 12.25 1.3125V2.1875C12.25 2.43359 12.0312 2.625 11.8125 2.625H0.4375C0.191406 2.625 0 2.43359 0 2.1875V1.3125C0 1.09375 0.191406 0.875 0.4375 0.875H3.71875L3.96484 0.382812C4.07422 0.164062 4.29297 0 4.53906 0H7.68359C7.92969 0 8.14844 0.164062 8.25781 0.382812L8.53125 0.875H11.8125ZM1.44922 12.7695L0.875 3.5H11.375L10.7734 12.7695C10.7461 13.4805 10.1719 14 9.46094 14H2.76172C2.05078 14 1.47656 13.4805 1.44922 12.7695Z"
+                                                fill="white" />
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="btn-copy" (click)="onCopyItem(i)"
+                                        [disabled]="isCopyDisabled(control) || detailsFormArray.parent?.get('header.isClosed')?.value === '1'">
+                                        <svg width="11" height="12" viewBox="0 0 11 12" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M7.5 10.5V11.4375C7.5 11.7656 7.24219 12 6.9375 12H0.5625C0.234375 12 0 11.7656 0 11.4375V2.8125C0 2.50781 0.234375 2.25 0.5625 2.25H2.25V9.1875C2.25 9.91406 2.83594 10.5 3.5625 10.5H7.5ZM7.5 2.4375C7.5 2.76562 7.73438 3 8.0625 3H10.5V9.1875C10.5 9.51562 10.2422 9.75 9.9375 9.75H3.5625C3.23438 9.75 3 9.51562 3 9.1875V0.5625C3 0.257812 3.23438 0 3.5625 0H7.5V2.4375ZM10.3125 1.71094C10.4297 1.82812 10.5 1.96875 10.5 2.10938V2.25H8.25V0H8.39062C8.53125 0 8.67188 0.0703125 8.78906 0.1875L10.3125 1.71094Z"
+                                                fill="white" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="row-middle">
+                            <td class="cell-batch-status">
+                                <span class="badge-status">未処理</span>
+                            </td>
+                            <td class="cell-standard">
+                                <input type="text" formControlName="standardInfo" readonly class="readonly-input">
+                            </td>
+                            <td class="cell-mng-no">
+                                <div class="mng-no-range">
+                                    <input type="text" formControlName="numberMngFrom">
+                                    <span class="range-sep">~</span>
+                                    <input type="text" formControlName="numberMngTo">
+                                </div>
+                            </td>
+                            <td class="cell-location">
+                                <input type="text" formControlName="locationCode" readonly class="readonly-input">
+                            </td>
+                            <td class="cell-qty">
+                                <div class="qty-grid">
+                                    <div class="qty-field">
+                                        <input type="number" formControlName="csPlanQuantity"
+                                            [disabled]="control.get('isPackCsInput')?.value === '0'"
+                                            (input)="calculateTotalQuantityAndAmount(i)">
+                                        <span class="unit-label">{{ control.get('packCsUnitName')?.value }}</span>
+                                    </div>
+                                    <div class="qty-field">
+                                        <input type="number" formControlName="blPlanQuantity"
+                                            [disabled]="control.get('isPackBlInput')?.value === '0'"
+                                            (input)="calculateTotalQuantityAndAmount(i)">
+                                        <span class="unit-label">{{ control.get('packBlUnitName')?.value }}</span>
+                                    </div>
+                                    <div class="qty-field">
+                                        <input type="number" formControlName="psPlanQuantity"
+                                            [disabled]="control.get('isPackPsInput')?.value === '0'"
+                                            (input)="calculateTotalQuantityAndAmount(i)">
+                                        <span class="unit-label">{{ control.get('pieceUnitName')?.value }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="cell-entered">
+                                <input type="number" formControlName="totalActualQuantity" readonly
+                                    class="readonly-num">
+                            </td>
+                        </tr>
+                        <tr class="row-bottom">
+                            <td class="cell-batch">
+                                <span>-</span>
+                            </td>
+                            <td class="cell-supplier">
+                                <div class="input-group">
+                                    <input type="text" formControlName="supplierCode" class="code-input" readonly>
+                                    <input type="text" formControlName="supplierName" class="name-input" readonly>
+                                </div>
+                            </td>
+                            <td class="cell-owner">
+                                <div class="input-group">
+                                    <div class="code-input-wrapper">
+                                        <input type="text" formControlName="ownerCode">
+                                        <button type="button" class="search-btn"
+                                            (click)="openSearchDialog($any(control), 'owner')">
+                                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <rect width="14" height="14" rx="1" fill="#4392BB" />
+                                                <path
+                                                    d="M9.91797 9.44141C10.0234 9.55859 10.0234 9.73438 9.90625 9.83984L9.57812 10.168C9.47266 10.2852 9.29688 10.2852 9.17969 10.168L8.01953 9.00781C7.96094 8.94922 7.9375 8.87891 7.9375 8.80859V8.60938C7.51562 8.9375 7 9.125 6.4375 9.125C5.08984 9.125 4 8.03516 4 6.6875C4 5.35156 5.08984 4.25 6.4375 4.25C7.77344 4.25 8.875 5.35156 8.875 6.6875C8.875 7.26172 8.67578 7.77734 8.35938 8.1875H8.54688C8.61719 8.1875 8.6875 8.22266 8.74609 8.26953L9.91797 9.44141ZM6.4375 8.1875C7.25781 8.1875 7.9375 7.51953 7.9375 6.6875C7.9375 5.86719 7.25781 5.1875 6.4375 5.1875C5.60547 5.1875 4.9375 5.86719 4.9375 6.6875C4.9375 7.51953 5.60547 8.1875 6.4375 8.1875Z"
+                                                    fill="white" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <input type="text" formControlName="ownerName" class="name-input" readonly>
+                                </div>
+                            </td>
+                            <td class="cell-inv-status">
+                                <div class="select-wrapper">
+                                    <select formControlName="inventoryProductType" class="form-select">
+                                        <option value="">(設定無し)</option>
+                                        <option *ngFor="let opt of inventoryProductTypeOptions" [value]="opt.value">{{
+                                            opt.label }}</option>
+                                    </select>
+                                    <!-- <select formControlName="inventoryProductType">
+                                        <option value="">(設定無し)</option>
+                                    </select> -->
+                                </div>
+                            </td>
+                            <td class="cell-total">
+                                <input type="text" style="width: 80px;" formControlName="amountTotal" readonly
+                                    class="readonly-num">
+                                <input type="text" style="width: 80px;" formControlName="totalPlanQuantity"
+                                    class="readonly-num">
+                            </td>
+                            <td class="cell-empty"></td>
+                        </tr>
+                    </ng-container>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+</div>

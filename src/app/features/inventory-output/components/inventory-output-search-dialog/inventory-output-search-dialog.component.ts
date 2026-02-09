@@ -115,7 +115,7 @@ export class InventoryOutputSearchDialogComponent implements OnInit {
             case 'delivery':
                 this.filteredItems = this.items.filter((item: any) =>
                     item.destinationCode?.toLowerCase().includes(query) ||
-                    item.destinationName?.toLowerCase().includes(query)
+                    item.departmentName?.toLowerCase().includes(query)
                 );
                 break;
             case 'customer':

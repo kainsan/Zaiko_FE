@@ -94,6 +94,14 @@ export class InventoryOutputService {
         return this.http.get<Repository[]>(`${this.apiUrl}/repositories`);
     }
 
+    getRoutes(): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/routes`);
+    }
+
+    getCourses(params: { routeCode: string }): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/courses`, { params });
+    }
+
     createInventoryOutputPlan(data: InventoryOutputPlanResponse): Observable<any> {
         return this.http.post(`${this.apiUrl}/inventory-output/inventory-output-plan`, data);
     }

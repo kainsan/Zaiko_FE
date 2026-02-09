@@ -1,0 +1,196 @@
+<div class="header-container" *ngIf="headerFormGroup">
+    <div class="top-bar">
+        <button class="back-btn" (click)="onBack()">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 12L6 8L10 4" stroke="#4392BB" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+            戻る
+        </button>
+
+        <div class="actions">
+            <div class="status-label">
+                出庫状態
+                <span class="status-badge">{{ inputStatusMap[headerFormGroup.get('inputStatus')?.value || '0'] }}</span>
+            </div>
+            <button class="btn-close" (click)="toggleClose()">{{
+                headerFormGroup.get('isClosed')?.value === '1' ?
+                'クローズ解除' : 'クローズ' }}</button>
+            <button *ngIf="headerFormGroup.get('inventoryOutputId')?.value" class="btn-delete" (click)="onDelete()"
+                [disabled]="isFormInvalid || headerFormGroup.get('isClosed')?.value === '1'">
+                <svg width="13" height="14" viewBox="0 0 13 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M11.8125 0.875C12.0312 0.875 12.25 1.09375 12.25 1.3125V2.1875C12.25 2.43359 12.0312 2.625 11.8125 2.625H0.4375C0.191406 2.625 0 2.43359 0 2.1875V1.3125C0 1.09375 0.191406 0.875 0.4375 0.875H3.71875L3.96484 0.382812C4.07422 0.164062 4.29297 0 4.53906 0H7.68359C7.92969 0 8.14844 0.164062 8.25781 0.382812L8.53125 0.875H11.8125ZM1.44922 12.7695L0.875 3.5H11.375L10.7734 12.7695C10.7461 13.4805 10.1719 14 9.46094 14H2.76172C2.05078 14 1.47656 13.4805 1.44922 12.7695Z"
+                        fill="white" />
+                </svg>
+                削除</button>
+            <button class="btn-save" (click)="onSave()"
+                [disabled]="isFormInvalid || headerFormGroup.get('isClosed')?.value === '1'">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M10.9941 2.48828C11.2227 2.7168 11.375 3.02148 11.375 3.35156V10.1562C11.375 10.8418 10.8164 11.375 10.1562 11.375H1.21875C0.533203 11.375 0 10.8418 0 10.1562V1.21875C0 0.558594 0.533203 0 1.21875 0H8.02344C8.35352 0 8.6582 0.152344 8.88672 0.380859L10.9941 2.48828ZM5.6875 9.75C6.57617 9.75 7.3125 9.03906 7.3125 8.125C7.3125 7.23633 6.57617 6.5 5.6875 6.5C4.77344 6.5 4.0625 7.23633 4.0625 8.125C4.0625 9.03906 4.77344 9.75 5.6875 9.75ZM8.125 2.03125C8.125 1.95508 8.07422 1.87891 8.02344 1.80273L7.94727 1.72656C7.87109 1.67578 7.79492 1.625 7.71875 1.625H1.92969C1.75195 1.625 1.625 1.77734 1.625 1.92969V4.57031C1.625 4.74805 1.75195 4.875 1.92969 4.875H7.82031C7.97266 4.875 8.125 4.74805 8.125 4.57031V2.03125Z"
+                        fill="white" />
+                </svg>
+                保存</button>
+        </div>
+    </div>
+
+    <div class="form-grid" [formGroup]="headerFormGroup">
+
+        <div class="form-group">
+            <label class="required">受注日</label>
+            <div class="input-wrapper date-input">
+                <input matInput [matDatepicker]="orderPicker" formControlName="orderDate" class="date-field">
+                <mat-datepicker-toggle matSuffix [for]="orderPicker"></mat-datepicker-toggle>
+                <mat-datepicker #orderPicker></mat-datepicker>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="required">出庫予定日</label>
+            <div class="input-wrapper date-input"
+                [class.invalid-input]="headerFormGroup.get('planOutputDate')?.invalid && headerFormGroup.get('planOutputDate')?.touched">
+                <input matInput [matDatepicker]="planPicker" formControlName="planOutputDate" class="date-field">
+                <mat-datepicker-toggle matSuffix [for]="planPicker"></mat-datepicker-toggle>
+                <mat-datepicker #planPicker></mat-datepicker>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="required">作業予定日</label>
+            <div class="input-wrapper date-input">
+                <input matInput [matDatepicker]="workPicker" formControlName="planWorkingDate" class="date-field">
+                <mat-datepicker-toggle matSuffix [for]="workPicker"></mat-datepicker-toggle>
+                <mat-datepicker #workPicker></mat-datepicker>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="required">納品予定日</label>
+            <div class="input-wrapper date-input">
+                <input matInput [matDatepicker]="deliverPicker" formControlName="planDeliverDate" class="date-field">
+                <mat-datepicker-toggle matSuffix [for]="deliverPicker"></mat-datepicker-toggle>
+                <mat-datepicker #deliverPicker></mat-datepicker>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="required">伝票区分</label>
+            <select formControlName="createSlipType">
+                <option value="0">通常出庫（自動採番）</option>
+                <option value="1">通常出庫（手動採番）</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>伝票番号</label>
+            <input type="text" formControlName="slipNo" class="readonly-input">
+        </div>
+        <div class="form-group">
+            <label>客先伝票番号</label>
+            <input type="text" formControlName="planSupplierSlipNo">
+        </div>
+
+        <div class="form-group">
+            <label class="required">出荷先</label>
+            <div class="input-wrapper">
+                <input type="text" formControlName="planDestinationCode">
+                <button class="search-btn-small" type="button"
+                    (click)="openSearchDialog('planCustomerDeliveryDestination')">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="form-group span-6">
+            <label>出荷先名称</label>
+            <input type="text" formControlName="planDestinationName" class="readonly-input">
+        </div>
+
+        <!-- Row 3: ルート (1 col dropdown) | コース (1 col dropdown) | 購買先コード* (1 col with search) | 購買先名称 (4 cols) -->
+        <div class="form-group">
+            <label>ルート</label>
+            <select formControlName="routeCode">
+                <option value="">(設定無し)</option>
+                @for (route of routes(); track route.routeCode) {
+                <option [value]="route.routeCode">{{route.routeCode}} {{route.routeName}}</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label>コース</label>
+            <select formControlName="courseCode">
+                <option value="">(設定無し)</option>
+                @for (course of courses(); track course.courseCode) {
+                <option [value]="course.courseCode">{{course.courseName}}</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="required">請求先コード</label>
+            <div class="input-wrapper">
+                <input type="text" formControlName="planCustomerCode" class="readonly-input">
+                <button class="search-btn-small" type="button" [disabled]="true">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="form-group span-4">
+            <label>請求先名称</label>
+            <input type="text" formControlName="planCustomerName" class="readonly-input">
+        </div>
+
+        <!-- Row 4: 伝票出荷先名称 | checkbox | 出荷先TEL | 出荷先FAX | 出荷先郵便番号 -->
+        <div class="form-group span-3">
+            <div class="label-with-checkbox">
+                <label>伝票出荷先名称</label>
+                <label class="checkbox-label">
+                    <input type="checkbox" (change)="onManualDestinationChange($event)"
+                        [checked]="headerFormGroup.get('isManualDestination')?.value === '1'">
+                    <span>マスタ登録外出荷先指定</span>
+                </label>
+            </div>
+            <input type="text" formControlName="newDestinationName">
+        </div>
+        <div class="form-group span-2">
+            <label>出荷先TEL</label>
+            <input type="text" formControlName="phoneNumber">
+        </div>
+        <div class="form-group span-2">
+            <label>出荷先FAX</label>
+            <input type="text" formControlName="faxNumber">
+        </div>
+        <div class="form-group">
+            <label>出荷先郵便番号</label>
+            <input type="text" formControlName="postCode">
+        </div>
+
+        <!-- Row 6: 出荷先住所 | 倉庫* -->
+        <div class="form-group span-6">
+            <label>出荷先住所</label>
+            <div class="name-input">
+                <input type="text" formControlName="address1">
+                <input type="text" formControlName="address2">
+                <input type="text" formControlName="address3">
+                <input type="text" formControlName="address4">
+            </div>
+        </div>
+        <div class="form-group span-2">
+            <label class="required">倉庫</label>
+            <select formControlName="planRepositoryId">
+                <option value="">選択してください</option>
+                <option *ngFor="let repo of repositories()" [value]="repo.repositoryId">
+                    {{ repo.repositoryCode }} {{ repo.repositoryName }}
+                </option>
+            </select>
+        </div>
+
+        <!-- Row 7: 伝票備考 (full width) -->
+        <div class="form-group span-5">
+            <label>伝票備考</label>
+            <input type="text" formControlName="slipNote">
+        </div>
+    </div>
+</div>
