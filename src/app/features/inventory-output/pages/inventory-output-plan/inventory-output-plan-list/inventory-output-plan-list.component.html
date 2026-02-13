@@ -113,16 +113,22 @@
                                 <div class="unit-radios">
                                     <label class="radio-label">
                                         <input type="radio" [name]="'unit-' + i" value="cs"
+                                            [checked]="getSelectedUnitMode(control) === 'cs'"
+                                            (change)="onUnitModeChange(i, 'cs')"
                                             [disabled]="control.get('isPackCsInput')?.value === '0'">
                                         <span>{{ control.get('packCsUnitName')?.value }}</span>
                                     </label>
                                     <label class="radio-label">
                                         <input type="radio" [name]="'unit-' + i" value="bl"
+                                            [checked]="getSelectedUnitMode(control) === 'bl'"
+                                            (change)="onUnitModeChange(i, 'bl')"
                                             [disabled]="control.get('isPackBlInput')?.value === '0'">
                                         <span>{{ control.get('packBlUnitName')?.value }}</span>
                                     </label>
                                     <label class="radio-label">
-                                        <input type="radio" [name]="'unit-' + i" value="ps" checked
+                                        <input type="radio" [name]="'unit-' + i" value="ps"
+                                            [checked]="getSelectedUnitMode(control) === 'ps'"
+                                            (change)="onUnitModeChange(i, 'ps')"
                                             [disabled]="control.get('isPieceInput')?.value === '0'">
                                         <span>{{ control.get('pieceUnitName')?.value }}</span>
                                     </label>
@@ -175,19 +181,16 @@
                                 <div class="qty-grid">
                                     <div class="qty-field">
                                         <input type="number" formControlName="csPlanQuantity"
-                                            [disabled]="control.get('isPackCsInput')?.value === '0'"
                                             (input)="calculateTotalQuantityAndAmount(i)">
                                         <span class="unit-label">{{ control.get('packCsUnitName')?.value }}</span>
                                     </div>
                                     <div class="qty-field">
                                         <input type="number" formControlName="blPlanQuantity"
-                                            [disabled]="control.get('isPackBlInput')?.value === '0'"
                                             (input)="calculateTotalQuantityAndAmount(i)">
                                         <span class="unit-label">{{ control.get('packBlUnitName')?.value }}</span>
                                     </div>
                                     <div class="qty-field">
                                         <input type="number" formControlName="psPlanQuantity"
-                                            [disabled]="control.get('isPackPsInput')?.value === '0'"
                                             (input)="calculateTotalQuantityAndAmount(i)">
                                         <span class="unit-label">{{ control.get('pieceUnitName')?.value }}</span>
                                     </div>
@@ -233,9 +236,7 @@
                                         <option *ngFor="let opt of inventoryProductTypeOptions" [value]="opt.value">{{
                                             opt.label }}</option>
                                     </select>
-                                    <!-- <select formControlName="inventoryProductType">
-                                        <option value="">(設定無し)</option>
-                                    </select> -->
+
                                 </div>
                             </td>
                             <td class="cell-total">

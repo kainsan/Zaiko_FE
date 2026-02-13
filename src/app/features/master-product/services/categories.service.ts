@@ -5,12 +5,13 @@ import { map } from 'rxjs/operators';
 import { PageResponse } from '../response/PageResponse';
 import { MasterProductDTO, Repository, Location } from '../model/product.model';
 import { ProductSearchParams } from '../request/ProductSearchRequest';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoriesService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 

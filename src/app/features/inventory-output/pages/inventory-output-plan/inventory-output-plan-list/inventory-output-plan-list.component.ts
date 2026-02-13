@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, signal, OnInit } from '@angular/core';
+import { Component, DoCheck, EventEmitter, Input, Output, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { InventoryOutputService } from '../../../services/inventory-output.service';
 import { InventoryOutputSearchDialogComponent } from '../../../components/inventory-output-search-dialog/inventory-output-search-dialog.component';
 import { Location, Repository } from '../../../../master-product/model/product.model'; // Reuse input search dialog for now
+import { blob } from 'node:stream/consumers';
 
 @Component({
     selector: 'app-inventory-output-plan-list',
@@ -22,7 +23,7 @@ import { Location, Repository } from '../../../../master-product/model/product.m
     templateUrl: './inventory-output-plan-list.component.html',
     styleUrls: ['./inventory-output-plan-list.component.scss']
 })
-export class InventoryOutputPlanListComponent implements OnInit {
+export class InventoryOutputPlanListComponent implements OnInit, DoCheck {
     @Input() detailsFormArray!: FormArray;
     @Output() addItem = new EventEmitter<void>();
     @Output() removeItem = new EventEmitter<number>();
@@ -30,6 +31,7 @@ export class InventoryOutputPlanListComponent implements OnInit {
 
     repositories = signal<Repository[]>([]);
     locationsMap: { [index: number]: Location[] } = {};
+    private initializedDetailCount = 0;
 
     public statusDateTimeMngType: Record<string, string> = {
         '0': '入',
@@ -86,6 +88,24 @@ export class InventoryOutputPlanListComponent implements OnInit {
                 }
             });
         });
+
+        this.controls.forEach((_, index) => {
+            this.applyQuantityInputState(index);
+        });
+        this.initializedDetailCount = this.controls.length;
+    }
+
+    ngDoCheck(): void {
+        if (!this.detailsFormArray) return;
+
+        if (this.controls.length < this.initializedDetailCount) {
+            this.initializedDetailCount = 0;
+        }
+
+        while (this.initializedDetailCount < this.controls.length) {
+            this.applyQuantityInputState(this.initializedDetailCount);
+            this.initializedDetailCount++;
+        }
     }
 
     private loadRepositories(): void {
@@ -163,30 +183,42 @@ export class InventoryOutputPlanListComponent implements OnInit {
                         productId: res.productId,
                         productCode: res.productCode,
                         productName: res.name1,
-                        // Update other product specific fields if needed
+                        // Product master info
+                        standardInfo: res.standardInfo ?? '',
                         packCsUnitName: res.packCsUnitName,
                         packBlUnitName: res.packBlUnitName,
                         pieceUnitName: res.pieceUnitName,
+                        packCsAmount: res.packCsAmount ?? 0,
+                        packBlAmount: res.packBlAmount ?? 0,
 
                         // Set management flags
                         isDatetimeMng: res.isDatetimeMng,
                         isNumberMng: res.isNumberMng,
                         isPackCsInput: res.isPackCsInput,
                         isPackBlInput: res.isPackBlInput,
-                        isPieceInput: res.isPieceInput
+                        isPieceInput: res.isPieceInput,
+
+                        // Reset dependent values
+                        csPlanQuantity: null,
+                        blPlanQuantity: null,
+                        psPlanQuantity: null,
+                        totalPlanQuantity: 0,
+                        totalQuantityInput: 0,
+                        amountTotal: 0,
+                        billingPackType: '',
+                        datetimeMngFrom: null,
+                        datetimeMngTo: null,
+                        numberMngFrom: null,
+                        numberMngTo: null
                     });
+                    const rowIndex = this.detailsFormArray.controls.indexOf(group);
+                    if (rowIndex >= 0) this.applyQuantityInputState(rowIndex);
                 }
                 if (type === 'owner') {
                     group.patchValue({
-                        ownerId: res.ownerId,
-                        ownerName: res.ownerName,
-
-                        // Set management flags
-                        isDatetimeMng: res.isDatetimeMng,
-                        isNumberMng: res.isNumberMng,
-                        isPackCsInput: res.isPackCsInput,
-                        isPackBlInput: res.isPackBlInput,
-                        isPieceInput: res.isPieceInput
+                        productOwnerId: res.customerId ?? null,
+                        ownerCode: res.customerCode ?? '',
+                        ownerName: res.customerName ?? '',
                     });
                 }
             });
@@ -222,9 +254,13 @@ export class InventoryOutputPlanListComponent implements OnInit {
 
     calculateTotalQuantityAndAmount(index: number): void {
         const formGroup = this.detailsFormArray.at(index);
-        const csQty = Number(formGroup.get('csPlanQuantity')?.value) || 0;
-        const blQty = Number(formGroup.get('blPlanQuantity')?.value) || 0;
-        const psQty = Number(formGroup.get('psPlanQuantity')?.value) || 0;
+        const csCtrl = formGroup.get('csPlanQuantity');
+        const blCtrl = formGroup.get('blPlanQuantity');
+        const psCtrl = formGroup.get('psPlanQuantity');
+
+        const csQty = Number(csCtrl?.value) || 0;
+        const blQty = Number(blCtrl?.value) || 0;
+        const psQty = Number(psCtrl?.value) || 0;
 
         const packCsAmount = Number(formGroup.get('packCsAmount')?.value) || 0;
         const packBlAmount = Number(formGroup.get('packBlAmount')?.value) || 0;
@@ -239,25 +275,25 @@ export class InventoryOutputPlanListComponent implements OnInit {
 
         // let totalPlanQuantity = Number(formGroup.get('totalPlanQuantity')?.value) || 0;
         let total = 0;
-        if (isPackCsInput !== '0') {
+        if (isPackCsInput !== '0' && csCtrl?.enabled) {
             total += csQty * packCsAmount * packBlAmount;
         }
-        if (isPackBlInput !== '0') {
+        if (isPackBlInput !== '0' && blCtrl?.enabled) {
             total += blQty * packBlAmount;
         }
-        if (isPieceInput !== '0') {
+        if (isPieceInput !== '0' && psCtrl?.enabled) {
             total += psQty;
         }
 
         //let amountTotal = Number(formGroup.get('amountTotal')?.value) || 0;
         let totalAmount = 0;
-        if (isPackCsInput !== '0') {
+        if (isPackCsInput !== '0' && csCtrl?.enabled) {
             totalAmount += csQty * saleCsPrice;
         }
-        if (isPackBlInput !== '0') {
+        if (isPackBlInput !== '0' && blCtrl?.enabled) {
             totalAmount += blQty * saleBlPrice;
         }
-        if (isPieceInput !== '0') {
+        if (isPieceInput !== '0' && psCtrl?.enabled) {
             totalAmount += psQty * salePiecePrice;
         }
 
@@ -278,6 +314,18 @@ export class InventoryOutputPlanListComponent implements OnInit {
 
     onCopyItem(index: number): void {
         this.copyItem.emit(index);
+    }
+
+    onUnitModeChange(index: number, mode: 'cs' | 'bl' | 'ps'): void {
+        this.applyQuantityInputState(index, mode);
+        const formGroup = this.detailsFormArray.at(index) as FormGroup;
+        formGroup.patchValue({
+            csPlanQuantity: null,
+            blPlanQuantity: null,
+            psPlanQuantity: null,
+            amountTotal: null,
+            totalPlanQuantity: null
+        }, { emitEvent: false });
     }
 
     trackByDetail(index: number, control: AbstractControl) {
@@ -307,5 +355,75 @@ export class InventoryOutputPlanListComponent implements OnInit {
         const totalPlanQuantity = Number(control.get('totalPlanQuantity')?.value) || 0;
         const totalActualQuantity = Number(control.get('totalActualQuantity')?.value) || 0;
         return totalPlanQuantity - totalActualQuantity;
+    }
+     // Lay value ra de check radio button
+    getSelectedUnitMode(control: AbstractControl): 'cs' | 'bl' | 'ps' {
+        const billingPackType = String(control.get('billingPackType')?.value ?? '');
+        switch (billingPackType) {
+            case '1':
+                return 'cs';
+            case '2':
+                return 'bl';
+            case '3':
+                return 'ps';
+            default:
+                return this.getDefaultUnitMode(control);
+        }
+    }
+    // disable radio button nao có value là 1
+    private getDefaultUnitMode(control: AbstractControl): 'cs' | 'bl' | 'ps' {
+        const canCs = control.get('isPackCsInput')?.value === '1';
+        const canBl = control.get('isPackBlInput')?.value === '1';
+        const canPs = control.get('isPieceInput')?.value === '1';
+
+        if (canPs) return 'ps';
+        if (canBl) return 'bl';
+        if (canCs) return 'cs';
+        return 'cs';
+    }
+    //Switch flag theo radio button
+    private applyQuantityInputState(index: number, selectedMode?: 'cs' | 'bl' | 'ps'): void {
+        const formGroup = this.detailsFormArray.at(index) as FormGroup;
+        const canCs = formGroup.get('isPackCsInput')?.value === '1';
+        const canBl = formGroup.get('isPackBlInput')?.value === '1';
+        const canPs = formGroup.get('isPieceInput')?.value === '1';
+
+        let mode: 'cs' | 'bl' | 'ps' = selectedMode ?? this.getSelectedUnitMode(formGroup);
+
+        // Keep selected mode valid against master flags
+        if ((mode === 'cs' && !canCs) || (mode === 'bl' && !canBl) || (mode === 'ps' && !canPs)) {
+            mode = this.getDefaultUnitMode(formGroup);
+        }
+        // khi chọn tùy vào radio button
+        switch (mode) {
+            case 'cs':
+                this.setControlEnabled(formGroup.get('csPlanQuantity'), canCs);
+                this.setControlEnabled(formGroup.get('blPlanQuantity'), false);
+                this.setControlEnabled(formGroup.get('psPlanQuantity'), false);
+                break;
+            case 'bl':
+                this.setControlEnabled(formGroup.get('csPlanQuantity'), canCs);
+                this.setControlEnabled(formGroup.get('blPlanQuantity'), canBl);
+                this.setControlEnabled(formGroup.get('psPlanQuantity'), false);
+                break;
+            case 'ps':
+                this.setControlEnabled(formGroup.get('csPlanQuantity'), canCs);
+                this.setControlEnabled(formGroup.get('blPlanQuantity'), canBl);
+                this.setControlEnabled(formGroup.get('psPlanQuantity'), canPs);
+                break;
+        }
+
+        const billingPackType = mode === 'cs' ? '1' : mode === 'bl' ? '2' : '3';
+        formGroup.get('billingPackType')?.setValue(billingPackType, { emitEvent: false });
+    }
+
+    private setControlEnabled(control: AbstractControl | null, enabled: boolean): void {
+        if (!control) return;
+
+        if (enabled) {
+            control.enable({ emitEvent: false });
+        } else {
+            control.disable({ emitEvent: false });
+        }
     }
 }

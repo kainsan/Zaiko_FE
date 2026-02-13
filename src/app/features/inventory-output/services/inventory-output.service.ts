@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { PageResponse } from '../../master-product/response/PageResponse';
 import { InventoryOutputListItem, InventoryOutputPlanResponse, InventoryOutputActualResponse, InventoryOutputSearchParams, InventoryOutputCorrectionResponse } from '../models/inventory-output.model';
 import { Product, Repository } from '../../master-product/model/product.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class InventoryOutputService {
-    private apiUrl = 'http://localhost:8080/api';
+    private apiUrl = environment.apiUrl;
 
     constructor(private http: HttpClient) { }
 
