@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 import { PageResponse } from '../response/PageResponse';
 import { MasterProductDTO, Repository, Location } from '../model/product.model';
 import { ProductSearchParams } from '../request/ProductSearchRequest';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../environments/environment.example';
 
 @Injectable({
   providedIn: 'root'
