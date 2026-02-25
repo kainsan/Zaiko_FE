@@ -1,0 +1,72 @@
+<div class="portfolio-wrapper">
+    <div class="portfolio-container">
+
+        <header class="profile-header">
+            <div class="avatar-placeholder">
+                <span class="avatar-initials">TK</span>
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-name">{{ profile.name }}</h1>
+                <p class="profile-title">{{ profile.title }}</p>
+                <ul class="profile-details">
+                    <li><span class="detail-label">Ngày sinh:</span> {{ profile.dob }}</li>
+                    <li><span class="detail-label">Giới tính:</span> {{ profile.gender }}</li>
+                    <li><span class="detail-label">Số điện thoại:</span> {{ profile.phone }}</li>
+                    <li><span class="detail-label">Email:</span> {{ profile.email }}</li>
+                    <li><span class="detail-label">Địa chỉ:</span> {{ profile.address }}</li>
+                </ul>
+            </div>
+        </header>
+
+        <section class="section">
+            <h2 class="section-title">OVERVIEW</h2>
+            <ul class="overview-list">
+                <li *ngFor="let item of overview">{{ item }}</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">HỌC VẤN</h2>
+            <div *ngFor="let edu of education" class="timeline-item">
+                <span class="timeline-period">{{ edu.period }}</span>
+                <div class="timeline-content">
+                    <p class="timeline-org">{{ edu.school }}</p>
+                    <p>{{ edu.major }}</p>
+                    <p>{{ edu.gpa }}</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">KINH NGHIỆM LÀM VIỆC</h2>
+            <div *ngFor="let exp of experience" class="timeline-item">
+                <span class="timeline-period">{{ exp.period }}</span>
+                <div class="timeline-content">
+                    <p class="timeline-org">{{ exp.company }}</p>
+                    <p class="timeline-role">{{ exp.role }}</p>
+                    <ul class="task-list">
+                        <li *ngFor="let task of exp.tasks">{{ task }}</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">CHỨNG CHỈ</h2>
+            <ul class="cert-list">
+                <li *ngFor="let cert of certificates">{{ cert }}</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">KỸ NĂNG</h2>
+            <div *ngFor="let skill of skills" class="skill-group">
+                <span class="skill-category">{{ skill.category }}</span>
+                <ul class="skill-list">
+                    <li *ngFor="let item of skill.items">{{ item }}</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+</div>

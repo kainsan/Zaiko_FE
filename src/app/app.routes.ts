@@ -21,4 +21,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/inventory-output/pages/inventory-output-list/inventory-output-list').then(m => m.InventoryOutputList),
   },
+  {
+    path: 'portfolio',
+    loadComponent: () =>
+      import('./features/portfolio/pages/portfolio').then(m => m.Portfolio),
+  },
 ];

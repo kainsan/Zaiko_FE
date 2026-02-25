@@ -42,7 +42,7 @@ export class DashboardHome {
     {
       title: "在庫",
       items: [
-        { label: "在庫一覧", path: "/inventory/list" }
+        { label: "在庫一覧", path: "/portfolio" }
       ]
     }
   ];
